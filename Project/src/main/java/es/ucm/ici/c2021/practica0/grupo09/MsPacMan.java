@@ -30,7 +30,7 @@ public final class MsPacMan extends PacmanController {
         int pacmanPos = game.getPacmanCurrentNodeIndex();
         double closestDistance = Double.MAX_VALUE;
         for (GHOST currentGhost : GHOST.values()) {
-            if(edible && game.isGhostEdible(currentGhost) || !edible && !game.isGhostEdible(currentGhost)){
+            if(edible == game.isGhostEdible(currentGhost)){ //xnor, que es igual a (edible && game.isGhostEdible(currentGhost) || !edible && !game.isGhostEdible(currentGhost))
                 double aux = game.getDistance(pacmanPos, game.getGhostCurrentNodeIndex(currentGhost), measure);
                 if (aux < closestDistance && aux < limit) {
                     closestGhost = currentGhost;
