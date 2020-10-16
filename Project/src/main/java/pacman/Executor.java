@@ -52,7 +52,7 @@ public class Executor {
     private final Function<Game, String> peek;
     private final Logger logger = LoggerFactory.getLogger(Executor.class);
 	private boolean pacmanPOvisual;
-    private static String VERSION = "2.0.0 (ICI 20/21 Initial release)";
+    private static String VERSION = "2.1.0 (ICI 20/21 - Evaluator Included)";
 
     public static class Builder {
         private boolean pacmanPO = false;
