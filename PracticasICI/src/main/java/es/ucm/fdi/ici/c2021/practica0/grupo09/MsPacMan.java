@@ -9,17 +9,18 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.internal.Node;
 
-class interseccion {
-	
-	public interseccion(int iden, EnumMap<MOVE, Integer> dir,EnumMap<MOVE, Integer> pi,EnumMap<MOVE, Integer> ppi) {		
+class interseccion {	
+	public interseccion(int iden, EnumMap<MOVE, Integer> dir, EnumMap<MOVE, Integer> dest,EnumMap<MOVE, Integer> pi,EnumMap<MOVE, Integer> ppi) {		
 		identificador = iden;
 		direccions = dir;
+		destinos = dest;
 		pills = pi;
 		powePill = ppi;
 	}
 	
 	public int identificador; //node index
-	public EnumMap<MOVE, Integer> direccions; //direcciones y distancias
+	public EnumMap<MOVE, Integer> direccions; //distancias
+	public EnumMap<MOVE, Integer> destinos; //identificador del nodo en esa direccion
 	public EnumMap<MOVE, Integer> pills; //pills en ese camino	
 	public EnumMap<MOVE, Integer> powePill; //powerPills en ese camino
  }
@@ -37,7 +38,6 @@ public final class MsPacMan extends PacmanController {
 		int coste = 1;
 		
 		while((proximoNodo.numNeighbouringNodes <= 2)) {
-			System.out.println("while");
 			if(proximoNodo.neighbourhood.get(direccion) == null) { //en que otra direccion nos podemos mover				
 				for(MOVE m: MOVE.values()) { //ya tenemos la nueva direccion
 					if(m != direccion.opposite() && proximoNodo.neighbourhood.get(m) != null) { direccion = m; break;}
@@ -47,10 +47,8 @@ public final class MsPacMan extends PacmanController {
 			else if(proximoNodo.powerPillIndex != -1) powerPills++;
 			proximoNodo = graph[proximoNodo.neighbourhood.get(direccion)];
 			coste++;	
-		}	
-		
-		
-		return new int[] {coste, pills, powerPills};
+		}			
+		return new int[] {coste,proximoNodo.nodeIndex, pills, powerPills};
 	}
 	
 	private void crearMapa(Game game) {		
@@ -62,6 +60,7 @@ public final class MsPacMan extends PacmanController {
 				EnumMap<MOVE, Integer> map = nodo.neighbourhood;
 
 				EnumMap<MOVE,Integer> direcciones = new EnumMap<MOVE, Integer>(MOVE.class);
+				EnumMap<MOVE,Integer> destinations = new EnumMap<MOVE, Integer>(MOVE.class);
 				EnumMap<MOVE,Integer> pills = new EnumMap<MOVE, Integer>(MOVE.class);
 				EnumMap<MOVE,Integer> powerPills = new EnumMap<MOVE, Integer>(MOVE.class);
 				
@@ -69,16 +68,18 @@ public final class MsPacMan extends PacmanController {
 					if(map.get(m) != null) { //direccion existente
 						int[] temp = buscaCamino(nodo, m, graph);
 						direcciones.put(m, temp[0]);
-						pills.put(m, temp[1]);
-						powerPills.put(m, temp[2]);
+						destinations.put(m,temp[1]);
+						pills.put(m, temp[2]);
+						powerPills.put(m, temp[3]);
 					}
 				}	
-				mapa.add(new interseccion(nodo.nodeIndex,direcciones, pills, powerPills));
+				mapa.add(new interseccion(nodo.nodeIndex,direcciones,destinations, pills, powerPills));
 			}
 		}
 	}
 	
 	boolean mapaHecho = false;
+	
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
 		if(!mapaHecho) {
