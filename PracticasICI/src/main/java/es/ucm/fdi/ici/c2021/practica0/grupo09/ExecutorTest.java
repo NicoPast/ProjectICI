@@ -8,9 +8,10 @@ public class ExecutorTest {
 	
 	public static void main(String[] args) {
 		Executor executor = new Executor.Builder()
-		.setTickLimit(4000)
+		.setTickLimit(400000000)
+		.setTimeLimit(400000000)
 		.setVisual(true)
-		.setScaleFactor(3.0)
+		.setScaleFactor(3.0)		
 		.build();
 		
 		PacmanController pacMan = new MsPacMan();
