@@ -78,13 +78,25 @@ public final class MsPacMan extends PacmanController {
 		}
 	}
 	
+	private interseccion interseccion_rec(int ini, int fin, int iden) {
+		if(fin - ini > 1) { //sigue habiendo varios nodos en el rango de búsqueda
+			int mid = (fin-ini)/2 + ini;
+			if(mapa.get(mid).identificador <= iden) return interseccion_rec(mid, fin, iden); //esta en el lado derecho
+			else return interseccion_rec(ini,mid,iden); //esta en el lado izquierdo
+		}
+		else return mapa.get(ini); //es de tamaño 1 por tanto devuelve el elemento inicial
+	}
+	
+	private interseccion getInterseccion(int iden) { //usa divide y venceras para encontrar la interseccion
+		return interseccion_rec(0,mapa.size(),iden);
+	}
+	
 	boolean mapaHecho = false;
 	
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
-		if(!mapaHecho) {
+		if(!mapaHecho) { //solo entra aqui en el primer ciclo
 			crearMapa(game);
-			System.out.println("llegó");
 			mapaHecho = true;
 		}
 		
