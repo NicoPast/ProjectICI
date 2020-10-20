@@ -10,7 +10,7 @@ public class ExecutorTest {
 		Executor executor = new Executor.Builder()
 		.setTickLimit(4000)
 		.setVisual(true)
-		.setScaleFactor(3.0)
+		.setScaleFactor(3.0)		
 		.build();
 		
 		PacmanController pacMan = new MsPacMan();
