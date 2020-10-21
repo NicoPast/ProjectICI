@@ -16,6 +16,7 @@ public final class Ghosts extends GhostController {
 
     @Override
     public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
+    	
         moves.clear();
         for (GHOST ghostType : GHOST.values()) {
             if (game.doesGhostRequireAction(ghostType)) {
