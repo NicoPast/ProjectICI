@@ -12,14 +12,14 @@ import pacman.game.internal.Node;
 class interseccion {	
 	public interseccion(int iden, EnumMap<MOVE, Integer> dir, EnumMap<MOVE, Integer> dest,EnumMap<MOVE, Integer> pi,EnumMap<MOVE, Integer> ppi) {		
 		identificador = iden;
-		direccions = dir;
+		distancias = dir;
 		destinos = dest;
 		pills = pi;
 		powePill = ppi;
 	}
 	
 	public int identificador; //node index
-	public EnumMap<MOVE, Integer> direccions; //distancias
+	public EnumMap<MOVE, Integer> distancias; //distancias
 	public EnumMap<MOVE, Integer> destinos; //identificador del nodo en esa direccion
 	public EnumMap<MOVE, Integer> pills; //pills en ese camino (entre nodo y nodo, las pills que hay en las intersecciones no cuentan)
 	public EnumMap<MOVE, Integer> powePill; //powerPills en ese camino
@@ -30,8 +30,12 @@ public final class MsPacMan extends PacmanController {
 	private List<interseccion> mapa = new ArrayList<interseccion>();
 	boolean mapaHecho = false;
 	int ultimoNodo = -1, proximoNodo = -1; //-1 es que aun no ha registrado nada
-	MOVE ultimoMovimientoReal = MOVE.DOWN; //es down por que este programa siempre devuelve down
-	MOVE movimientoDeLlegada = MOVE.UP; //PROVISIONAL tambien
+	MOVE ultimoMovimientoReal = MOVE.LEFT; //es down por que este programa siempre devuelve down
+	MOVE movimientoDeLlegada = MOVE.RIGHT; //PROVISIONAL tambien
+	interseccion interseccionActual;
+	
+	
+	//provisional
 	
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {		
 		MOVE direccion = dir;
@@ -90,7 +94,7 @@ public final class MsPacMan extends PacmanController {
 			else return interseccion_rec(ini,mid,iden); //esta en el lado izquierdo
 		}
 		else if(mapa.get(ini).identificador == iden) return mapa.get(ini); //es de tamaño 1 por tanto devuelve el elemento inicial
-		else throw new ArithmeticException();
+		else return null;
 	}
 	
 	private interseccion getInterseccion(int iden) { //usa divide y venceras para encontrar la interseccion
@@ -108,12 +112,43 @@ public final class MsPacMan extends PacmanController {
 		else if(game.wasPowerPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada= getInterseccion(proximoNodo);			
-			int pills = interSalida.powePill.get(ultimoMovimientoReal);       //no haría falta esta variable ya que pasaria de 1 a 0,
-			interSalida.pills.replace(ultimoMovimientoReal,pills, pills-1);	  //pero si alguein nos quiere romper el programa poniendo mas de
-			interLlegada.pills.replace(movimientoDeLlegada, pills, pills-1);  // una pill entre dos intersecciones le podemos callar la boca
+			int pills = interSalida.powePill.get(ultimoMovimientoReal);       // no haría falta esta variable ya que pasaria de 1 a 0,
+			interSalida.pills.replace(ultimoMovimientoReal,pills, pills-1);	  // pero si alguein nos quiere romper el programa poniendo mas de
+			interLlegada.pills.replace(movimientoDeLlegada, pills, pills-1);  // una powerpill entre dos intersecciones le podemos callar la boca
 		}
 	}
 	
+	
+	private MOVE mejorDireccion(Game game) {				
+		float proporcion = 0; //numPills/distancia
+		MOVE dir = MOVE.NEUTRAL; //la direccion por la cual esta la mejor proporcion
+		for(MOVE m: MOVE.values()) {
+			if(m != movimientoDeLlegada && m!= MOVE.NEUTRAL &&
+					interseccionActual.distancias.get(m) != null) { //no puedes volver hacia atras
+				float proporcionAux = (float)interseccionActual.pills.get(m)/(float)interseccionActual.distancias.get(m); //para ahorra calculos
+				if(dir == MOVE.NEUTRAL) { //aun no se ha procesado ni una entrada
+					proporcion = proporcionAux;
+					dir = m;
+				}
+				else if(proporcionAux > proporcion) { //estamos ante un camino mas factible
+					proporcion = proporcionAux;
+					dir = m;
+				}
+			}
+		}		
+		return dir;
+	}
+	
+	private MOVE proxMovimientoLlegada(MOVE proxMove) {
+		interseccion interLlegada= getInterseccion(proximoNodo);
+		for(MOVE m: MOVE.values()) {
+			if(interLlegada.distancias.get(m) != null &&
+					interLlegada.destinos.get(m) == interseccionActual.identificador &&
+					interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove)) return m;
+		}
+		
+		return MOVE.NEUTRAL; //nunca deberia llegar
+	}
 	
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
@@ -121,38 +156,31 @@ public final class MsPacMan extends PacmanController {
 			crearMapa(game);			
 			mapaHecho = true;
 
-		    return MOVE.DOWN; //es para que no salga en rojo
+		    return MOVE.NEUTRAL; //siempre la primera decision es izquierda abajo
 		}
+		//System.out.println(game.getPacmanCurrentNodeIndex());
 		
-
-		/*System.out.println(game.getPacmanCurrentNodeIndex());
-		getInterseccion(972);*/
-		System.out.println(game.getPacmanCurrentNodeIndex());
-		//EJEMPLO
-		try {
-			interseccion interseccionActual = getInterseccion(game.getPacmanCurrentNodeIndex());
-			ultimoNodo = interseccionActual.identificador;
-			
-			//AQUI VA LA LOGICA DEL PACMAN
-			
-			//ESTO PETA AL LLEGAR ABAJO POR QUE O HAY MAS ABAJO
-			//es DOWN por que ahora mismo el programa siempre va hacia abajo
-			//en el programa real hay que primero tomar la decision de la direccion y luego sacar el
-			//proximoNodo segun la descicion tomada
-			proximoNodo = interseccionActual.destinos.get(MOVE.DOWN);
-			
-			System.out.println("INTERSECCION");
-
-		}
-		catch(Exception e) { //no estas en una interseccion
-			//System.out.println("No estas en una interseccion");
-						
+		interseccionActual = getInterseccion(game.getPacmanCurrentNodeIndex());
+		if(interseccionActual == null) { //si es null, no estas en una interseccion (AKA, estas en un pasillo)
 			if(ultimoNodo != -1 && proximoNodo != -1)updateMapa(game); //solo hay que actualizarlo durante las rectas
-		}	
+			
+			return MOVE.NEUTRAL;
+		}
 		
 		
+		//A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
+		System.out.println("INTERSECCION");
 		
+		MOVE proxMove = mejorDireccion(game);
 		
-       return MOVE.DOWN; //es para que no salga en rojo
+		ultimoNodo = interseccionActual.identificador;
+		proximoNodo = interseccionActual.destinos.get(proxMove);
+		
+
+		ultimoMovimientoReal = proxMove;
+		movimientoDeLlegada = proxMovimientoLlegada(proxMove);
+	
+     		
+       return proxMove; //es para que no salga en rojo
     }
 }
