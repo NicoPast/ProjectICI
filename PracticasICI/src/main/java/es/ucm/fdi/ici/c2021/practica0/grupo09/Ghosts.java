@@ -1,10 +1,10 @@
+package es.ucm.fdi.ici.c2021.practica0.grupo09;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
 
-import javassist.compiler.ast.Pair;
 import pacman.controllers.GhostController;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -28,13 +28,20 @@ public final class Ghosts extends GhostController {
 	public EnumMap<MOVE, Integer> powePill; //powerPills en ese camino
  }
 
+ 	enum Roles {
+		 Perseguidor,
+		 Bloqueador,
+		 Campeador
+	}
+
 	private List<interseccion> mapa = new ArrayList<interseccion>();
 	int ultimoNodo = -1, proximoNodo = -1; //-1 es que aun no ha registrado nada
 	MOVE ultimoMovimientoReal = MOVE.LEFT; //es down por que este programa siempre devuelve down
 	MOVE movimientoDeLlegada = MOVE.RIGHT; //PROVISIONAL tambien
 	interseccion interseccionActual;
+	boolean checkLastMoveMade = false;
 
-private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {		
+	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {		
 		MOVE direccion = dir;
 		int pills = 0;
 		int powerPills = 0;
@@ -114,25 +121,6 @@ private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 			interLlegada.pills.replace(movimientoDeLlegada, pills, pills-1);  // una powerpill entre dos intersecciones le podemos callar la boca
 		}
 	}
-		private MOVE mejorDireccion(Game game) {				
-		float proporcion = 0; //numPills/distancia
-		MOVE dir = MOVE.NEUTRAL; //la direccion por la cual esta la mejor proporcion
-		for(MOVE m: MOVE.values()) {
-			if(m != movimientoDeLlegada && m!= MOVE.NEUTRAL &&
-					interseccionActual.distancias.get(m) != null) { //no puedes volver hacia atras
-				float proporcionAux = (float)interseccionActual.pills.get(m)/(float)interseccionActual.distancias.get(m); //para ahorra calculos
-				if(dir == MOVE.NEUTRAL) { //aun no se ha procesado ni una entrada
-					proporcion = proporcionAux;
-					dir = m;
-				}
-				else if(proporcionAux > proporcion) { //estamos ante un camino mas factible
-					proporcion = proporcionAux;
-					dir = m;
-				}
-			}
-		}		
-		return dir;
-	}
 	
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {
 		interseccion interLlegada= getInterseccion(proximoNodo);
@@ -143,28 +131,119 @@ private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		}
 		return MOVE.NEUTRAL; //nunca deberia llegar
 	}
+	
 	boolean mapaHecho = false;
-
+	private EnumMap<GHOST, interseccion> destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
 	private EnumMap<GHOST, MOVE> moves = new EnumMap<GHOST, MOVE>(GHOST.class);
 	private MOVE[] allMoves = MOVE.values();
 	private Random rnd = new Random();
 
 	@Override
-	public final EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
-		if (!mapaHecho) { // solo entra aqui en el primer ciclo
-			crearMapa(game);
-
-			mapaHecho = true;
-		}
-
+	public final EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {	
 		EnumMap<GHOST, MOVE> moves=null;
+		if(!mapaHecho) { //solo entra aqui en el primer ciclo
+			crearMapa(game);			
+			mapaHecho = true;
+
+		    return moves; //siempre la primera decision es izquierda abajo
+		}
+		
+		//Primero actualizo el mapa usando la posicion del pacman
+		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
+		if(aux == null) { //si es null, no estas en una interseccion (AKA, estas en un pasillo)
+			if(ultimoNodo != -1 && proximoNodo != -1) updateMapa(game); //solo hay que actualizarlo durante las rectas		
+			if(checkLastMoveMade) {
+				MOVE m = game.getPacmanLastMoveMade();
+				checkLastMoveMade = false;
+				ultimoMovimientoReal = m;
+				movimientoDeLlegada = proxMovimientoLlegada(m);
+			}
+			return moves;
+		}
+			
+		//A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
+		System.out.println("INTERSECCION");
+
+		interseccionActual = aux;
+		checkLastMoveMade = true;
+
 		if (isCheckMate(game)) {
 			int i;
+		}
+		else {
+			moves = getMovesByRoles(game, getRoles(game));
 		}
 		return moves;
 	}
 
 	private boolean isCheckMate(Game g) {
 		return false;
+	}
+
+	private EnumMap<GHOST, Roles> getRoles(Game game){
+		EnumMap<GHOST, Roles> roles = new EnumMap<GHOST, Roles>(GHOST.class);
+
+		//Hacer cosas
+
+		return roles;
+	} 
+
+	private EnumMap<GHOST, MOVE> getMovesByRoles(Game game, EnumMap<GHOST, Roles> roles){
+		for (GHOST ghostType : GHOST.values()) {
+			if (!game.doesGhostRequireAction(ghostType)) { //Si no se tiene que mover
+				continue;
+			}
+			switch (roles.get(ghostType)) {
+				case Perseguidor :
+					moves.put(ghostType, getMovePerseguidor(game, ghostType));
+					break;
+				case Bloqueador :
+					moves.put(ghostType, getMoveBloqueador(game, ghostType));
+					break;
+				case Campeador :
+					moves.put(ghostType, getMoveCampeador(game, ghostType));
+					break;
+				default:
+					moves.put(ghostType, MOVE.NEUTRAL); //Random si no se le ha asignado ningun rol
+					break;
+			}
+			//Actualizo la interseccion destino de este fantasma
+			destinosGhosts.put(ghostType, getInterseccion(destinosGhosts.get(ghostType).destinos.get(moves.get(ghostType))));
+		}
+		return moves;
+	} 
+
+	//Se dirige a la interseccion donde se dirige MsPacMan
+	//Si el pacman esta mas cerca de la pildora que cualquier fantasma, mantengo mis distancias
+	private MOVE getMovePerseguidor(Game game, GHOST ghost){
+		//La interseccion a la que se dirige el pacman
+		interseccion proximaInterseccionPacman = getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
+
+		
+
+		return MOVE.DOWN;
+	}
+
+	//Se dirige a una interseccion donde se dirija MsPacMan, evitando ir por el mismo camino que el perseguidor
+	//Si el pacman esta mas cerca de la pildora que cualquier fantasma, huyo alejandome de los otros fantamas
+	private MOVE getMoveBloqueador(Game game, GHOST ghost){
+
+
+		return MOVE.DOWN;
+	}
+
+	//haga lo que haga, siempre va a estar mas cerca de una pildora que MsPacMan, tratando de acercarse si es posible al Pacman
+	//Si el pacman esta mas cerca de la pildora que cualquier fantasma, huyo alejandome de los otros fantamas
+	private MOVE getMoveCampeador(Game game, GHOST ghost){
+
+
+		return MOVE.DOWN;
+	}
+
+	//movimiento para huir alejandose tambien de los otros fantamas 
+	private MOVE getMoveRunAway(Game game, GHOST ghost){
+
+
+		return MOVE.DOWN;
 	}
 }
