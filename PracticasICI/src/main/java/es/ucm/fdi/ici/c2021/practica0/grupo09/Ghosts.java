@@ -182,14 +182,56 @@ public final class Ghosts extends GhostController {
 		checkLastMoveMade = true;
 
 		if (isCheckMate(game)) {
-			int i;
+			//Do nothing
 		} else {
-			moves = getMovesByRoles(game, getRoles(game));
+		  getMovesByRoles(game, getRoles(game));
 		}
 		return moves;
 	}
 
 	private boolean isCheckMate(Game g) {
+		GHOST [] gs=GHOST.values();
+		int []ghostNodes=new int[4];
+		for(int i=0;i<4;i++) {
+			ghostNodes[i]=g.getGhostCurrentNodeIndex(gs[i]);
+		}
+		//Si el pacman est� m�s cerca de la Power Pill que los fantasmas no hay jaque
+		if(isPacManCloserToPowerPill(g,20000))
+			return false;
+
+
+		int fantasmasOcupados=0;
+		interseccion prox=getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
+		int distanciaPacman=(int)g.getDistance(g.getPacmanCurrentNodeIndex(), prox.identificador,g.getPacmanLastMoveMade(),
+				DM.PATH);
+		//Si la distancia del fantasma m�s cercano a la proxima intersecci�n del pacman es menor que
+		//la distancia del pacman a esa intersecci�n
+		if( g.getDistance(g.getClosestNodeIndexFromNodeIndex(prox.identificador, ghostNodes, DM.PATH),
+				prox.identificador, DM.PATH)<distanciaPacman) 
+			fantasmasOcupados++;
+		else return false;
+
+		//vemos las intersecciones pr�ximas posibles
+		 Vector<interseccion> proxdestinos=new Vector<interseccion>();
+		int destinosOcupados=0;
+		MOVE[] m= g.getPossibleMoves(prox.identificador);
+		for(int i=0;i<prox.destinos.size();i++) {
+			interseccion inte= getInterseccion(prox.destinos.get(m[i]));
+			if(inte!=null)
+				proxdestinos.add(inte);
+			destinosOcupados++;
+		}
+		//calculamos si hay jaque mate solo si quedan fantasmas sin ocupar m�s el n�mero de posibles destinos
+		//es menor estricto que 5, ya que en caso contrario no es posible jaque mate
+		while(destinosOcupados +(4-fantasmasOcupados)<5) {
+			for(int i=0;i<destinosOcupados;i++) {
+				GHOST [] fantasmaslibres=new GHOST[4-fantasmasOcupados];
+				for(int j=0;j<fantasmaslibres.length;j++) {
+					fantasmaslibres[j]=gs[j+fantasmasOcupados];
+				}
+				
+			}
+		}
 		return false;
 	}
 
@@ -201,7 +243,7 @@ public final class Ghosts extends GhostController {
 		return roles;
 	}
 
-	private EnumMap<GHOST, MOVE> getMovesByRoles(Game game, EnumMap<GHOST, Roles> roles) {
+	private void getMovesByRoles(Game game, EnumMap<GHOST, Roles> roles) {
 		for (GHOST ghostType : GHOST.values()) {
 			if (!game.doesGhostRequireAction(ghostType)) { // Si no se tiene que mover
 				continue;
@@ -224,7 +266,7 @@ public final class Ghosts extends GhostController {
 			destinosGhosts.put(ghostType,
 					getInterseccion(destinosGhosts.get(ghostType).destinos.get(moves.get(ghostType))));
 		}
-		return moves;
+		
 	}
 
 	// Se dirige a la interseccion donde se dirige MsPacMan
