@@ -187,106 +187,87 @@ public final class Ghosts extends GhostController {
 		return moves;
 	}
 
-	private boolean isCheckMate(Game g) {
-		GHOST [] gs=GHOST.values();
-		Vector<GHOST>ocupados=new Vector<GHOST>();
-		Vector<Integer>posicionesObjetivo=new Vector<Integer>();
-		int []ghostNodes=new int[4];
-		for(int i=0;i<4;i++) {
-			ghostNodes[i]=g.getGhostCurrentNodeIndex(gs[i]);
-		}
-		//Si el pacman est� m�s cerca de la Power Pill que los fantasmas no hay jaque
-		if(isPacManCloserToPowerPill(g,20000))
-			return false;
+	private class GHOSTANDDISTANCE {
+		public GHOST ghost = null;
+		public double distance = Double.MAX_VALUE;
 
+	}
 
-		int fantasmasOcupados=0;
-		interseccion prox=getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
-		int distanciaPacman=(int)g.getDistance(g.getPacmanCurrentNodeIndex(), prox.identificador,g.getPacmanLastMoveMade(),
-				DM.PATH);
-		//Si la distancia del fantasma m�s cercano a la proxima intersecci�n del pacman es menor que
-		//la distancia del pacman a esa intersecci�n
+	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, interseccion inter, Vector<GHOST> libres) {
 
-		int closestghostIndex=g.getClosestNodeIndexFromNodeIndex(prox.identificador, ghostNodes, DM.PATH);
-		if( g.getDistance(closestghostIndex,prox.identificador, DM.PATH)<distanciaPacman) 
-		{
-			int i=0;
-			int node=0;
-			while(node!=closestghostIndex) {
-				node=g.getGhostCurrentNodeIndex(gs[i]);
+		GHOSTANDDISTANCE gyd = new GHOSTANDDISTANCE();
+		GHOST closestGhost = null;
+		for (GHOST ghost : libres) {
+			double aux = game.getDistance(inter.identificador, game.getGhostCurrentNodeIndex(ghost),
+					game.getGhostLastMoveMade(ghost), DM.PATH);
+			if (aux < gyd.distance) {
+				gyd.ghost = ghost;
+				gyd.distance = aux;
 			}
-
-			ocupados.add(gs[i]);
-			posicionesObjetivo.add(prox.identificador);
-			fantasmasOcupados++;
-
-		}else return false;
-
-		//vemos las intersecciones pr�ximas posibles
-		Vector<interseccion> proxdestinos=new Vector<interseccion>();
-		int destinosOcupados=0;
-		MOVE[] m= g.getPossibleMoves(prox.identificador);
-		for(int i=0;i<prox.destinos.size();i++) {
-			interseccion inte= getInterseccion(prox.destinos.get(m[i]));
-			if(inte!=null)
-				proxdestinos.add(inte);
-			destinosOcupados++;
 		}
-		int asignados=0;
-		int vueltas=0;
-		//calculamos si hay jaque mate solo si quedan fantasmas sin ocupar m�s el n�mero de posibles destinos
-		//es menor estricto que 5, ya que en caso contrario no es posible jaque mate
-		while(fantasmasOcupados<5 && vueltas<2) {
-			int [] fantasmaslibres=new int[4-fantasmasOcupados];
-			for(int i=0;i<destinosOcupados;i++) {
-				for(int j=0;j<fantasmaslibres.length;j++) {
-					fantasmaslibres[j]=g.getGhostCurrentNodeIndex(gs[j+fantasmasOcupados]);
-				}
-			}
-			for(int i=0;i<destinosOcupados;i++) {
-				if( g.getDistance(g.getClosestNodeIndexFromNodeIndex(proxdestinos.elementAt(i).identificador,
-						fantasmaslibres, DM.PATH),
-						prox.identificador, DM.PATH)<distanciaPacman) 
-				{//sacar a m�todo
-					int j=0;
-					int node=0;
-					while(node!=closestghostIndex) {
-						node=g.getGhostCurrentNodeIndex(gs[j]);
-					}
-					asignados++;
-					ocupados.add(gs[j]);
-					posicionesObjetivo.add(proxdestinos.elementAt(i).identificador);
-					fantasmasOcupados++;
-				}
-				else return false;
+		return gyd;
+	}
 
-				int nextOcupados=0;
-				//metemos las pr�ximas intersecciones en el vector
-				for(int iter=0;iter<destinosOcupados;iter++) {
-					interseccion in=proxdestinos.elementAt(iter);
-					MOVE[] pmoves= g.getPossibleMoves(in.identificador);
-					for(MOVE mo:pmoves)
-					{
-						interseccion interse=getInterseccion(in.destinos.get(mo));
-						if(interse!=null)
-						{
-							proxdestinos.add(interse);
-							nextOcupados++;
+	private void rellenarProxDestinos(Set<interseccion> inters, Vector<Integer> nodosFijos, Game g) {
+		if (inters.isEmpty())
+			inters.add(getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)));
+		else {
+			Set<interseccion> aux = new HashSet<interseccion>(inters);
+			inters.clear();
+			// Buscamos las intersecciones correspondientes a los movimientos posibles
+			// y si ya está esa intersección fijada no expandimos su rama
+			for (interseccion a : aux) {
+				if (!nodosFijos.contains(a.identificador)) {
+					MOVE[] pmoves = g.getPossibleMoves(a.identificador);
+					for (MOVE mo : pmoves) {
+						interseccion interse = getInterseccion(a.destinos.get(mo));
+						if (interse != null) {
+							inters.add(interse);
 						}
 					}
 				}
-				//eliminamos los anteriores y actualizamos el n�mero de elementos
-				for(int iter=0;iter<destinosOcupados;iter++) {
-					proxdestinos.remove(0);
-				}
-				destinosOcupados=nextOcupados;
-
 			}
-			vueltas++;
+		}
+	}
+
+	private boolean isCheckMate(Game g) {
+
+		Set<interseccion> visitadas = new HashSet<interseccion>();
+		// rellenamos un array con los nodos de los fantasmas
+		Vector<GHOST> ghosts = new Vector<GHOST>();		
+		for (GHOST gh : GHOST.values()) {
+			if (!g.isGhostEdible(gh) && g.getGhostLairTime(gh) <= 0)
+				ghosts.add(gh);
+		}
+		Vector<Integer> nodosFijos=new Vector<Integer>();
+
+		// Si el pacman está más cerca de la Power Pill que los fantasmas no hay jaque
+		if (isPacManCloserToPowerPill(g, 20000)) {
+			return false;
 		}
 
-		return true;
-	}
+		int fantasmasOcupados = 0;
+
+		interseccion[] aux=new interseccion[6];
+		visitadas.toArray(aux);
+		int i=0;
+		while ( visitadas.size() < ghosts.size()) {
+			GHOSTANDDISTANCE gyd=closestGhostToIntersection(g,aux[i],ghosts);
+			if(gyd.distance< g.getDistance(g.getPacmanCurrentNodeIndex(), visitadas.size(), ultimoMovimientoReal, DM.PATH)
+					{
+				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(
+						g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost),
+						DM.PATH));
+				ghosts.remove(gyd.ghost);
+				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
+					}
+			rellenarProxDestinos(visitadas,nodosFijos,g);
+			i++;
+			
+				return (ghosts.size()<4);
+			
+
+		}
 	private EnumMap<GHOST, Roles> getRoles(Game game) {
 		EnumMap<GHOST, Roles> roles = new EnumMap<GHOST, Roles>(GHOST.class);
 
