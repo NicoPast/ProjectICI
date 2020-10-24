@@ -148,8 +148,6 @@ public final class Ghosts extends GhostController {
 	boolean mapaHecho = false;
 	private EnumMap<GHOST, interseccion> destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
 	private EnumMap<GHOST, MOVE> moves = new EnumMap<GHOST, MOVE>(GHOST.class);
-	private MOVE[] allMoves = MOVE.values();
-	private Random rnd = new Random();
 
 	@Override
 	public final EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
@@ -182,7 +180,7 @@ public final class Ghosts extends GhostController {
 		checkLastMoveMade = true;
 
 		if (isCheckMate(game)) {
-			//Do nothing
+			//Functionality in isCheckmate()
 		} else {
 		  getMovesByRoles(game, getRoles(game));
 		}
@@ -265,21 +263,35 @@ public final class Ghosts extends GhostController {
 			// Actualizo la interseccion destino de este fantasma
 			destinosGhosts.put(ghostType,
 					getInterseccion(destinosGhosts.get(ghostType).destinos.get(moves.get(ghostType))));
-		}
-		
+		}		
 	}
 
-	// Se dirige a la interseccion donde se dirige MsPacMan
-	// Si el pacman esta mas cerca de la pildora que cualquier fantasma, mantengo
-	// mis distancias al pacman
+	// Se dirige a la interseccion donde es mas probable que se dirija el PacMan 
+	// (No voy a la inmediata, porque si fuese jaque mate ya lo habria hecho en el metodo isCheckMate())
+	// Si el pacman esta mas cerca de la pildora que cualquier fantasma en cierto rango, huyo
 	private MOVE getMovePerseguidor(Game game, GHOST ghostType) {
-		if (isPacManCloserToPowerPill(game, 20)) {
+		if (isPacManCloserToPowerPill(game, 15)) 
 			return getMoveRunAway(game, ghostType);
-		}
-		// La interseccion a la que se dirige el pacman
-		interseccion proximaInterseccionPacman = getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
 
-		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), proximaInterseccionPacman.identificador, game.getGhostLastMoveMade(ghostType), DM.PATH);
+		interseccion proximaInterseccionPacman;
+		if(checkLastMoveMade) //Si el pacman esta en una interseccion
+			proximaInterseccionPacman = interseccionActual;
+		else // La interseccion a la que se dirige el pacman
+			proximaInterseccionPacman = getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)); 
+
+		//Mirar el camino con mas valor para el PacMan y el mas cercano a mi
+		float valorMasAlto = 0, valor = 0;
+		Integer destino = 0;
+		for (MOVE d : proximaInterseccionPacman.destinos.keySet()) { 
+			valor = (float)proximaInterseccionPacman.pills.get(d) / (float)proximaInterseccionPacman.distancias.get(d); //Valor del camino para el PacMan
+			valor /= game.getDistance(game.getGhostCurrentNodeIndex(ghostType), proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(ghostType), DM.PATH); //Cercania del fantasma hacia ese nodo
+			if(valor > valorMasAlto) {
+				valorMasAlto = valor;
+				destino = proximaInterseccionPacman.destinos.get(d);
+			}
+		}
+
+		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), destino, game.getGhostLastMoveMade(ghostType), DM.PATH);
 	}
 
 	// Se dirige a una interseccion donde se dirija MsPacMan, evitando ir por el
