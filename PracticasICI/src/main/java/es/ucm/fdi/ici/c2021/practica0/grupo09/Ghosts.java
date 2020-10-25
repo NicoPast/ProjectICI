@@ -2,8 +2,9 @@ package es.ucm.fdi.ici.c2021.practica0.grupo09;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 
 import pacman.controllers.GhostController;
@@ -27,13 +28,12 @@ public final class Ghosts extends GhostController {
 		public int identificador; // node index
 		public EnumMap<MOVE, Integer> distancias; // distancias
 		public EnumMap<MOVE, Integer> destinos; // identificador del nodo en esa direccion
-		public EnumMap<MOVE, Integer> pills; // pills en ese camino (entre nodo y nodo, las pills que hay en las
-												// intersecciones no cuentan)
+		public EnumMap<MOVE, Integer> pills; // pills en ese camino (entre nodo y nodo, las pills que hay en las intersecciones no cuentan)
 		public EnumMap<MOVE, Integer> powePill; // powerPills en ese camino
 	}
 
 	enum Roles {
-		Perseguidor, Bloqueador, Campeador
+		Perseguidor, Campeador
 	}
 
 	private List<interseccion> mapa = new ArrayList<interseccion>();
@@ -42,6 +42,11 @@ public final class Ghosts extends GhostController {
 	MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
 	interseccion interseccionActual;
 	boolean checkLastMoveMade = false;
+
+	double CONSTANT_ROL_CAMPEADOR = 15;
+	int CONSTANT_CAMPEADOR_ERROR = 5;
+	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 15;
+	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 15;
 
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
@@ -125,12 +130,9 @@ public final class Ghosts extends GhostController {
 		} else if (game.wasPowerPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
-			int pills = interSalida.powePill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria
-																		// de 1 a 0,
-			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el
-																				// programa poniendo mas de
-			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos intersecciones
-																				// le podemos callar la boca
+			int pills = interSalida.powePill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria de 1 a 0,
+			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el programa poniendo mas de
+			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos intersecciones le podemos callar la boca
 		}
 	}
 
@@ -170,19 +172,16 @@ public final class Ghosts extends GhostController {
 				ultimoMovimientoReal = m;
 				movimientoDeLlegada = proxMovimientoLlegada(m);
 			}
-			return moves;
+		}
+		else {
+			interseccionActual = aux;
+			checkLastMoveMade = true;
 		}
 
-		// A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
-		System.out.println("INTERSECCION");
-
-		interseccionActual = aux;
-		checkLastMoveMade = true;
-
 		if (isCheckMate(game)) {
-			//Functionality in isCheckmate()
+			// Functionality in isCheckmate()
 		} else {
-		  getMovesByRoles(game, getRoles(game));
+			getMovesByRoles(game, getRoles(game));
 		}
 		return moves;
 	}
@@ -194,9 +193,7 @@ public final class Ghosts extends GhostController {
 	}
 
 	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, interseccion inter, Vector<GHOST> libres) {
-
 		GHOSTANDDISTANCE gyd = new GHOSTANDDISTANCE();
-		GHOST closestGhost = null;
 		for (GHOST ghost : libres) {
 			double aux = game.getDistance(inter.identificador, game.getGhostCurrentNodeIndex(ghost),
 					game.getGhostLastMoveMade(ghost), DM.PATH);
@@ -209,8 +206,9 @@ public final class Ghosts extends GhostController {
 	}
 
 	private void rellenarProxDestinos(Set<interseccion> inters, Vector<Integer> nodosFijos, Game g) {
-		if (inters.isEmpty())
+		if (inters.isEmpty() && !checkLastMoveMade){
 			inters.add(getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)));
+		}
 		else {
 			Set<interseccion> aux = new HashSet<interseccion>(inters);
 			inters.clear();
@@ -230,48 +228,59 @@ public final class Ghosts extends GhostController {
 		}
 	}
 
-	private boolean isCheckMate(Game g) {
-
-		Set<interseccion> visitadas = new HashSet<interseccion>();
-		// rellenamos un array con los nodos de los fantasmas
-		Vector<GHOST> ghosts = new Vector<GHOST>();		
-		for (GHOST gh : GHOST.values()) {
-			if (!g.isGhostEdible(gh) && g.getGhostLairTime(gh) <= 0)
-				ghosts.add(gh);
-		}
-		Vector<Integer> nodosFijos=new Vector<Integer>();
-
+	private boolean isCheckMate(Game g) {		
 		// Si el pacman está más cerca de la Power Pill que los fantasmas no hay jaque
 		if (isPacManCloserToPowerPill(g, 20000)) {
 			return false;
 		}
 
-		int fantasmasOcupados = 0;
+		Set<interseccion> visitadas = new HashSet<interseccion>();
+		// rellenamos un array con los nodos de los fantasmas
+		Vector<GHOST> ghosts = new Vector<GHOST>();
+		for (GHOST gh : GHOST.values()) {
+			if (!g.isGhostEdible(gh) && g.getGhostLairTime(gh) <= 0)
+				ghosts.add(gh);
+		}
+		Vector<Integer> nodosFijos = new Vector<Integer>();
 
-		interseccion[] aux=new interseccion[6];
+		interseccion[] aux = new interseccion[6];
 		visitadas.toArray(aux);
-		int i=0;
-		while ( visitadas.size() < ghosts.size()) {
-			GHOSTANDDISTANCE gyd=closestGhostToIntersection(g,aux[i],ghosts);
-			if(gyd.distance< g.getDistance(g.getPacmanCurrentNodeIndex(), visitadas.size(), ultimoMovimientoReal, DM.PATH)
-					{
-				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(
-						g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost),
-						DM.PATH));
+		rellenarProxDestinos(visitadas, nodosFijos, g);
+		int i = 0;
+		while (ghosts.size() > 1 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0) {
+			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i], ghosts);
+			if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
+				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
-					}
-			rellenarProxDestinos(visitadas,nodosFijos,g);
+			}
+			else rellenarProxDestinos(visitadas, nodosFijos, g);
 			i++;
-			
-				return (ghosts.size()<4);
-			
-
 		}
+		return (visitadas.size() == 0);
+	}
+
 	private EnumMap<GHOST, Roles> getRoles(Game game) {
 		EnumMap<GHOST, Roles> roles = new EnumMap<GHOST, Roles>(GHOST.class);
 
-		// Hacer cosas
+		if(game.getActivePowerPillsIndices().length == 0){
+			for (GHOST ghostType : GHOST.values()) {
+				roles.put(ghostType, Roles.Perseguidor);	
+			}
+			return roles;
+		}
+
+		//El que esta más cerca de la powerpill, y no está atacando al pacman
+		ClosestPowerPillAndDistance closest = new ClosestPowerPillAndDistance();
+		GHOST camper = GHOST.BLINKY;
+		for (GHOST ghostType : GHOST.values()) {	
+			ClosestPowerPillAndDistance aux = getClosestPowerPillAndDistance(game, game.getGhostCurrentNodeIndex(ghostType), game.getGhostLastMoveMade(ghostType));
+			if(aux.distance < closest.distance && game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), DM.EUCLID) > CONSTANT_ROL_CAMPEADOR){
+				closest = aux;
+				camper = ghostType;
+			}
+		}
+		roles.put(camper, Roles.Campeador);
 
 		return roles;
 	}
@@ -281,98 +290,138 @@ public final class Ghosts extends GhostController {
 			if (!game.doesGhostRequireAction(ghostType)) { // Si no se tiene que mover
 				continue;
 			}
+			interseccion proximaInterseccionPacman = (checkLastMoveMade) ? interseccionActual : getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
 			switch (roles.get(ghostType)) {
 				case Perseguidor:
-					moves.put(ghostType, getMovePerseguidor(game, ghostType));
-					break;
-				case Bloqueador:
-					moves.put(ghostType, getMoveBloqueador(game, ghostType));
+					moves.put(ghostType, getMovePerseguidor(game, ghostType, proximaInterseccionPacman));
 					break;
 				case Campeador:
-					moves.put(ghostType, getMoveCampeador(game, ghostType));
+					moves.put(ghostType, getMoveCampeador(game, ghostType, proximaInterseccionPacman, CONSTANT_CAMPEADOR_ERROR));
 					break;
 				default:
 					moves.put(ghostType, MOVE.NEUTRAL); // Random si no se le ha asignado ningun rol
 					break;
 			}
-			// Actualizo la interseccion destino de este fantasma
-			destinosGhosts.put(ghostType,
-					getInterseccion(destinosGhosts.get(ghostType).destinos.get(moves.get(ghostType))));
-		}		
+		}
 	}
 
-	// Se dirige a la interseccion donde es mas probable que se dirija el PacMan 
+	// Se dirige a la interseccion donde es mas probable que se dirija el PacMan y yo estoy más cerca
 	// (No voy a la inmediata, porque si fuese jaque mate ya lo habria hecho en el metodo isCheckMate())
 	// Si el pacman esta mas cerca de la pildora que cualquier fantasma en cierto rango, huyo
-	private MOVE getMovePerseguidor(Game game, GHOST ghostType) {
-		if (isPacManCloserToPowerPill(game, 15)) 
+	private MOVE getMovePerseguidor(Game game, GHOST ghostType, interseccion proximaInterseccionPacman) {
+		if (isPacManCloserToPowerPill(game, CONSTANT_LIMITE_HUIDA_PERSEGUIDOR) || game.isGhostEdible(ghostType))
 			return getMoveRunAway(game, ghostType);
 
-		interseccion proximaInterseccionPacman;
-		if(checkLastMoveMade) //Si el pacman esta en una interseccion
-			proximaInterseccionPacman = interseccionActual;
-		else // La interseccion a la que se dirige el pacman
-			proximaInterseccionPacman = getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)); 
-
-		//Mirar el camino con mas valor para el PacMan y el mas cercano a mi
-		float valorMasAlto = 0, valor = 0;
+		// Mirar el camino con mas valor para el PacMan y el mas cercano a mi
+		float valorMasAlto = -2, valor = 0;
 		Integer destino = 0;
-		for (MOVE d : proximaInterseccionPacman.destinos.keySet()) { 
-			valor = (float)proximaInterseccionPacman.pills.get(d) / (float)proximaInterseccionPacman.distancias.get(d); //Valor del camino para el PacMan
-			valor /= game.getDistance(game.getGhostCurrentNodeIndex(ghostType), proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(ghostType), DM.PATH); //Cercania del fantasma hacia ese nodo
-			if(valor > valorMasAlto) {
+		Integer posGhost = game.getGhostCurrentNodeIndex(ghostType);
+		for (MOVE d : proximaInterseccionPacman.destinos.keySet()) {
+			if(posGhost == proximaInterseccionPacman.destinos.get(d)){
+				destino = proximaInterseccionPacman.identificador;
+				break;
+			}
+			valor = (float) proximaInterseccionPacman.pills.get(d)
+					/ (float) (proximaInterseccionPacman.distancias.get(d) + game.getDistance(game.getPacmanCurrentNodeIndex(), proximaInterseccionPacman.identificador, DM.PATH)); // Valor del camino para el PacMan
+			double distanceG = game.getDistance(game.getGhostCurrentNodeIndex(ghostType),
+					proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(ghostType), DM.PATH); // Cercania del fantasma hacia ese nodo
+			valor /= distanceG;
+			for (GHOST g : destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
+				if (g != ghostType && destinosGhosts.get(g).identificador != destino
+						&& distanceG < game.getDistance(game.getGhostCurrentNodeIndex(g),
+								proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(g), DM.PATH)) {
+					valor--;
+					break;
+				}
+			}
+			if (valor > valorMasAlto) { // si el valor es mas alto o si ya hay un fantasma que llega antes ahí
 				valorMasAlto = valor;
 				destino = proximaInterseccionPacman.destinos.get(d);
 			}
 		}
 
-		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), destino, game.getGhostLastMoveMade(ghostType), DM.PATH);
+		destinosGhosts.put(ghostType, getInterseccion(destino));
+
+		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), destino,
+				game.getGhostLastMoveMade(ghostType), DM.PATH);
 	}
 
-	// Se dirige a una interseccion donde se dirija MsPacMan, evitando ir por el
-	// mismo camino que el perseguidor
-	// Si el pacman esta mas cerca de la pildora que cualquier fantasma, mantengo
-	// mis distancias al pacman
-	private MOVE getMoveBloqueador(Game game, GHOST ghostType) {
-		if (isPacManCloserToPowerPill(game, 15)) {
+	// haga lo que haga, siempre va a estar mas cerca de una pildora que MsPacMan, tratando de acercarse si es posible al Pacman
+	// Si el pacman esta mas cerca de la pildora que cualquier fantasma, huyo alejandome de los otros fantamas
+	private MOVE getMoveCampeador(Game game, GHOST ghostType, interseccion proximaInterseccionPacman, int error) {
+		if (isPacManCloserToPowerPill(game, CONSTANT_LIMITE_HUIDA_CAMPEADOR) || game.isGhostEdible(ghostType)) {
 			return getMoveRunAway(game, ghostType);
 		}
-		return MOVE.DOWN;
-	}
+		ClosestPowerPillAndDistance cppadToGhost = getClosestPowerPillAndDistance(game, game.getGhostCurrentNodeIndex(ghostType), game.getGhostLastMoveMade(ghostType));
+		ClosestPowerPillAndDistance cppadToPacMan = getClosestPowerPillAndDistance(game, game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+		interseccion inter = getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
+		double greaterDistance = 0;
 
-	// haga lo que haga, siempre va a estar mas cerca de una pildora que MsPacMan,
-	// tratando de acercarse si es posible al Pacman
-	// Si el pacman esta mas cerca de la pildora que cualquier fantasma, huyo
-	// alejandome de los otros fantamas
-	private MOVE getMoveCampeador(Game game, GHOST ghostType) {
-		if (isPacManCloserToPowerPill(game, 10)) {
-			return getMoveRunAway(game, ghostType);
+		double distanceToPowerPillPacMan = (cppadToGhost.powerpill == cppadToPacMan.powerpill) ? 
+			cppadToPacMan.distance : game.getDistance(game.getPacmanCurrentNodeIndex(), cppadToGhost.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
+
+		MOVE bestMove = game.getNextMoveTowardsTarget(inter.identificador, cppadToGhost.powerpill, game.getGhostLastMoveMade(ghostType), DM.PATH);
+		for (MOVE move : inter.distancias.keySet()) {
+			if(move == game.getGhostLastMoveMade(ghostType)) //No valoro el movimiento OPOSITE
+				continue;
+			double aux = game.getDistance(inter.destinos.get(move), cppadToGhost.powerpill, DM.EUCLID) + inter.distancias.get(move) + 
+					game.getDistance(game.getPacmanCurrentNodeIndex(), proximaInterseccionPacman.identificador, game.getPacmanLastMoveMade(), DM.PATH) + error; //Aproximacion
+			if(aux > greaterDistance && aux < distanceToPowerPillPacMan){
+				greaterDistance = aux;
+				bestMove = move;
+			}
 		}
-		return MOVE.DOWN;
+		destinosGhosts.put(ghostType, getInterseccion(inter.destinos.get(bestMove)));
+		return bestMove;
 	}
 
 	// movimiento para huir alejandose tambien de los otros fantasmas
 	private MOVE getMoveRunAway(Game game, GHOST ghostType) {
+		MOVE prohibido = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghostType), DM.PATH);
+		MOVE bestMove = game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghostType), DM.PATH);
+		interseccion inter = getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
+		int[] posGhosts = new int[3]; int i = 0;
+		for(GHOST g : GHOST.values()){
+			if(g == ghostType) continue;
+			posGhosts[i] = game.getGhostCurrentNodeIndex(g);
+			i++;
+		}
+		double furthest = 0;
+		for (MOVE move : inter.destinos.keySet()) {
+			if(move == prohibido)
+				continue;
+			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getClosestNodeIndexFromNodeIndex(game.getGhostCurrentNodeIndex(ghostType), posGhosts, DM.EUCLID), DM.EUCLID);
+			if(aux > furthest) {
+				furthest = aux;
+				bestMove = move;
+			}
+		}
+		return bestMove;
+	}
 
-		return MOVE.DOWN;
+	class ClosestPowerPillAndDistance{
+		int powerpill = 0;
+		double distance =  Double.MAX_VALUE;
+	}
+
+	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(Game game, int pos, MOVE lastMoveMade){
+		ClosestPowerPillAndDistance cpad = new ClosestPowerPillAndDistance();
+		for (int currentPill : game.getActivePowerPillsIndices()) {
+			double aux = game.getDistance(pos, currentPill, lastMoveMade, DM.PATH);
+			if (aux < cpad.distance) {
+				cpad.distance = aux;
+				cpad.powerpill = currentPill;
+			}
+		}
+		return cpad;
 	}
 
 	private boolean isPacManCloserToPowerPill(Game game, int limit) {
-		int pacmanPos = game.getPacmanCurrentNodeIndex();
-		int closestPowerPill = 0;
-		double closestDistance = Double.MAX_VALUE;
-		for (int currentPill : game.getActivePowerPillsIndices()) {
-			double aux = game.getDistance(pacmanPos, currentPill, game.getPacmanLastMoveMade(), DM.PATH);
-			if (aux < closestDistance) {
-				closestDistance = aux;
-				closestPowerPill = currentPill;
-			}
-		}
-
+		ClosestPowerPillAndDistance cpad = getClosestPowerPillAndDistance(game, game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 		// Solo miro si esta en el rango del fairplay
-		if (closestDistance < limit) {
+		if (cpad.distance < limit) {
 			for (GHOST ghostType : GHOST.values()) {
-				if (closestDistance > game.getDistance(game.getGhostCurrentNodeIndex(ghostType), closestPowerPill,
+				if (cpad.distance > game.getDistance(game.getGhostCurrentNodeIndex(ghostType), cpad.powerpill,
 						game.getGhostLastMoveMade(ghostType), DM.PATH))
 					return true;
 			}
