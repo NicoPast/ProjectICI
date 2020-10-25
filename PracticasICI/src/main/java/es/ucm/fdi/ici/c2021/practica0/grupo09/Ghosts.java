@@ -45,8 +45,8 @@ public final class Ghosts extends GhostController {
 
 	double CONSTANT_ROL_CAMPEADOR = 15;
 	int CONSTANT_CAMPEADOR_ERROR = 5;
-	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 15;
-	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 15;
+	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 100;
+	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 100;
 
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
@@ -170,7 +170,7 @@ public final class Ghosts extends GhostController {
 				MOVE m = game.getPacmanLastMoveMade();
 				checkLastMoveMade = false;
 				ultimoMovimientoReal = m;
-				movimientoDeLlegada = proxMovimientoLlegada(m);
+				//movimientoDeLlegada = proxMovimientoLlegada(m);
 			}
 		}
 		else {
@@ -189,14 +189,12 @@ public final class Ghosts extends GhostController {
 	private class GHOSTANDDISTANCE {
 		public GHOST ghost = null;
 		public double distance = Double.MAX_VALUE;
-
 	}
 
 	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, interseccion inter, Vector<GHOST> libres) {
 		GHOSTANDDISTANCE gyd = new GHOSTANDDISTANCE();
 		for (GHOST ghost : libres) {
-			double aux = game.getDistance(inter.identificador, game.getGhostCurrentNodeIndex(ghost),
-					game.getGhostLastMoveMade(ghost), DM.PATH);
+			double aux = game.getDistance(inter.identificador, game.getGhostCurrentNodeIndex(ghost), game.getGhostLastMoveMade(ghost), DM.PATH);
 			if (aux < gyd.distance) {
 				gyd.ghost = ghost;
 				gyd.distance = aux;
@@ -228,6 +226,15 @@ public final class Ghosts extends GhostController {
 		}
 	}
 
+	private Vector<GHOST> activeGhosts(Game game){
+		Vector<GHOST> activeGhosts = new Vector<GHOST>();
+		for (GHOST ghost : GHOST.values()) {	
+			if(!game.isGhostEdible(ghost) && game.getGhostLairTime(ghost) <= 0)
+				activeGhosts.add(ghost);
+		}
+		return activeGhosts;
+	}
+
 	private boolean isCheckMate(Game g) {		
 		// Si el pacman está más cerca de la Power Pill que los fantasmas no hay jaque
 		if (isPacManCloserToPowerPill(g, 20000)) {
@@ -236,25 +243,30 @@ public final class Ghosts extends GhostController {
 
 		Set<interseccion> visitadas = new HashSet<interseccion>();
 		// rellenamos un array con los nodos de los fantasmas
-		Vector<GHOST> ghosts = new Vector<GHOST>();
-		for (GHOST gh : GHOST.values()) {
-			if (!g.isGhostEdible(gh) && g.getGhostLairTime(gh) <= 0)
-				ghosts.add(gh);
-		}
+		Vector<GHOST> ghosts = activeGhosts(g);
+		if(ghosts.isEmpty())
+			return false;
+
 		Vector<Integer> nodosFijos = new Vector<Integer>();
 
 		interseccion[] aux = new interseccion[6];
-		visitadas.toArray(aux);
 		rellenarProxDestinos(visitadas, nodosFijos, g);
+		visitadas.toArray(aux);
 		int i = 0;
 		while (ghosts.size() > 1 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0) {
+			if(aux[i] == null)
+				break;
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i], ghosts);
 			if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
 				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
 			}
-			else rellenarProxDestinos(visitadas, nodosFijos, g);
+			else {
+				rellenarProxDestinos(visitadas, nodosFijos, g);
+				visitadas.toArray(aux);
+				i = 0;
+			}
 			i++;
 		}
 		return (visitadas.size() == 0);
@@ -263,17 +275,17 @@ public final class Ghosts extends GhostController {
 	private EnumMap<GHOST, Roles> getRoles(Game game) {
 		EnumMap<GHOST, Roles> roles = new EnumMap<GHOST, Roles>(GHOST.class);
 
-		if(game.getActivePowerPillsIndices().length == 0){
-			for (GHOST ghostType : GHOST.values()) {
-				roles.put(ghostType, Roles.Perseguidor);	
-			}
-			return roles;
+		for (GHOST ghostType : activeGhosts(game)) {
+			roles.put(ghostType, Roles.Perseguidor);	
 		}
+		if(game.getActivePowerPillsIndices().length == 0 || activeGhosts(game).size() <= 2)
+			return roles;
+		
 
 		//El que esta más cerca de la powerpill, y no está atacando al pacman
 		ClosestPowerPillAndDistance closest = new ClosestPowerPillAndDistance();
 		GHOST camper = GHOST.BLINKY;
-		for (GHOST ghostType : GHOST.values()) {	
+		for (GHOST ghostType : activeGhosts(game)) {	
 			ClosestPowerPillAndDistance aux = getClosestPowerPillAndDistance(game, game.getGhostCurrentNodeIndex(ghostType), game.getGhostLastMoveMade(ghostType));
 			if(aux.distance < closest.distance && game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), DM.EUCLID) > CONSTANT_ROL_CAMPEADOR){
 				closest = aux;
@@ -286,7 +298,7 @@ public final class Ghosts extends GhostController {
 	}
 
 	private void getMovesByRoles(Game game, EnumMap<GHOST, Roles> roles) {
-		for (GHOST ghostType : GHOST.values()) {
+		for (GHOST ghostType : activeGhosts(game)) {
 			if (!game.doesGhostRequireAction(ghostType)) { // Si no se tiene que mover
 				continue;
 			}
@@ -381,7 +393,7 @@ public final class Ghosts extends GhostController {
 		MOVE bestMove = game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghostType), DM.PATH);
 		interseccion inter = getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
 		int[] posGhosts = new int[3]; int i = 0;
-		for(GHOST g : GHOST.values()){
+		for(GHOST g : activeGhosts(game)){
 			if(g == ghostType) continue;
 			posGhosts[i] = game.getGhostCurrentNodeIndex(g);
 			i++;
@@ -420,7 +432,7 @@ public final class Ghosts extends GhostController {
 		ClosestPowerPillAndDistance cpad = getClosestPowerPillAndDistance(game, game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 		// Solo miro si esta en el rango del fairplay
 		if (cpad.distance < limit) {
-			for (GHOST ghostType : GHOST.values()) {
+			for (GHOST ghostType : activeGhosts(game)) {
 				if (cpad.distance > game.getDistance(game.getGhostCurrentNodeIndex(ghostType), cpad.powerpill,
 						game.getGhostLastMoveMade(ghostType), DM.PATH))
 					return true;
