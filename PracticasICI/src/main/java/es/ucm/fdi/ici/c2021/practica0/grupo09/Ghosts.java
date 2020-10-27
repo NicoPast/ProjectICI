@@ -43,11 +43,11 @@ public final class Ghosts extends GhostController {
 	interseccion interseccionActual;
 	boolean checkLastMoveMade = false;
 
-	double CONSTANT_ROL_CAMPEADOR = 15;
-	int CONSTANT_CAMPEADOR_ERROR = 5;
+	double CONSTANT_ROL_CAMPEADOR = 25;
+	int CONSTANT_CAMPEADOR_ERROR = 10;
 	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 25;
 	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 25;
-	int CONSTANT_LIMITE_MULTIPLIER = 2;
+	double CONSTANT_LIMITE_MULTIPLIER = 1.5;
 
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
@@ -160,6 +160,9 @@ public final class Ghosts extends GhostController {
 		if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
+			interseccionActual = null;
+			proximoNodo = -1;
+			ultimoNodo = -1;
 			mapaHecho = false;
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
@@ -178,14 +181,11 @@ public final class Ghosts extends GhostController {
 				MOVE m = game.getPacmanLastMoveMade();
 				checkLastMoveMade = false;
 				ultimoMovimientoReal = m;
-				ultimoNodo = interseccionActual.identificador;
-				try {					
+				if(interseccionActual != null) {
+					ultimoNodo = interseccionActual.identificador;
 					proximoNodo = interseccionActual.destinos.get(m);
+					movimientoDeLlegada = proxMovimientoLlegada(m);
 				}
-				catch(Exception e) {
-					System.out.println(":(");
-				}
-				movimientoDeLlegada = proxMovimientoLlegada(m);
 			}
 		}
 		else {
@@ -194,7 +194,7 @@ public final class Ghosts extends GhostController {
 		}
 
 		if (isCheckMate(game)) {
-			// Functionality in isCheckmate()
+			System.out.println("CheckMate");
 		} else {
 			getMovesByRoles(game, getRoles(game));
 		}
@@ -222,9 +222,6 @@ public final class Ghosts extends GhostController {
 		if (inters.isEmpty()){
 			if(checkLastMoveMade) inters.add(getInterseccion(interseccionActual.identificador));
 			else {
-				if(interseccionActual.destinos.get(ultimoMovimientoReal) == null) {
-					
-				}
 				int inte = interseccionActual.destinos.get(ultimoMovimientoReal);
 				inters.add(getInterseccion(inte));
 			}
@@ -238,9 +235,7 @@ public final class Ghosts extends GhostController {
 				if (!nodosFijos.contains(a.identificador)) {
 					for (MOVE mo : a.destinos.keySet()) {
 						interseccion interse = getInterseccion(a.destinos.get(mo));
-						if (interse != null) {
-							inters.add(interse);
-						}
+						inters.add(interse);
 					}
 				}
 			}
@@ -277,9 +272,7 @@ public final class Ghosts extends GhostController {
 			visitadas.toArray(aux);
 		
 		int i = 0;
-		while (ghosts.size() > 1 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0) {
-			if(aux[i] == null)
-				break;
+		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0) {
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i], ghosts);
 			if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
 				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
@@ -325,9 +318,6 @@ public final class Ghosts extends GhostController {
 			if (!game.doesGhostRequireAction(ghostType)) { // Si no se tiene que mover
 				continue;
 			}
-			if(interseccionActual == null){
-				moves.put(ghostType, getMovePerseguidor(game, ghostType, null));
-			}
 				
 			interseccion proximaInterseccionPacman;
 			if(checkLastMoveMade) proximaInterseccionPacman = interseccionActual;
@@ -353,11 +343,6 @@ public final class Ghosts extends GhostController {
 	private MOVE getMovePerseguidor(Game game, GHOST ghostType, interseccion proximaInterseccionPacman) {
 		if (isPacManCloserToPowerPill(game, CONSTANT_LIMITE_HUIDA_PERSEGUIDOR) || game.isGhostEdible(ghostType))
 			return getMoveRunAway(game, ghostType);
-
-		if(proximaInterseccionPacman == null){
-			return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghostType), game.getPacmanCurrentNodeIndex(),
-				game.getGhostLastMoveMade(ghostType), DM.PATH);
-		}
 
 		// Mirar el camino con mas valor para el PacMan y el mas cercano a mi
 		float valorMasAlto = -2, valor = 0;
