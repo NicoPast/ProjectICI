@@ -202,7 +202,7 @@ public final class MsPacMan extends PacmanController {
 			int aux = 0;
 			MOVE actual = MOVE.NEUTRAL;
 		
-		while(!movimientoEncontrado) {
+		while(!movimientoEncontrado && pills.size()>0) {
 			for(int i=0;i<pills.size();i++) { //si hay pills
 				if(interseccionActual.pills.get(pills.get(i))>aux) {
 					aux = interseccionActual.pills.get(pills.get(i));
@@ -212,7 +212,7 @@ public final class MsPacMan extends PacmanController {
 			}		
 		}
 		aux = -1; //ahora pasa a representar distancias
-		while(!movimientoEncontrado) {
+		while(!movimientoEncontrado && noPills.size()>0) {
 			for(int i=0;i<noPills.size();i++) { //si hay pills
 				if(aux == -1 || interseccionActual.distancias.get(noPills.get(i)) < aux) {
 					aux = interseccionActual.distancias.get(noPills.get(i));
@@ -222,7 +222,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 		aux = 0; //ahora pasa a ser powerPills
-		while(!movimientoEncontrado) {
+		while(!movimientoEncontrado  && powerPills.size()>0) {
 			for(int i=0;i<powerPills.size();i++) { //si hay pills
 				if(interseccionActual.powerPill.get(powerPills.get(i))>aux) {
 					aux = interseccionActual.powerPill.get(powerPills.get(i));
@@ -232,7 +232,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 		aux = -1; //ahora pasa a ser distancias
-		while(!movimientoEncontrado) {
+		while(!movimientoEncontrado && fantasmas.size()>0) {
 			for(int i=0;i<fantasmas.size();i++) { //si hay pills
 				if(aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) < aux) {
 					aux = interseccionActual.distancias.get(fantasmas.get(i));
