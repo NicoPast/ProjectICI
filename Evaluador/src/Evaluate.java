@@ -8,5 +8,4 @@ public class Evaluate {
 		scores.printScoreAndRanking();
 
 	}
-
 }

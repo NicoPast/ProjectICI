@@ -41,7 +41,7 @@ public final class MsPacMan extends PacmanController {
 
 	double distanciaPeligro = 40;
 	double distanciaPerseguir = 50;
-	
+	String mapaActual = "a";
 
 
 	// provisional
@@ -147,7 +147,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 
-		System.out.println(distanciaAux);
+		//System.out.println(distanciaAux);
 		return distanciaAux < distanciaPeligro;
 	}
 
@@ -218,6 +218,7 @@ public final class MsPacMan extends PacmanController {
 		else { //no me van a comer
 			return getBestMove(game);	
 			}
+		
 		return null;
 	}
 
@@ -235,6 +236,12 @@ public final class MsPacMan extends PacmanController {
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
+		
+		if(game.getCurrentMaze().name != mapaActual){
+			mapaActual = game.getCurrentMaze().name;
+			mapa.clear();
+			mapaHecho = false;
+		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			mapaHecho = true;
@@ -252,7 +259,7 @@ public final class MsPacMan extends PacmanController {
 		}
 
 		// A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
-		System.out.println("INTERSECCION");
+		//System.out.println("INTERSECCION");
 
 		MOVE proxMove = mejorDireccion(game);
 
