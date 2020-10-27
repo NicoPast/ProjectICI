@@ -179,7 +179,7 @@ public final class MsPacMan extends PacmanController {
 				for (GHOST g : GHOST.values()) {
 					double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 							DM.PATH);
-					if (distancia != -1 && distancia < interseccionActual.distancias.get(m)) { // no pillar el camino						
+					if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino						
 						hasGhost = true;
 						fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
 						break; //hacemos el breake por que ya no nos interesa seguir buscando
@@ -192,61 +192,75 @@ public final class MsPacMan extends PacmanController {
 						powerPills.add(m);
 					else if(interseccionActual.pills.get(m)==0)//mira si el camino no tiene pills
 						noPills.add(m);
-					else pills.add(m); //en el camino solo hay pills
+					else if(interseccionActual.pills.get(m)>0) pills.add(m); //en el camino solo hay pills
 				}
 			}
 		}	
 		
 		//Tenemos todas las direcciones almacenadas en los vectores
-		boolean movimientoEncontrado = false;
-			int aux = 0;
-			MOVE actual = MOVE.NEUTRAL;
+		int aux = 0;
+		MOVE actual = MOVE.NEUTRAL;
 		
-		while(!movimientoEncontrado && pills.size()>0) {
+		if(pills.size()>0) {
 			for(int i=0;i<pills.size();i++) { //si hay pills
-				if(interseccionActual.pills.get(pills.get(i))>aux) {
+					//System.out.println(interseccionActual.pills.get(pills.get(i)));
+				if(interseccionActual.pills.get(pills.get(i)) >= aux) {
 					aux = interseccionActual.pills.get(pills.get(i));
-					actual = pills.elementAt(i);
-					movimientoEncontrado = true;
+					actual = pills.get(i);
 				}
 			}		
 		}
-		aux = -1; //ahora pasa a representar distancias
-		while(!movimientoEncontrado && noPills.size()>0) {
-			for(int i=0;i<noPills.size();i++) { //si hay pills
-				if(aux == -1 || interseccionActual.distancias.get(noPills.get(i)) < aux) {
-					aux = interseccionActual.distancias.get(noPills.get(i));
-					actual = noPills.elementAt(i);
-					movimientoEncontrado = true;
-				}
-			}
+		else if(noPills.size()>0) {
+			actual = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game,DM.PATH), DM.PATH);
 		}
-		aux = 0; //ahora pasa a ser powerPills
-		while(!movimientoEncontrado  && powerPills.size()>0) {
+		else if(powerPills.size()>0) { //coge el camino con menos powerPills
+			aux = 0; //ahora pasa a ser powerPills
 			for(int i=0;i<powerPills.size();i++) { //si hay pills
 				if(interseccionActual.powerPill.get(powerPills.get(i))>aux) {
 					aux = interseccionActual.powerPill.get(powerPills.get(i));
 					actual = powerPills.elementAt(i);
-					movimientoEncontrado = true;
 				}
 			}
 		}
-		aux = -1; //ahora pasa a ser distancias
-		while(!movimientoEncontrado && fantasmas.size()>0) {
+		else if(fantasmas.size()>0) { //se sabe que morimos. Prioridades: 1- powerPills, 2- Pills, 3- Distancia Corta
+			aux = -1; //ahora pasa a ser distancias
+			int maxPills = 0;
 			for(int i=0;i<fantasmas.size();i++) { //si hay pills
-				if(aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) < aux) {
+				if(interseccionActual.powerPill.get(fantasmas.get(i)) > 0) {
+					actual = fantasmas.elementAt(i);
+					break;
+				}
+				else if(interseccionActual.pills.get(fantasmas.get(i)) > maxPills) {
+					maxPills = interseccionActual.pills.get(fantasmas.get(i));
+					actual = fantasmas.elementAt(i);
+				}
+				else if(maxPills == 0 &&(aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) > aux)) {
 					aux = interseccionActual.distancias.get(fantasmas.get(i));
 					actual = fantasmas.elementAt(i);
-					movimientoEncontrado = true;
 				}
 			}
+		}		
+		
+		if(actual == MOVE.NEUTRAL) {
+			System.out.println("Se mamó");
 		}
-		
-		
-		
 		return actual;
 	}
 	
+    private int getClosestPill(Game game, DM measure) {
+        int closestPill = -1;
+        int pacmanPos = game.getPacmanCurrentNodeIndex();
+        double closestDistance = Double.MAX_VALUE;
+        for (int currentPill : game.getActivePillsIndices()) {
+            double aux = game.getDistance(pacmanPos, currentPill, measure);
+            if (aux < closestDistance) {
+                closestPill = currentPill;
+                closestDistance = aux;
+            }
+        }
+        return closestPill;
+    }
+    
 	GHOST fantasmaComibleCerca(Game game) {
 		GHOST fantasma =  null;
 		double distancia = 0;
@@ -273,6 +287,8 @@ public final class MsPacMan extends PacmanController {
 				game.getGhostCurrentNodeIndex(fantasmaCerca), game.getPacmanLastMoveMade(), DM.PATH);
 						
 		if(isInRisk(game)) { //estoy en riesgo de que me coman
+			
+			
 			return MOVE.RIGHT;
 		}
 		else //no me van a comer
@@ -293,8 +309,14 @@ public final class MsPacMan extends PacmanController {
 	}
 
 	@Override
+	public void preCompute(String opponent) {
+		mapaHecho = false;
+		mapa.clear();
+		mapaActual = "";
+	}
+	
+	@Override
 	public MOVE getMove(Game game, long timeDue) {
-		
 		if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
@@ -318,6 +340,10 @@ public final class MsPacMan extends PacmanController {
 		// A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
 		MOVE proxMove = mejorDireccion(game);
 
+		//FALTA
+		//SI SE PUEDEN COMER FANTASMAS, PRIMERO MIRAR SI EN ESA DIRECCION ME PUEDE COMER OTRO
+		//CUENDO ESTAMOS BAJO AMENAZA DE UN FANTASMA
+		
 		ultimoNodo = interseccionActual.identificador;
 		proximoNodo = interseccionActual.destinos.get(proxMove);
 
