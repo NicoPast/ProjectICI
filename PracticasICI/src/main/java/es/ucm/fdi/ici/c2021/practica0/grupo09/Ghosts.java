@@ -151,16 +151,23 @@ public final class Ghosts extends GhostController {
 	boolean mapaHecho = false;
 	private EnumMap<GHOST, interseccion> destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
 	private EnumMap<GHOST, MOVE> moves = new EnumMap<GHOST, MOVE>(GHOST.class);
-
+	String mapaActual = "a";
+	
 	@Override
 	public final EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
 		EnumMap<GHOST, MOVE> moves = null;
+	
+		if(game.getCurrentMaze().name != mapaActual){
+			mapaActual = game.getCurrentMaze().name;
+			mapa.clear();
+			mapaHecho = false;
+		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			mapaHecho = true;
-
 			return moves; // siempre la primera decision es izquierda abajo
 		}
+
 
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
@@ -171,7 +178,14 @@ public final class Ghosts extends GhostController {
 				MOVE m = game.getPacmanLastMoveMade();
 				checkLastMoveMade = false;
 				ultimoMovimientoReal = m;
-				//movimientoDeLlegada = proxMovimientoLlegada(m);
+				ultimoNodo = interseccionActual.identificador;
+				try {					
+					proximoNodo = interseccionActual.destinos.get(m);
+				}
+				catch(Exception e) {
+					System.out.println(":(");
+				}
+				movimientoDeLlegada = proxMovimientoLlegada(m);
 			}
 		}
 		else {
@@ -205,8 +219,15 @@ public final class Ghosts extends GhostController {
 	}
 
 	private void rellenarProxDestinos(Set<interseccion> inters, Vector<Integer> nodosFijos, Game g) {
-		if (inters.isEmpty() && !checkLastMoveMade){
-			inters.add(getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)));
+		if (inters.isEmpty()){
+			if(checkLastMoveMade) inters.add(getInterseccion(interseccionActual.identificador));
+			else {
+				if(interseccionActual.destinos.get(ultimoMovimientoReal) == null) {
+					
+				}
+				int inte = interseccionActual.destinos.get(ultimoMovimientoReal);
+				inters.add(getInterseccion(inte));
+			}
 		}
 		else {
 			Set<interseccion> aux = new HashSet<interseccion>(inters);
@@ -308,7 +329,10 @@ public final class Ghosts extends GhostController {
 				moves.put(ghostType, getMovePerseguidor(game, ghostType, null));
 			}
 				
-			interseccion proximaInterseccionPacman = (checkLastMoveMade) ? interseccionActual : getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
+			interseccion proximaInterseccionPacman;
+			if(checkLastMoveMade) proximaInterseccionPacman = interseccionActual;
+			else proximaInterseccionPacman = getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal));
+
 			switch (roles.get(ghostType)) {
 				case Perseguidor:
 					moves.put(ghostType, getMovePerseguidor(game, ghostType, proximaInterseccionPacman));
