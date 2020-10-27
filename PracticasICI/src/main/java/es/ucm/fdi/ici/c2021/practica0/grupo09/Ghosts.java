@@ -194,7 +194,6 @@ public final class Ghosts extends GhostController {
 		}
 
 		if (isCheckMate(game)) {
-			System.out.println("CheckMate");
 		} else {
 			getMovesByRoles(game, getRoles(game));
 		}
@@ -209,7 +208,7 @@ public final class Ghosts extends GhostController {
 	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, interseccion inter, Vector<GHOST> libres) {
 		GHOSTANDDISTANCE gyd = new GHOSTANDDISTANCE();
 		for (GHOST ghost : libres) {
-			double aux = game.getDistance(inter.identificador, game.getGhostCurrentNodeIndex(ghost), game.getGhostLastMoveMade(ghost), DM.PATH);
+			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), inter.identificador, game.getGhostLastMoveMade(ghost), DM.PATH);
 			if (aux < gyd.distance) {
 				gyd.ghost = ghost;
 				gyd.distance = aux;
@@ -218,24 +217,28 @@ public final class Ghosts extends GhostController {
 		return gyd;
 	}
 
-	private void rellenarProxDestinos(Set<interseccion> inters, Vector<Integer> nodosFijos, Game g) {
+	class interseccion_plus{
+		public interseccion intersection;
+		public interseccion prohibida;
+		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
+	};
+	
+	private void rellenarProxDestinos(Set<interseccion_plus> inters, Vector<Integer> nodosFijos, Game g) {
 		if (inters.isEmpty()){
-			if(checkLastMoveMade) inters.add(getInterseccion(interseccionActual.identificador));
-			else {
-				int inte = interseccionActual.destinos.get(ultimoMovimientoReal);
-				inters.add(getInterseccion(inte));
-			}
+			if(checkLastMoveMade) inters.add(new interseccion_plus(getInterseccion(interseccionActual.identificador), interseccionActual));
+			else inters.add(new interseccion_plus(getInterseccion(interseccionActual.destinos.get(ultimoMovimientoReal)), interseccionActual));
 		}
 		else {
-			Set<interseccion> aux = new HashSet<interseccion>(inters);
+			Set<interseccion_plus> aux = new HashSet<interseccion_plus>(inters);
 			inters.clear();
 			// Buscamos las intersecciones correspondientes a los movimientos posibles
 			// y si ya está esa intersección fijada no expandimos su rama
-			for (interseccion a : aux) {
-				if (!nodosFijos.contains(a.identificador)) {
-					for (MOVE mo : a.destinos.keySet()) {
-						interseccion interse = getInterseccion(a.destinos.get(mo));
-						inters.add(interse);
+			for (interseccion_plus a : aux) {
+				if (!nodosFijos.contains(a.intersection.identificador)) {
+					for (MOVE mo : a.intersection.destinos.keySet()) {
+						if(getInterseccion(a.intersection.destinos.get(mo)) != a.prohibida){
+							inters.add(new interseccion_plus(getInterseccion(a.intersection.destinos.get(mo)), a.intersection));
+						}
 					}
 				}
 			}
@@ -257,7 +260,7 @@ public final class Ghosts extends GhostController {
 			return false;
 		}
 
-		Set<interseccion> visitadas = new HashSet<interseccion>();
+		Set<interseccion_plus> visitadas = new HashSet<interseccion_plus>();
 		// rellenamos un array con los nodos de los fantasmas
 		Vector<GHOST> ghosts = activeGhosts(g);
 		if(ghosts.isEmpty())
@@ -265,17 +268,23 @@ public final class Ghosts extends GhostController {
 
 		Vector<Integer> nodosFijos = new Vector<Integer>();
 
-		interseccion[] aux = new interseccion[6];
+		interseccion_plus[] aux = new interseccion_plus[6];
 		rellenarProxDestinos(visitadas, nodosFijos, g);
 		
 		if(!visitadas.isEmpty())
 			visitadas.toArray(aux);
 		
 		int i = 0;
-		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0) {
-			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i], ghosts);
-			if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
-				moves.put(gyd.ghost, g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].identificador, g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
+		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0 && i < visitadas.size()) {
+			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i].intersection, ghosts);
+			if(gyd.distance <= 1){
+				moves.put(gyd.ghost, g.getNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
+				ghosts.remove(gyd.ghost);
+				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
+				i++;
+			}
+			else if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].intersection.identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
+				moves.put(gyd.ghost, g.getNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].intersection.identificador, g.getGhostLastMoveMade(gyd.ghost), DM.PATH));
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
@@ -284,9 +293,9 @@ public final class Ghosts extends GhostController {
 				rellenarProxDestinos(visitadas, nodosFijos, g);
 				visitadas.toArray(aux);
 				i = 0;
-			}			
+			}		
 		}
-		return (visitadas.size() == 0);
+		return (visitadas.size() - i == 0);
 	}
 
 	private EnumMap<GHOST, Roles> getRoles(Game game) {
