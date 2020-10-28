@@ -435,6 +435,8 @@ public final class MsPacMan extends PacmanController {
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
 			mapaHecho = false;
+			
+			System.out.println(mapaActual);
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
