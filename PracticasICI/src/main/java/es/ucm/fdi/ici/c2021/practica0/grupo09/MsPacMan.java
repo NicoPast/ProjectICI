@@ -43,7 +43,7 @@ public final class MsPacMan extends PacmanController {
 
 	DM metrica = DM.MANHATTAN;
 	double distanciaPeligro = 40;
-	double distanciaPerseguir = 150;
+	double distanciaPerseguir = 140;
 
 
 	// provisional
@@ -279,6 +279,26 @@ public final class MsPacMan extends PacmanController {
         return closestPill;
     }
     
+    private boolean fantasmaEnCamino(Game game, GHOST g) {
+    	if(game.isGhostEdible(g)) return false;
+    	
+    	MOVE posibleMovimiento = MOVE.NEUTRAL;
+    	
+    	posibleMovimiento = game.getApproximateNextMoveTowardsTarget(interseccionActual.identificador,
+    			game.getGhostCurrentNodeIndex(g), game.getPacmanLastMoveMade(), metrica);
+    	
+    	double distancia = interseccionActual.distancias.get(posibleMovimiento);
+    	
+    	for(GHOST fantasma:GHOST.values()) {
+    		if(fantasma != g && game.getDistance(game.getGhostCurrentNodeIndex(fantasma),
+    				interseccionActual.destinos.get(posibleMovimiento), metrica) < distancia) { //nos come un fantasma
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
 	GHOST fantasmaComibleCerca(Game game) {
 		GHOST fantasma =  null;
 		double distancia = Double.MAX_VALUE;
@@ -289,13 +309,12 @@ public final class MsPacMan extends PacmanController {
 						game.getGhostCurrentNodeIndex(g), metrica);
 				
 				
-				if (distAux < distancia && distAux<distanciaPerseguir) {
+				if (distAux < distancia && distAux < distanciaPerseguir && !fantasmaEnCamino(game,g)) { //fantasma comible en rango
 					fantasma = g;
 					distancia = distAux;
 				}
 			}
 		}
-		//System.out.println(distancia);
 
 		if (distancia < distanciaPerseguir) { // hay fantasmas para comer y está cerca
 			return fantasma;
