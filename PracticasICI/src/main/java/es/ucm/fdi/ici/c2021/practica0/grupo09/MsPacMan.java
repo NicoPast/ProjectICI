@@ -410,6 +410,7 @@ public final class MsPacMan extends PacmanController {
 		
 	}
 
+	
 	private MOVE proxMovimientoLlegada(int proxNodo,MOVE proxMove) {
 		interseccion interLlegada = getInterseccion(proxNodo);
 		for (MOVE m : MOVE.values()) {
@@ -436,7 +437,7 @@ public final class MsPacMan extends PacmanController {
 			mapa.clear();
 			mapaHecho = false;
 			
-			System.out.println(mapaActual);
+			//System.out.println(mapaActual);
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
