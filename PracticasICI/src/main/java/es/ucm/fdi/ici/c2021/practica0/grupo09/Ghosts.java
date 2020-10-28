@@ -44,7 +44,7 @@ public final class Ghosts extends GhostController {
 	boolean checkLastMoveMade = false;
 
 	double CONSTANT_ROL_CAMPEADOR = 15;
-	int CONSTANT_CAMPEADOR_ERROR = 10;
+	int CONSTANT_CAMPEADOR_ERROR = 5;
 	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 15;
 	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 15;
 	int CONSTANT_MIN_PERSEGUIDORES = 3;
