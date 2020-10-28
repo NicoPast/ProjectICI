@@ -51,7 +51,7 @@ public final class MsPacMan extends PacmanController {
 	String mapaActual = "a";
 
 	DM metrica = DM.MANHATTAN;
-	double distanciaPeligro = 30;
+	double distanciaPeligro = 50;
 	double distanciaPerseguir = 60;
 
 
@@ -212,9 +212,33 @@ public final class MsPacMan extends PacmanController {
 				}
 			}		
 		}
-		else if(noPills.size()>0) {
-			actual = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game), metrica);
+		else if(noPills.size()>0) {			
+			//MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game),
+			//game.getPacmanLastMoveMade(), metrica);	
+			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game), metrica);
 
+			boolean encontrado = false;
+			int i=0;
+			while(!encontrado && i<noPills.size()) {
+				
+				if(noPills.get(i) == auxMove) {
+					encontrado = true;
+					actual = auxMove;
+				}				
+				i++;
+			}
+			
+			if(!encontrado) { //buscamos el mas corto
+				double distanciaMinima = Double.MAX_VALUE;
+				for(MOVE m:noPills) {
+					double distAux = game.getDistance(interseccionActual.identificador, interseccionActual.destinos.get(m),
+							metrica);
+					if(distAux < distanciaMinima ) {
+						distanciaMinima = distAux;
+						actual = m;
+					}
+				}
+			}
 		}
 		else if(powerPills.size()>0) { //coge el camino con menos powerPills
 			aux = 0; //ahora pasa a ser powerPills
@@ -316,7 +340,7 @@ public final class MsPacMan extends PacmanController {
 	
 	
 	private MOVE getMoveHuir(Game game) {
-		//System.out.println("Estoy en peligro");
+		System.out.println("Estoy en peligro");
 		
 		int powerPillCercana = getPowerPillCercana(game);
 		
@@ -431,7 +455,7 @@ public final class MsPacMan extends PacmanController {
 		proximoNodo = interseccionActual.destinos.get(proxMove);
 
 		ultimoMovimientoReal = proxMove;
-		movimientoDeLlegada = proxMovimientoLlegada(proximoNodo,proxMove);
+		movimientoDeLlegada = proxMovimientoLlegada(proximoNodo, proxMove);
 
 		return proxMove; // es para que no salga en rojo
 	}
