@@ -61,7 +61,7 @@ public class Scores {
 	void computeRanking()
 	{
 		double[] pacManScores = new double[list_pacMan.size()]; 
-		double[] ghostScores = new double[list_pacMan.size()];
+		double[] ghostScores = new double[list_ghosts.size()];
 		
 		for(int pc = 0; pc<pacManScores.length; pc++)
 		{
