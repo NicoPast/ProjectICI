@@ -50,7 +50,7 @@ public final class Ghosts extends GhostController {
 	int CONSTANT_MIN_PERSEGUIDORES = 3;
 	double CONSTANT_LIMITE_MULTIPLIER = 1.25;
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
-	DM CONSTANT_DIRECTION_MEASURE = DM.MANHATTAN;
+	DM CONSTANT_DIRECTION_MEASURE = DM.EUCLID;
 
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
