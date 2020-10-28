@@ -184,8 +184,10 @@ public final class Ghosts extends GhostController {
 				ultimoMovimientoReal = m;
 				if(interseccionActual != null) {
 					ultimoNodo = interseccionActual.identificador;
-					proximoNodo = interseccionActual.destinos.get(m);
-					movimientoDeLlegada = proxMovimientoLlegada(m);
+					if(interseccionActual.destinos.get(m) != null) {
+						proximoNodo = interseccionActual.destinos.get(m);
+						movimientoDeLlegada = proxMovimientoLlegada(m);						
+					}
 				}
 			}
 		}
