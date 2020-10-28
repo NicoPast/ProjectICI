@@ -43,12 +43,12 @@ public final class Ghosts extends GhostController {
 	interseccion interseccionActual;
 	boolean checkLastMoveMade = false;
 
-	double CONSTANT_ROL_CAMPEADOR = 25;
+	double CONSTANT_ROL_CAMPEADOR = 15;
 	int CONSTANT_CAMPEADOR_ERROR = 5;
-	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 25;
-	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 15;
+	int CONSTANT_LIMITE_HUIDA_PERSEGUIDOR = 28;
+	int CONSTANT_LIMITE_HUIDA_CAMPEADOR = 25;
 	int CONSTANT_MIN_PERSEGUIDORES = 3;
-	double CONSTANT_LIMITE_MULTIPLIER = 1.5;
+	double CONSTANT_LIMITE_MULTIPLIER = 1.55;
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
 	DM CONSTANT_DIRECTION_MEASURE = DM.EUCLID;
 
@@ -195,7 +195,7 @@ public final class Ghosts extends GhostController {
 		}
 
 		if (isCheckMate(game)) {
-			System.out.println("CHECKMATE");
+			//System.out.println("CHECKMATE");
 		} else {
 			getMovesByRoles(game, getRoles(game));
 		}
@@ -254,6 +254,15 @@ public final class Ghosts extends GhostController {
 				activeGhosts.add(ghost);
 		}
 		return activeGhosts;
+	}
+	
+	private Vector<GHOST> edibleGhosts(Game game){
+		Vector<GHOST> edibleGhosts = new Vector<GHOST>();
+		for (GHOST ghost : GHOST.values()) {	
+			if(game.isGhostEdible(ghost))
+				edibleGhosts.add(ghost);
+		}
+		return edibleGhosts;
 	}
 
 	private boolean isCheckMate(Game g) {		
@@ -376,7 +385,7 @@ public final class Ghosts extends GhostController {
 						proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(ghostType), CONSTANT_DIRECTION_MEASURE); // Cercania del fantasma hacia ese nodo
 				valor /= distanceG;
 				for (GHOST g : destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
-				 	if (g != ghostType 
+				 	if (destinosGhosts.get(g) != null && g != ghostType 
 				 		&& destinosGhosts.get(g).identificador != destino
 				 		&& distanceG < game.getDistance(game.getGhostCurrentNodeIndex(g), proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(g), CONSTANT_MEASURE_DISTANCE)) {
 				 		valor--;
@@ -439,16 +448,37 @@ public final class Ghosts extends GhostController {
 			i++;
 		}
 		if(inter != null) {
-			double nearest = 0;
-			for (MOVE move : inter.destinos.keySet()) {
-				if(move == prohibido)
-					continue;
-				double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getClosestNodeIndexFromNodeIndex(game.getGhostCurrentNodeIndex(ghostType), posGhosts, DM.EUCLID), DM.EUCLID);
-				if(aux < nearest) {
-					nearest = aux;
-					bestMove = move;
+			if(!activeGhosts(game).isEmpty()) {
+				double nearest = 0;
+				for (MOVE move : inter.destinos.keySet()) {
+					if(move == prohibido)
+						continue;
+					double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getClosestNodeIndexFromNodeIndex(game.getGhostCurrentNodeIndex(ghostType), posGhosts, DM.EUCLID), DM.EUCLID);
+					if(aux < nearest) {
+						nearest = aux;
+						bestMove = move;
+					}
 				}
 			}
+			else {
+				posGhosts = new int[3]; i = 0;
+				for(GHOST g : edibleGhosts(game)){
+					if(g == ghostType) continue;
+					posGhosts[i] = game.getGhostCurrentNodeIndex(g);
+					i++;
+				}
+				double furthest = 0;
+				for (MOVE move : inter.destinos.keySet()) {
+					if(move == prohibido)
+						continue;
+					double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), game.getClosestNodeIndexFromNodeIndex(game.getGhostCurrentNodeIndex(ghostType), posGhosts, DM.EUCLID), DM.EUCLID);
+					if(aux > furthest) {
+						furthest = aux;
+						bestMove = move;
+					}
+				}
+			}
+			
 		}
 		return bestMove;
 	}
