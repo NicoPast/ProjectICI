@@ -43,7 +43,7 @@ public final class MsPacMan extends PacmanController {
 
 	DM metrica = DM.MANHATTAN;
 	double distanciaPeligro = 40;
-	double distanciaPerseguir = 60;
+	double distanciaPerseguir = 150;
 
 
 	// provisional
@@ -289,26 +289,15 @@ public final class MsPacMan extends PacmanController {
 						game.getGhostCurrentNodeIndex(g), metrica);
 				
 				
-				if (distAux < distancia) {
+				if (distAux < distancia && distAux<distanciaPerseguir) {
 					fantasma = g;
 					distancia = distAux;
 				}
-				
-				/*for(GHOST otherGhost:GHOST.values()) {
-					if(!game.isGhostEdible(otherGhost)) {
-						double distGhostGhost = game.getDistance(game.getGhostCurrentNodeIndex(g), 
-								game.getGhostCurrentNodeIndex(otherGhost), metrica);
-						
-						if(distGhostGhost <= distAux) {
-							fantasma = null;
-							distancia = 0;
-						}
-					}
-				}*/
 			}
 		}
+		//System.out.println(distancia);
 
-		if (distancia != 0 || distancia < distanciaPerseguir) { // hay fantasmas para comer y está cerca
+		if (distancia < distanciaPerseguir) { // hay fantasmas para comer y está cerca
 			return fantasma;
 		} 
 		else return null;
@@ -365,9 +354,9 @@ public final class MsPacMan extends PacmanController {
 		}
 		
 		//direccion sigue siento nuetral, estamos en la interseccion mas cercana a la pill
-		System.out.println("estoy en riesgo");
+		//System.out.println("estoy en riesgo");
 		if(direccion == MOVE.NEUTRAL) { //por todo hay fantasmas o por ningun lado nos hacercamos (estamos en la interseccion mas cercana)
-			System.out.println("estoy muy cerca");
+			//System.out.println("estoy muy cerca");
 			MOVE mAux = game.getApproximateNextMoveTowardsTarget(interseccionActual.identificador,
 						powerPillCercana, game.getPacmanLastMoveMade(), metrica); //no deberia entrar aqui pero para asegurar
 			
@@ -445,10 +434,6 @@ public final class MsPacMan extends PacmanController {
 
 		// A PARTIR DE AQUI ESTAS EN UNA INTERSECCION
 		MOVE proxMove = mejorDireccion(game);
-
-		//FALTA
-		//SI SE PUEDEN COMER FANTASMAS, PRIMERO MIRAR SI EN ESA DIRECCION ME PUEDE COMER OTRO
-		//CUENDO ESTAMOS BAJO AMENAZA DE UN FANTASMA
 		
 		ultimoNodo = interseccionActual.identificador;
 		proximoNodo = interseccionActual.destinos.get(proxMove);
