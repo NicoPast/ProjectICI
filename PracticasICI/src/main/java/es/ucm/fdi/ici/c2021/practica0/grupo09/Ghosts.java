@@ -374,14 +374,14 @@ public final class Ghosts extends GhostController {
 				double distanceG = game.getDistance(game.getGhostCurrentNodeIndex(ghostType),
 						proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(ghostType), CONSTANT_DIRECTION_MEASURE); // Cercania del fantasma hacia ese nodo
 				valor /= distanceG;
-				// for (GHOST g : destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
-				// 	if (g != ghostType 
-				// 		&& destinosGhosts.get(g).identificador != destino
-				// 		&& distanceG < game.getDistance(game.getGhostCurrentNodeIndex(g), proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(g), CONSTANT_MEASURE_DISTANCE)) {
-				// 		valor--;
-				// 		break;
-				// 	}
-				// }
+				for (GHOST g : destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
+				 	if (g != ghostType 
+				 		&& destinosGhosts.get(g).identificador != destino
+				 		&& distanceG < game.getDistance(game.getGhostCurrentNodeIndex(g), proximaInterseccionPacman.destinos.get(d), game.getGhostLastMoveMade(g), CONSTANT_MEASURE_DISTANCE)) {
+				 		valor--;
+				 		break;
+				 	}
+				}
 				if (valor > valorMasAlto) { // si el valor es mas alto o si ya hay un fantasma que llega antes ahí
 					valorMasAlto = valor;
 					destino = proximaInterseccionPacman.destinos.get(d);
