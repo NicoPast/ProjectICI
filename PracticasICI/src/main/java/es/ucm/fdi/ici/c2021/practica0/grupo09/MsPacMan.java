@@ -442,8 +442,17 @@ public final class MsPacMan extends PacmanController {
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			mapaHecho = true;
+			ultimoNodo = -1; proximoNodo = -1; // -1 es que aun no ha registrado nada
+			ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
+			movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
 
 			return MOVE.NEUTRAL; // siempre la primera decision es izquierda abajo
+		}
+		
+		if(game.wasPacManEaten()) { //tiene que resetear los valores predeterminados
+			ultimoNodo = -1; proximoNodo = -1; // -1 es que aun no ha registrado nada
+			ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
+			movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
 		}
 
 		interseccionActual = getInterseccion(game.getPacmanCurrentNodeIndex());
