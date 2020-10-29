@@ -6,6 +6,5 @@ public class Evaluate {
 		PacManEvaluator evaluator = new PacManEvaluator();
 		Scores scores = evaluator.evaluate();
 		scores.printScoreAndRanking();
-
 	}
 }
