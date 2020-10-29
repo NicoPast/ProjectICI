@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica0.grupo09;
+package es.ucm.fdi.ici.c2021.practica1.grupo09;
 
 import pacman.Executor;
 import pacman.controllers.GhostController;
