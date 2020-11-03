@@ -19,7 +19,6 @@ import pacman.game.internal.Node;
 import pacman.controllers.GhostController;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 
 public class GhostsFSM extends GhostController {
 
@@ -40,7 +39,7 @@ public class GhostsFSM extends GhostController {
 			
 			GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
 			PacManNearPPillTransition near = new PacManNearPPillTransition();
-			GhostsNotEdibleAndPacManFarPPill toChaseTransition = new GhostsNotEdibleAndPacManFarPPill(ghost);
+			GhostsNotEdibleAndPacManFarPPill toChaseTransition = new GhostsNotEdibleAndPacManFarPPill(ghost, this);
 			
 			fsm.add(chase, edible, runAway);
 			fsm.add(chase, near, runAway);
@@ -58,7 +57,12 @@ public class GhostsFSM extends GhostController {
 	public void preCompute(String opponent) {
     	for(FSM fsm: fsms.values())
     		fsm.reset();
-    	
+		destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
+		interseccionActual = null;
+		proximoNodo = -1;
+		ultimoNodo = -1;
+		mapaHecho = false;
+		mapa.clear();
     }
 	
 	@Override
@@ -67,17 +71,12 @@ public class GhostsFSM extends GhostController {
 		if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
-			interseccionActual = null;
-			proximoNodo = -1;
-			ultimoNodo = -1;
-			mapaHecho = false;
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			mapaHecho = true;
 			return result; // siempre la primera decision es izquierda abajo
 		}
-
 
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
@@ -101,20 +100,18 @@ public class GhostsFSM extends GhostController {
 			interseccionActual = aux;
 			checkLastMoveMade = true;
 		}
-		GhostsInput in = new GhostsInput(game);
+
+		GhostsInput in = new GhostsInput(game, this);
 		
-		for(GHOST ghost: GHOST.values())
-		{
+		for(GHOST ghost: GHOST.values()) {
 			FSM fsm = fsms.get(ghost);
 			MOVE move = fsm.run(in);
 			result.put(ghost, move);
 		}
 		
-		return result;
-		
-	
-		
+		return result;	
 	}
+
 	public class interseccion {
 		public interseccion(int iden, EnumMap<MOVE, Integer> dir, EnumMap<MOVE, Integer> dest,
 				EnumMap<MOVE, Integer> pi, EnumMap<MOVE, Integer> ppi) {
@@ -131,12 +128,18 @@ public class GhostsFSM extends GhostController {
 		public EnumMap<MOVE, Integer> pills; // pills en ese camino (entre nodo y nodo, las pills que hay en las intersecciones no cuentan)
 		public EnumMap<MOVE, Integer> powePill; // powerPills en ese camino
 	}
+	
 	private List<interseccion> mapa = new ArrayList<interseccion>();
 	int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
 	MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
 	MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
 	interseccion interseccionActual;
 	boolean checkLastMoveMade = false;
+	boolean mapaHecho = false;
+	String mapaActual = "a";
+
+	public EnumMap<GHOST, interseccion> destinosGhosts;
+
 	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
 		int pills = 0;
@@ -236,6 +239,7 @@ public class GhostsFSM extends GhostController {
 		return MOVE.NEUTRAL; // nunca deberia llegar
 	}
 
-	boolean mapaHecho = false;
-	String mapaActual = "a";
+	public interseccion getInterseccionActual() { return interseccionActual; }
+	public boolean getCheckLastModeMade() {return checkLastMoveMade;}
+	public MOVE getUltimoMovReal() { return ultimoMovimientoReal; }
 }
