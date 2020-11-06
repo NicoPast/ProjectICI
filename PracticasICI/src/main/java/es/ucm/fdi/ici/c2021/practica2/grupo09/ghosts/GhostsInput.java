@@ -40,8 +40,4 @@ public class GhostsInput extends Input {
 	public interseccion getProximaInterseccionPacMan() { 
 		return proximaInterseccionPacMan;
 	}
-
-	public MapaInfo getMapaInfo() {
-		return mapa;
-	}
 }
