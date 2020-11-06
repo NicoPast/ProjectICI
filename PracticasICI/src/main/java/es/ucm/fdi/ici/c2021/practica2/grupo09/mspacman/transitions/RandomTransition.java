@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.practica2.demofsm.pacman.transitions;
+package es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions;
 
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
