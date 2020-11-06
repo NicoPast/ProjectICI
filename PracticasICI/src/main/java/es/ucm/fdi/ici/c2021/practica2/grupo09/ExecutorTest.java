@@ -15,7 +15,8 @@ public class ExecutorTest {
 		.setScaleFactor(3.0)		
 		.build();
 		
-		PacmanController pacMan = new MsPacMan();
+		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacManFSM();
+		//PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
 		System.out.println(
 		executor.runGame(pacMan, ghosts, 50)
