@@ -1,18 +1,19 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
+import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM.interseccion;
 public class ChaseAction implements Action {
 
-	private GhostsFSM myFSM;
+	private MapaInfo myFSM;
 	GHOST ghostType;
 	
-	public ChaseAction( GHOST ghost,GhostsFSM fsm ) {
+	public ChaseAction( GHOST ghost, MapaInfo fsm ) {
 		this.ghostType = ghost;
 		this.myFSM=fsm;
 	}

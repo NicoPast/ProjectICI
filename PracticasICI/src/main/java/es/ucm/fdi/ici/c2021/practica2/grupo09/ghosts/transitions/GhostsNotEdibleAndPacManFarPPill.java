@@ -10,10 +10,9 @@ public class GhostsNotEdibleAndPacManFarPPill implements Transition {
 
 	GHOST ghost;
 
-	public GhostsNotEdibleAndPacManFarPPill(GHOST ghost,GhostsFSM fsm) {
+	public GhostsNotEdibleAndPacManFarPPill(GHOST ghost) {
 		super();
 		this.ghost = ghost;
-
 	}
 	
 	@Override

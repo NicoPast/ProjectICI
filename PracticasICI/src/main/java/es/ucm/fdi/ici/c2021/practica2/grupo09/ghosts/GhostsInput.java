@@ -1,26 +1,27 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fsm.Input;
 import pacman.game.Constants.DM;
-import pacman.game.Constants.GHOST;
 import pacman.game.Game;
 
 public class GhostsInput extends Input {
 
-	private GhostsFSM myFsm;
+	private MapaInfo mapa;
 
 	private double minPacmanDistancePPill;
 	private interseccion proximaInterseccionPacMan;
 	
-	public GhostsInput(Game game, GhostsFSM ghostsFsm) {
+	public GhostsInput(Game game, MapaInfo mapaInfo) {
 		super(game);
-		myFsm = ghostsFsm;
+		mapa = mapaInfo;
 	}
 
 	@Override
 	public void parseInput() {
+		mapa.update(game);
+
 		int pacman = game.getPacmanCurrentNodeIndex();
 		this.minPacmanDistancePPill = Double.MAX_VALUE;
 		for(int ppill: game.getPowerPillIndices()) {
@@ -28,8 +29,8 @@ public class GhostsInput extends Input {
 			this.minPacmanDistancePPill = Math.min(distance, this.minPacmanDistancePPill);
 		}
 
-		if(myFsm.getCheckLastModeMade()) proximaInterseccionPacMan = myFsm.getInterseccionActual();
-		else proximaInterseccionPacMan = myFsm.getInterseccion(myFsm.getInterseccionActual().destinos.get(myFsm.getUltimoMovReal()));
+		if(mapa.getCheckLastModeMade()) proximaInterseccionPacMan = mapa.getInterseccionActual();
+		else proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
 	}
 
 	public double getMinPacmanDistancePPill() {
