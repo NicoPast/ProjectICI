@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fsm.Action;
@@ -8,14 +7,18 @@ import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
+
 public class ChaseAction implements Action {
 
-	private MapaInfo myFSM;
+	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
+	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
+
+	private MapaInfo mapa;
 	GHOST ghostType;
 	
-	public ChaseAction( GHOST ghost, MapaInfo fsm ) {
+	public ChaseAction( GHOST ghost, MapaInfo mapa_ ) {
 		this.ghostType = ghost;
-		this.myFSM=fsm;
+		this.mapa= mapa_;
 	}
 
 	// Se dirige a la interseccion donde es mas probable que se dirija el PacMan y que yo este más cerca
@@ -24,15 +27,12 @@ public class ChaseAction implements Action {
 		if (game.doesGhostRequireAction(ghostType)) { //if it requires an action	
 			int myPos = game.getGhostCurrentNodeIndex(ghostType);
 			MOVE mylastMove = game.getGhostLastMoveMade(ghostType);
-			DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
-			DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
-			
 			int destino = 0;
 			float valorMasAlto = -10, valor = 0;
 
-			interseccion proximaInterseccionPacman, interseccionActual = myFSM.getInterseccionActual();
-				if(myFSM.getCheckLastModeMade()) proximaInterseccionPacman = interseccionActual;
-				else proximaInterseccionPacman = myFSM.getInterseccion(interseccionActual.destinos.get(myFSM.getUltimoMovReal()));
+			interseccion proximaInterseccionPacman, interseccionActual = mapa.getInterseccionActual();
+				if(mapa.getCheckLastModeMade()) proximaInterseccionPacman = interseccionActual;
+				else proximaInterseccionPacman = mapa.getInterseccion(interseccionActual.destinos.get(mapa.getUltimoMovReal()));
 
 			for (MOVE m : proximaInterseccionPacman.destinos.keySet()) {
 				if(proximaInterseccionPacman.destinos.get(m) == interseccionActual.identificador)
@@ -46,8 +46,8 @@ public class ChaseAction implements Action {
 				valor = (float)proximaInterseccionPacman.pills.get(m) / 
 						(float)(proximaInterseccionPacman.distancias.get(m) + distanceG);
 
-				for (GHOST g : myFSM.destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
-				 	if (myFSM.destinosGhosts.get(g) != null && g != ghostType && myFSM.destinosGhosts.get(g).identificador != destino
+				for (GHOST g : mapa.destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
+				 	if (mapa.destinosGhosts.get(g) != null && g != ghostType && mapa.destinosGhosts.get(g).identificador != destino
 				 		&& distanceG < game.getDistance(myPos, proximaInterseccionPacman.destinos.get(m), mylastMove, CONSTANT_MEASURE_DISTANCE)) {
 				 		valor--;
 				 		break;
@@ -59,7 +59,7 @@ public class ChaseAction implements Action {
 				}
 			}
 
-			myFSM.destinosGhosts.put(ghostType, myFSM.getInterseccion(destino));
+			mapa.destinosGhosts.put(ghostType, mapa.getInterseccion(destino));
 
 			return game.getNextMoveTowardsTarget(myPos, destino, mylastMove, CONSTANT_MEASURE_DIRECTION);
         }

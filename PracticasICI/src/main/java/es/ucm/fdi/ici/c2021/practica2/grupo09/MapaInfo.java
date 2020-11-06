@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.internal.Node;
@@ -11,16 +12,18 @@ import pacman.game.internal.Node;
 public class MapaInfo {
 
     private List<interseccion> mapa = new ArrayList<interseccion>();
-	int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
-	MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
-	MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
-	interseccion interseccionActual;
-	boolean checkLastMoveMade = false;
-	boolean mapaHecho = false;
-	String mapaActual = "a";
+	private int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
+	private MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
+	private MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
+	private interseccion interseccionActual;
+	private boolean checkLastMoveMade = false;
+	private boolean mapaHecho = false;
+	private	String mapaActual = "a";
+
+	public EnumMap<GHOST, interseccion> destinosGhosts;
 
     public MapaInfo() {
-        
+
     }
 
     public class interseccion {
@@ -47,6 +50,7 @@ public class MapaInfo {
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
+			destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
             mapaHecho = true;
 		}
 

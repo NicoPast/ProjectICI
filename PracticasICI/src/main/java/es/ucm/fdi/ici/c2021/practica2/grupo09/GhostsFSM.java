@@ -20,11 +20,11 @@ import pacman.game.Game;
 public class GhostsFSM extends GhostController {
 
 	EnumMap<GHOST,FSM> fsms;
-	MapaInfo mapInfo = new MapaInfo();
+	MapaInfo mapInfo;
 
 	public GhostsFSM()
 	{	
-		
+		mapInfo = new MapaInfo();
 		fsms = new EnumMap<GHOST,FSM>(GHOST.class);
 		for(GHOST ghost: GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
@@ -34,7 +34,7 @@ public class GhostsFSM extends GhostController {
 
 			
 			SimpleState chase = new SimpleState("chase", new ChaseAction(ghost, mapInfo));
-			SimpleState runAway = new SimpleState("runAway", new RunAwayAction(ghost,mapInfo));
+			SimpleState runAway = new SimpleState("runAway", new RunAwayAction(ghost, mapInfo));
 			
 			GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
 			PacManNearPPillTransition near = new PacManNearPPillTransition();
