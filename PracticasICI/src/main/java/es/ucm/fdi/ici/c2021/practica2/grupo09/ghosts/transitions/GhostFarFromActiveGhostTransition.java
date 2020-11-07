@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.DM;
@@ -23,34 +24,17 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 		this.mymap = map;
 	}
 
-	private Vector<GHOST> activeGhosts(Game game) {
-		Vector<GHOST> activeGhosts = new Vector<GHOST>();
-		for (GHOST ghost : GHOST.values()) {
-			if (!game.isGhostEdible(ghost) && game.getGhostLairTime(ghost) <= 0)
-				activeGhosts.add(ghost);
-		}
-		return activeGhosts;
-	}
+	
 
-	private double nearestGhostDistance(int[] pos, MOVE m, Game game) {
-
-		double nearestDist = Double.MAX_VALUE;
-		for (int p : pos) {
-			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, /* constant dm */DM.EUCLID);
-			if (aux < nearestDist) {
-				nearestDist = aux;
-			}
-		}
-
-		return nearestDist;
-	}
+	
 
 	@Override
 	public boolean evaluate(Input in) {
-		in.parseInput();
-		Game g = in.getGame();
+		GhostsInput input = (GhostsInput)in;
+		input.parseInput();
+		Game g = input.getGame();
 
-		Vector<GHOST> actives = activeGhosts(g);
+		Vector<GHOST> actives = input.getActiveGhosts();
 		// si no hay fantasmas activos hay que cambiar a huir
 		if (!actives.isEmpty()) {
 			interseccion inter = mymap.getInterseccion(g.getGhostCurrentNodeIndex(ghost));
@@ -74,7 +58,7 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)
 						continue;
-					double aux = nearestGhostDistance(posGhosts, move, g);
+					double aux = input.nearestGhostDistance(g.getGhostCurrentNodeIndex(ghost),posGhosts, move).d;
 					if (aux < nearest) {
 						nearest = aux;
 

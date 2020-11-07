@@ -17,6 +17,15 @@ public class GhostsInput extends Input {
 		int powerpill = 0;
 		double distance =  Double.MAX_VALUE;
 	}
+	public class NODEANDDISTANCE{
+		public int n;
+		public double d;
+
+		public NODEANDDISTANCE(int no, double di) {
+			n = no;
+			d = di;
+		}
+	}
 
 	private MapaInfo mapa;
 	private ClosestPowerPillAndDistance cppad_PacMan;
@@ -62,6 +71,20 @@ public class GhostsInput extends Input {
 		}
 
 		return actives;
+	}
+	public NODEANDDISTANCE nearestGhostDistance(int myPos,int[] pos, MOVE m) {
+
+		int nearestP=-1;
+		double nearestDist = Double.MAX_VALUE;
+		for (int p : pos) {
+			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.EUCLID);
+			if (aux < nearestDist) {
+				nearestDist = aux;
+				nearestP=p;
+			}
+		}
+
+		return new NODEANDDISTANCE(nearestP,nearestDist);
 	}
 
 	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(Game game, int pos, MOVE lastMoveMade){

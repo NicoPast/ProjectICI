@@ -10,14 +10,12 @@ public class PrisonerAction implements Action {
 
 	private GhostsFSM myFSM;
     GHOST ghost;
-	public PrisonerAction( GHOST ghost,GhostsFSM fsm ) {
-		this.ghost = ghost;
-		this.myFSM=fsm;
+	public PrisonerAction() {
 	}
 	@Override
 	public MOVE execute(Game game) {
-		// TODO Auto-generated method stub
-		return null;
+		//si estoy muerto no puedo hacer nada
+		return MOVE.NEUTRAL;
 	}
 
 }

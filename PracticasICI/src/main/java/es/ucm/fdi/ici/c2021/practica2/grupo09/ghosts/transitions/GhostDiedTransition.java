@@ -1,5 +1,6 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
+import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.GHOST;
@@ -13,8 +14,9 @@ public class GhostDiedTransition implements Transition {
 			}
 	@Override
 	public boolean evaluate(Input in) {
-		// TODO Auto-generated method stub
-		return false;
+		GhostsInput input = (GhostsInput)in;
+		input.parseInput();
+		return input.getGame().wasGhostEaten(ghost);
 	}
 	@Override
 	public String toString() {

@@ -1,6 +1,6 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -8,11 +8,11 @@ import pacman.game.Game;
 
 public class ProtectAlliesAction implements Action {
 
-	private GhostsFSM myFSM;
+	private MapaInfo mymap;
     GHOST ghost;
-	public ProtectAlliesAction( GHOST ghost,GhostsFSM fsm ) {
+	public ProtectAlliesAction( GHOST ghost,MapaInfo  map) {
 		this.ghost = ghost;
-		this.myFSM=fsm;
+		this.mymap=map;
 	}
 	@Override
 	public MOVE execute(Game game) {
