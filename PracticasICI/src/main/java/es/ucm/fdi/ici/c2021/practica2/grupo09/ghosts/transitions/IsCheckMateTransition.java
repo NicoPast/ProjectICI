@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -78,6 +77,7 @@ public class IsCheckMateTransition implements Transition {
 			}		
 		}
 		input.checkMateCalculated = true;
+		input.isCheckMate = visitadas.size() - i == 0;
 		return visitadas.size() - i == 0;
 	}
 
