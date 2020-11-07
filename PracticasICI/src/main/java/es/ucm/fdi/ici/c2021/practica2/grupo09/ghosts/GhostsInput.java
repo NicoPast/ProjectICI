@@ -1,17 +1,31 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts;
 
+import java.util.EnumMap;
+import java.util.Vector;
+
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fsm.Input;
 import pacman.game.Constants.DM;
+import pacman.game.Constants.GHOST;
+import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 public class GhostsInput extends Input {
 
-	private MapaInfo mapa;
+	private class ClosestPowerPillAndDistance{
+		int powerpill = 0;
+		double distance =  Double.MAX_VALUE;
+	}
 
-	private double minPacmanDistancePPill;
+	private MapaInfo mapa;
+	private ClosestPowerPillAndDistance cppad_PacMan;
 	private interseccion proximaInterseccionPacMan;
+	private boolean isPacManCloserToAnyPowerPill;
+
+	//Usados con los metodos checkMates, porque la informacion ahi les sirve a todos
+	public boolean isCheckMate, checkMateCalculated;
+	
 	
 	public GhostsInput(Game game, MapaInfo mapaInfo) {
 		super(game);
@@ -22,19 +36,67 @@ public class GhostsInput extends Input {
 	public void parseInput() {
 		mapa.update(game);
 
+		isCheckMate = false;
+		checkMateCalculated = false;
+
 		int pacman = game.getPacmanCurrentNodeIndex();
-		this.minPacmanDistancePPill = Double.MAX_VALUE;
+		this.cppad_PacMan.distance = Double.MAX_VALUE;
 		for(int ppill: game.getPowerPillIndices()) {
-			double distance = game.getDistance(pacman, ppill, DM.PATH);
-			this.minPacmanDistancePPill = Math.min(distance, this.minPacmanDistancePPill);
+			double distance = game.getDistance(pacman, ppill, game.getPacmanLastMoveMade(), DM.PATH);
+			this.cppad_PacMan.distance = Math.min(distance, this.cppad_PacMan.distance);
+			if(this.cppad_PacMan.distance == distance) 
+				this.cppad_PacMan.powerpill = ppill;
 		}
 
 		if(mapa.getCheckLastModeMade()) proximaInterseccionPacMan = mapa.getInterseccionActual();
 		else proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
+
+		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(game, 99999);
+	}
+
+	public Vector<GHOST> getActiveGhosts(){
+		Vector<GHOST> actives = new Vector<>();
+		for(GHOST ghostType : GHOST.values()){
+			if(!game.isGhostEdible(ghostType) && game.getGhostLairTime(ghostType) <= 0) 
+				actives.add(ghostType);
+		}
+
+		return actives;
+	}
+
+	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(Game game, int pos, MOVE lastMoveMade){
+		ClosestPowerPillAndDistance cpad = new ClosestPowerPillAndDistance();
+		for (int currentPill : game.getActivePowerPillsIndices()) {
+			double aux = game.getDistance(pos, currentPill, lastMoveMade, DM.PATH);
+			if (aux < cpad.distance) {
+				cpad.distance = aux;
+				cpad.powerpill = currentPill;
+			}
+		}
+		return cpad;
+	}
+
+	private boolean isPacManCloserToPowerPill(Game game, int limit) {
+		ClosestPowerPillAndDistance cpad = getClosestPowerPillAndDistance(game, game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+
+		// Solo miro si esta en el rango del fairplay
+		double distMin = Double.MAX_VALUE; 
+		if (cpad.distance < limit) {
+			for (GHOST ghostType : getActiveGhosts()) {
+				double dist = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), cpad.powerpill, game.getGhostLastMoveMade(ghostType), DM.PATH);
+				distMin = Math.min(dist, distMin);
+			}
+			return distMin > cpad.distance && cpad.distance < limit * 1.55;
+		}
+		return false;
+	}
+
+	public boolean isPacManCloserToPowerPill(){
+		return isPacManCloserToAnyPowerPill;
 	}
 
 	public double getMinPacmanDistancePPill() {
-		return minPacmanDistancePPill;
+		return cppad_PacMan.distance;
 	}
 
 	public interseccion getProximaInterseccionPacMan() { 

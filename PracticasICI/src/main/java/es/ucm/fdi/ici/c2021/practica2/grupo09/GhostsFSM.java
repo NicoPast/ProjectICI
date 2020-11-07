@@ -22,8 +22,7 @@ public class GhostsFSM extends GhostController {
 	EnumMap<GHOST,FSM> fsms;
 	MapaInfo mapInfo;
 
-	public GhostsFSM()
-	{	
+	public GhostsFSM() {	
 		mapInfo = new MapaInfo();
 		fsms = new EnumMap<GHOST,FSM>(GHOST.class);
 		for(GHOST ghost: GHOST.values()) {
@@ -48,8 +47,7 @@ public class GhostsFSM extends GhostController {
 			
 			graphObserver.showInFrame(null);
 			
-			fsms.put(ghost, fsm);
-			
+			fsms.put(ghost, fsm);			
 		}
 	}
 	

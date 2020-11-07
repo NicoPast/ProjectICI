@@ -286,7 +286,7 @@ public final class Ghosts extends GhostController {
 		
 		if(!visitadas.isEmpty())
 			visitadas.toArray(aux);
-		
+
 		int i = 0;
 		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0 && i < visitadas.size()) {
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i].intersection, ghosts);

@@ -21,6 +21,7 @@ public class MapaInfo {
 	private	String mapaActual = "a";
 
 	public EnumMap<GHOST, interseccion> destinosGhosts;
+	public EnumMap<GHOST, MOVE> movesCheckMate;
 
     public MapaInfo() {
 
@@ -51,6 +52,7 @@ public class MapaInfo {
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
+			movesCheckMate = new EnumMap<GHOST, MOVE>(GHOST.class);
             mapaHecho = true;
 		}
 

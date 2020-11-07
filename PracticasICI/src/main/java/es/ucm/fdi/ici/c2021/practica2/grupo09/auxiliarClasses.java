@@ -5,11 +5,12 @@ import pacman.game.Constants.GHOST;
 public class auxiliarClasses {
 
 	public class GHOSTANDDISTANCE {
-		public GHOST g;
-		public double d;
+		public GHOST ghost;
+		public double distance;
+		
 		public GHOSTANDDISTANCE(GHOST go, double di) {
-			g=go;
-			d=di;	
+			ghost=go;
+			distance=di;	
 		}
 	}
 
