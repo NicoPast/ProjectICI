@@ -60,7 +60,7 @@ public class GhostsFSM extends GhostController {
 			intouchable.initialState = chase;
 
 			GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
-			PacManNearPPillTransition near = new PacManNearPPillTransition();
+			//PacManNearPPillTransition near = new PacManNearPPillTransition(); ¿no se usaba?
 			GhostsNotEdibleAndPacManFarPPill toChaseTransition = new GhostsNotEdibleAndPacManFarPPill(ghost);
 			GhostCanBeProtectedTransition cbp = new GhostCanBeProtectedTransition(ghost, mapInfo);
 			GhostCannotProtectAlly cannotProtect = new GhostCannotProtectAlly(ghost);

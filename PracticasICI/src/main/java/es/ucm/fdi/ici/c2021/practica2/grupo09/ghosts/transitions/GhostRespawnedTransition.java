@@ -10,14 +10,15 @@ public class GhostRespawnedTransition implements Transition {
 	public GhostRespawnedTransition(GHOST ghost) {
 		super();
 		this.ghost = ghost;
-			}
+	}
+
 	@Override
 	public boolean evaluate(Input in) {
-		// TODO Auto-generated method stub
-		return false;
+		return in.getGame().getGhostLairTime(ghost) <= 0;
 	}
+	
 	@Override
 	public String toString() {
-		return ghost.name()+" respawned";
+		return ghost.name() + " respawned";
 	}
 }
