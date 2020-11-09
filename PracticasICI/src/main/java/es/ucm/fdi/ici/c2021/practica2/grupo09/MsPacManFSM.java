@@ -24,6 +24,7 @@ import pacman.game.Game;
 public class MsPacManFSM extends PacmanController {
 
 	FSM fsm;
+	MapaInfo mapInfo;
 	public MsPacManFSM() {
     	fsm = new FSM("MsPacMan");
     	
@@ -41,6 +42,7 @@ public class MsPacManFSM extends PacmanController {
     	Transition tran4 = new RandomTransition(.01);
     	
     	
+    	//Creacion de maquina de estados para usar en el CompoundState
     	FSM cfsm1 = new FSM("Compound1");
     	GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
     	cfsm1.addObserver(c1observer);
