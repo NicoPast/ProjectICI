@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
@@ -19,7 +18,6 @@ public class GhostsEdibleTransition implements Transition  {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		input.parseInput();
 		return input.getGame().isGhostEdible(ghost);
 	}
 

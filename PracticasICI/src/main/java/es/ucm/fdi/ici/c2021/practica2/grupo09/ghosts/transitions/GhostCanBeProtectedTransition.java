@@ -32,7 +32,6 @@ public class GhostCanBeProtectedTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		input.parseInput();
 		Game g = input.getGame();
 
 		Vector<GHOST> actives = input.getActiveGhosts();
@@ -44,8 +43,8 @@ public class GhostCanBeProtectedTransition implements Transition {
 				int[] posGhosts = new int[3];
 				int i = 0;
 				i = 0;
-				// rellenamos las posiciones de los fantasmas activos para ver a qué distancia
-				// esta el más cercano
+				// rellenamos las posiciones de los fantasmas activos para ver a quï¿½ distancia
+				// esta el mï¿½s cercano
 				for (GHOST gh : actives) {
 					if (gh == ghost)
 						continue;
@@ -56,7 +55,7 @@ public class GhostCanBeProtectedTransition implements Transition {
 						g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(ghost),
 						/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
 				double nearest = 0;
-				//elegimos el fantasma más cercano buscando en todas direcciones excepto
+				//elegimos el fantasma mï¿½s cercano buscando en todas direcciones excepto
 				//en la prohibida
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)
@@ -67,7 +66,7 @@ public class GhostCanBeProtectedTransition implements Transition {
 
 					}
 				}
-				// si hay algún fantasma activo lo suficientemente cerca, hay que perseguirlo
+				// si hay algï¿½n fantasma activo lo suficientemente cerca, hay que perseguirlo
 				// para que si viene el pacman el fantasma lo mate
 				return nearest < CONST_LIMIT_DISTANCE;
 

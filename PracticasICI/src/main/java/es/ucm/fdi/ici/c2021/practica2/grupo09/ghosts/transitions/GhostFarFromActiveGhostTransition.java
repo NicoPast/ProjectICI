@@ -31,7 +31,6 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		input.parseInput();
 		Game g = input.getGame();
 
 		Vector<GHOST> actives = input.getActiveGhosts();
@@ -43,8 +42,8 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 				int[] posGhosts = new int[3];
 				int i = 0;
 				i = 0;
-				// rellenamos las posiciones de los fantasmas activos para ver a qué distancia
-				// esta el más cercano
+				// rellenamos las posiciones de los fantasmas activos para ver a quï¿½ distancia
+				// esta el mï¿½s cercano
 				for (GHOST gh : actives) {
 					if (gh == ghost)
 						continue;
@@ -64,8 +63,8 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 
 					}
 				}
-				// si el fantasma activo más cercano (mirando en todas direcciones menos
-				// en la prohibida) está muy lejos hay que huir de todo
+				// si el fantasma activo mï¿½s cercano (mirando en todas direcciones menos
+				// en la prohibida) estï¿½ muy lejos hay que huir de todo
 				return nearest > CONST_LIMIT_DISTANCE;
 
 			}

@@ -43,8 +43,8 @@ public class GhostsFSM extends GhostController {
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
 			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
-			GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
-			fsm.addObserver(graphObserver);
+			// GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
+			// fsm.addObserver(graphObserver);
 
 			SimpleState checkMate = new SimpleState("checkMate", new CheckMateAction(ghost, mapInfo));
 			SimpleState goToActive = new SimpleState("goToActive", new GoToActiveGhostAction(ghost, mapInfo));
@@ -90,7 +90,7 @@ public class GhostsFSM extends GhostController {
 			fsm.add(goToActive, far, runAway);
 			fsm.ready(prisoner);
 
-			graphObserver.showInFrame(null);
+			//graphObserver.showInFrame(null);
 
 			fsms.put(ghost, fsm);
 		}

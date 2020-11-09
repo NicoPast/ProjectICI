@@ -43,11 +43,15 @@ public class GhostsInput extends Input {
 	
 	public GhostsInput(Game game, MapaInfo mapaInfo) {
 		super(game);
-		mapa = mapaInfo;
+		this.mapa = mapaInfo;
+		parseInput();
 	}
 
 	@Override
 	public void parseInput() {
+		if(mapa == null)
+			return;
+
 		mapa.update(game);
 
 		isCheckMate = false;
@@ -55,13 +59,15 @@ public class GhostsInput extends Input {
 
 		initCppads();
 
+		proximaInterseccionPacMan = null;
 		if(mapa.getCheckLastModeMade()) proximaInterseccionPacMan = mapa.getInterseccionActual();
-		else proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
+		else if(mapa.getInterseccionActual() != null) proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
 
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
 
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
 	}
+
 	private void initCppads(){
 		this.cppad_PacMan = getClosestPowerPillAndDistance(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 		cppad_Ghosts = new EnumMap<>(GHOST.class);

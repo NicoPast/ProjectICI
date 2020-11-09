@@ -15,7 +15,6 @@ public class GhostDiedTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		input.parseInput();
 		return input.getGame().wasGhostEaten(ghost);
 	}
 	@Override
