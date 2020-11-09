@@ -395,7 +395,6 @@ public final class MsPacMan extends PacmanController {
 			else return mAux;
 		}
 		else return direccion;
-		//else return direccion;
 	}
 
 	private MOVE mejorDireccion(Game game) {
