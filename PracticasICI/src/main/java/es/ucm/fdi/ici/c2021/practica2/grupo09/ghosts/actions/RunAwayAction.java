@@ -68,13 +68,7 @@ public class RunAwayAction implements Action {
 					posGhosts[i] = game.getGhostCurrentNodeIndex(g);
 					i++;
 				}
-				for (GHOST g : edibleGhosts(game)) {
-					if (g == ghost)
-						continue;
-					posGhosts[i] = game.getGhostCurrentNodeIndex(g);
-					i++;
-				}
-				//aquí no se usa move para nada. En cada iteración del bucle el fantasma más cercano
+				//aquï¿½ no se usa move para nada. En cada iteraciï¿½n del bucle el fantasma mï¿½s cercano
 				//va a ser el mismo y por tanto furthest solo va a cambiar la primera vez
 				double furthest = 0;
 				for (MOVE move : inter.destinos.keySet()) {
@@ -93,7 +87,7 @@ public class RunAwayAction implements Action {
 //
 //			// recorremos los posibles movimientos que no sean el prohibido en la
 //			// interseccion
-//			// actual y elegimos el movimiento que nos lleve al fantasma más lejano
+//			// actual y elegimos el movimiento que nos lleve al fantasma mï¿½s lejano
 //			boolean AllIntersectionsOccuped = true;
 //
 //			// buscamos la primera interseccion libre de otros fantasmas en
@@ -109,7 +103,7 @@ public class RunAwayAction implements Action {
 //					}
 //			}
 //			// si ya hay un fantasma en cada una de las otras intersecciones
-//			// (poco probable) elegimos el movimiento que nos llevaría al más lejano
+//			// (poco probable) elegimos el movimiento que nos llevarï¿½a al mï¿½s lejano
 //			if (AllIntersectionsOccuped) {
 //				double furthest = 0;
 //				for (MOVE move : inter.destinos.keySet()) {

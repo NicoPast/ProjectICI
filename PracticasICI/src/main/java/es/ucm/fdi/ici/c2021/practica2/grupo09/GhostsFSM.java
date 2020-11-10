@@ -43,8 +43,8 @@ public class GhostsFSM extends GhostController {
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
 			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
-			// GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
-			// fsm.addObserver(graphObserver);
+			GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
+			fsm.addObserver(graphObserver);
 
 			SimpleState checkMate = new SimpleState("checkMate", new CheckMateAction(ghost, mapInfo));
 			SimpleState goToActive = new SimpleState("goToActive", new GoToActiveGhostAction(ghost, mapInfo));
@@ -53,11 +53,6 @@ public class GhostsFSM extends GhostController {
 			SimpleState securePPill = new SimpleState("secure", new SecurePPillAction(ghost, mapInfo));
 			SimpleState chase = new SimpleState("chase", new ChaseAction(ghost, mapInfo));
 			SimpleState runAway = new SimpleState("runAway", new RunAwayAction(ghost, mapInfo));
-
-			CompoundState weak = new CompoundState("weak", fsm);
-			weak.initialState = runAway;
-			CompoundState intouchable = new CompoundState("intouchable", fsm);
-			intouchable.initialState = chase;
 
 			GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
 			//PacManNearPPillTransition near = new PacManNearPPillTransition(); ¿no se usaba?
@@ -72,25 +67,35 @@ public class GhostsFSM extends GhostController {
 			GhostRespawnedTransition respawn=new GhostRespawnedTransition(ghost);
 			IsCheckMateTransition checkmate=new IsCheckMateTransition(mapInfo);
 			
+			FSM fsmChase = new FSM(ghost.name());
+				fsmChase.add(chase, checkmate, checkMate);
+				fsmChase.add(protectAllies, checkmate, checkMate);
+				fsmChase.add(securePPill, checkmate, checkMate);
+				fsmChase.add(chase, canProtect, protectAllies);
+				fsmChase.add(protectAllies, cannotProtect, chase);
+				fsmChase.add(protectAllies, canSecure, securePPill);
+				fsmChase.add(securePPill, canProtect, protectAllies);
+				fsmChase.add(chase, canSecure, securePPill);
+				fsmChase.add(securePPill, notsec, chase);
+				fsmChase.ready(chase);
+
+			FSM fsmWeak = new FSM(ghost.name());
+				fsmWeak.add(runAway, cbp, goToActive);
+				fsmWeak.add(goToActive, far, runAway);
+				fsmWeak.ready(runAway);
+
+			fsm.ready(prisoner);
+
+			CompoundState weak = new CompoundState("weak", fsmWeak);
+			CompoundState intouchable = new CompoundState("intouchable", fsmChase);
+
+			graphObserver.showInFrame(null);
+
 			fsm.add(intouchable, edible, weak);
 			fsm.add(weak, toChaseTransition, intouchable);
 			
 			fsm.add(prisoner, respawn, intouchable);
 			fsm.add(weak, died, prisoner);
-			fsm.add(chase, checkmate, checkMate);
-			fsm.add(protectAllies, checkmate, checkMate);
-			fsm.add(securePPill, checkmate, checkMate);
-			fsm.add(chase, canProtect, protectAllies);
-			fsm.add(protectAllies, cannotProtect, chase);
-			fsm.add(protectAllies, canSecure, securePPill);
-			fsm.add(securePPill, canProtect, protectAllies);
-			fsm.add(chase, canSecure, securePPill);
-			fsm.add(securePPill, notsec, chase);
-			fsm.add(runAway, cbp, goToActive);
-			fsm.add(goToActive, far, runAway);
-			fsm.ready(prisoner);
-
-			//graphObserver.showInFrame(null);
 
 			fsms.put(ghost, fsm);
 		}
