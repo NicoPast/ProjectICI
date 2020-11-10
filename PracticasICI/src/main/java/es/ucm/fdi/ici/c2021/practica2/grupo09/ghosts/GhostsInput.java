@@ -85,6 +85,14 @@ public class GhostsInput extends Input {
 
 		return actives;
 	}
+	public Vector<GHOST> getEdibleGhosts() {
+		Vector<GHOST> edibleGhosts = new Vector<GHOST>();
+		for (GHOST ghost : GHOST.values()) {
+			if (game.isGhostEdible(ghost))
+				edibleGhosts.add(ghost);
+		}
+		return edibleGhosts;
+	}
 	public NODEANDDISTANCE nearestGhostDistance(int myPos,int[] pos, MOVE m) {
 
 		int nearestP=-1;
@@ -140,7 +148,10 @@ public class GhostsInput extends Input {
 	public interseccion getProximaInterseccionPacMan() { 
 		return proximaInterseccionPacMan;
 	}
-
+	public interseccion getProximaInterseccionGhost(int pos) { 
+		return mapa.getInterseccion(pos);
+	}
+	public MOVE getPacmanRealMoveMade() {return mapa.getUltimoMovReal();}
 	public ClosestPowerPillAndDistance getClosestPowerPillAndDistance(GHOST ghostType){
 		return cppad_Ghosts.get(ghostType);
 	}

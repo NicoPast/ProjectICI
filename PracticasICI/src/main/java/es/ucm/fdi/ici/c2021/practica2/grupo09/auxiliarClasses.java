@@ -14,13 +14,13 @@ public class auxiliarClasses {
 		}
 	}
 
-	public class NODEANDDISTANCE {
-		public int n;
-		public double d;
-
-		public NODEANDDISTANCE(int no, double di) {
-			n = no;
-			d = di;
-		}
-	}
+//	public class NODEANDDISTANCE {
+//		public int n;
+//		public double d;
+//
+//		public NODEANDDISTANCE(int no, double di) {
+//			n = no;
+//			d = di;
+//		}
+//	}
 }

@@ -18,8 +18,10 @@ public class RunAwayAction implements Action {
 
 	public RunAwayAction(GHOST ghost, MapaInfo map) {
 		this.ghost = ghost;
-		mymapa= map;
+		mymapa = map;
 	}
+
+	
 
 	private Vector<GHOST> edibleGhosts(Game game) {
 		Vector<GHOST> edibleGhosts = new Vector<GHOST>();
@@ -32,17 +34,15 @@ public class RunAwayAction implements Action {
 
 	private double furthestGhostDistance(int[] pos, MOVE m, Game game) {
 
-		double furthestDist = 0;
-		int fpos = 0;
+		double furthest = 0;
 		for (int p : pos) {
 			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, /* constant dm */DM.EUCLID);
-			if (aux > furthestDist) {
-				furthestDist = aux;
-				fpos = p;
-			}
+			if (aux > furthest) {
+				furthest = aux;
+							}
 		}
 
-		return furthestDist;
+		return furthest;
 	}
 
 	@Override
@@ -68,56 +68,20 @@ public class RunAwayAction implements Action {
 					posGhosts[i] = game.getGhostCurrentNodeIndex(g);
 					i++;
 				}
-				//aquï¿½ no se usa move para nada. En cada iteraciï¿½n del bucle el fantasma mï¿½s cercano
-				//va a ser el mismo y por tanto furthest solo va a cambiar la primera vez
+				// buscamos el fantasma más lejano en todas direcciones excepto
+				// la prohibida y vamos a por ese
 				double furthest = 0;
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)
 						continue;
-					double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost),
-							game.getClosestNodeIndexFromNodeIndex(game.getGhostCurrentNodeIndex(ghost), posGhosts,
-									DM.EUCLID),
-							DM.EUCLID);
+
+					double aux = furthestGhostDistance(posGhosts, move, game);
 					if (aux > furthest) {
 						furthest = aux;
 						bestMove = move;
 					}
 				}
 			}
-//
-//			// recorremos los posibles movimientos que no sean el prohibido en la
-//			// interseccion
-//			// actual y elegimos el movimiento que nos lleve al fantasma mï¿½s lejano
-//			boolean AllIntersectionsOccuped = true;
-//
-//			// buscamos la primera interseccion libre de otros fantasmas en
-//			// todas las direcciones posibles excepto la prohibida
-//			for (MOVE move : inter.destinos.keySet()) {
-//
-//				if (move == prohibido)
-//					continue;
-//				for (int p : posGhosts)
-//					if (inter.destinos.get(move) != p) {
-//						bestMove = move;
-//						AllIntersectionsOccuped = false;
-//					}
-//			}
-//			// si ya hay un fantasma en cada una de las otras intersecciones
-//			// (poco probable) elegimos el movimiento que nos llevarï¿½a al mï¿½s lejano
-//			if (AllIntersectionsOccuped) {
-//				double furthest = 0;
-//				for (MOVE move : inter.destinos.keySet()) {
-//
-//					if (move == prohibido)
-//						continue;
-//
-//					double aux = furthestGhostDistance(posGhosts, move, game);
-//					if (aux > furthest) {
-//						furthest = aux;
-//						bestMove = move;
-//					}
-//				}
-//			}
 			return bestMove;
 		} else
 			return MOVE.NEUTRAL;
