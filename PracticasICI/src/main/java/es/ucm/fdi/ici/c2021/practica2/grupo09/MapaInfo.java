@@ -48,6 +48,7 @@ public class MapaInfo {
         if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
+			crearMapa(game);	
 		}
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
