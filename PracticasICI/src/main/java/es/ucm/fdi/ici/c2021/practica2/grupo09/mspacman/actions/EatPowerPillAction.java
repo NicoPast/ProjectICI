@@ -20,6 +20,8 @@ public class EatPowerPillAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
+		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
+		
 		int powerPillCercana = getPowerPillCercana(game);
 		
 		interseccion interseccionActual = mapInfo.getInterseccionActual();

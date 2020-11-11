@@ -5,15 +5,25 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChaseAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChillAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatPowerPillAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RunAwayAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComHuirTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComPerTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirComTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirTranTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerComTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerTranTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranComTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranPerTransition;
 import es.ucm.fdi.ici.fsm.CompoundState;
 import es.ucm.fdi.ici.fsm.FSM;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.SimpleState;
 import es.ucm.fdi.ici.fsm.Transition;
 import es.ucm.fdi.ici.fsm.observers.GraphFSMObserver;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RandomAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.RandomTransition;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -25,21 +35,23 @@ public class MsPacManFSM extends PacmanController {
 
 	FSM fsm;
 	MapaInfo mapInfo;
+	
 	public MsPacManFSM() {
     	fsm = new FSM("MsPacMan");
+    	
+    	mapInfo = new MapaInfo();
     	
     	GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
     	fsm.addObserver(observer);
     	
+    	SimpleState chillState = new SimpleState("chillState", new ChillAction(mapInfo));
+    	SimpleState chaseState = new SimpleState("chaseState", new ChaseAction(mapInfo));
     	
-    	SimpleState state1 = new SimpleState("state1", new RandomAction());
-    	SimpleState state2 = new SimpleState("state2", new RandomAction());
-    	SimpleState state3 = new SimpleState("state3", new RandomAction());
-    	
-    	Transition tran1 = new RandomTransition(.3);
-    	Transition tran2 = new RandomTransition(.2);
-    	Transition tran3 = new RandomTransition(.1);
-    	Transition tran4 = new RandomTransition(.01);
+    	Transition tranCom = new TranComTransition();
+    	Transition tranPer = new TranPerTransition();
+    	Transition perTran = new PerTranTransition();
+    	Transition perCom = new PerComTransition();
+    	Transition huirTran = new HuirTranTransition();
     	
     	
     	//Creacion de maquina de estados para usar en el CompoundState
@@ -47,21 +59,25 @@ public class MsPacManFSM extends PacmanController {
     	GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
     	cfsm1.addObserver(c1observer);
     	
-    	SimpleState cstate1 = new SimpleState("cstate1", new RandomAction());
-    	SimpleState cstate2 = new SimpleState("cstate2", new RandomAction());
-    	Transition ctran1 = new RandomTransition(.35);
-    	Transition ctran2 = new RandomTransition(.25);
-    	cfsm1.add(cstate1, ctran1, cstate2);
-    	cfsm1.add(cstate2, ctran2, cstate1);
-    	cfsm1.ready(cstate1);
-    	CompoundState compound1 = new CompoundState("compound1", cfsm1);
+    	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", new EatPowerPillAction(mapInfo));
+    	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo)); 	
+    	Transition comHuirTran = new ComHuirTransition();
+    	Transition comPerTran = new ComPerTransition();
+    	Transition huirComerTran = new HuirComTransition();
+    	cfsm1.add(eatPowerPillState, comHuirTran, runAwayState);
+    	cfsm1.add(runAwayState, huirComerTran, eatPowerPillState);
+    	cfsm1.ready(eatPowerPillState);
     	
-    	fsm.add(state1, tran1, state2);
-    	fsm.add(state2, tran2, state3);
-    	fsm.add(state3, tran3, compound1);
-    	fsm.add(compound1, tran4, state1);
-
-    	fsm.ready(state1);
+    	CompoundState peligroCompoundState = new CompoundState("compound1", cfsm1);
+    	
+    	fsm.add(chillState, tranCom, peligroCompoundState);
+    	fsm.add(chillState, tranPer, chaseState);
+    	fsm.add(chaseState, perTran, chillState);
+    	fsm.add(chaseState, perCom, peligroCompoundState);
+    	fsm.add(peligroCompoundState, huirTran, chillState);
+    	fsm.add(peligroCompoundState, comPerTran, chaseState);
+    	
+    	fsm.ready(chillState);
     	
     	JFrame frame = new JFrame();
     	JPanel main = new JPanel();
@@ -85,9 +101,7 @@ public class MsPacManFSM extends PacmanController {
      */
     @Override
     public MOVE getMove(Game game, long timeDue) {
-    	Input in = new MsPacManInput(game); 
+    	Input in = new MsPacManInput(game, mapInfo); 
     	return fsm.run(in);
-    }
-    
-    
+    } 
 }

@@ -19,8 +19,11 @@ public class ChaseAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
+		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
+		
 		return game.getApproximateNextMoveTowardsTarget(mapInfo.getInterseccionActual().identificador,
-				game.getGhostCurrentNodeIndex(fantasmaComibleCerca(game)), game.getPacmanLastMoveMade(), DM.PATH);
+				game.getGhostCurrentNodeIndex(fantasmaComibleCerca(game)), game.getPacmanLastMoveMade(),
+				mapInfo.getMetrica());
 	}
 	
 	GHOST fantasmaComibleCerca(Game game) {

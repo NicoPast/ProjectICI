@@ -10,24 +10,40 @@ public class MsPacManInput extends Input {
 
 	private MapaInfo mapInfo;
 	
-	public MsPacManInput(Game game) {
+	public MsPacManInput(Game game, MapaInfo map){
 		super(game);
-		
-		
-		
+		this.mapInfo = map;
+		parseInput();
 	}
 
 	@Override
-	public void parseInput() {
-		
-		mapInfo.update(game);	
+	public void parseInput() {		
+		if(mapInfo != null)mapInfo.update(game);	
 	}
 
 	
+	public double distanceToNearestPowerPill() {
+		double dist = Double.MAX_VALUE;
+		
+		for(int indice:game.getActivePowerPillsIndices()) {
+			double aux= game.getDistance(game.getPacManInitialNodeIndex(), indice, mapInfo.getMetrica());
+			if(aux<dist) dist = aux;
+		}
+		
+		return dist;
+	}
+	
+	public boolean wasPowerPillEaten() {
+		return game.wasPowerPillEaten();
+	}
+	
 	public double distToNearestGhost() {
 		double distanciaAux = Double.MAX_VALUE; //para asegurarnos que si no hay fantasmas cerca, devuelva false
+		if(mapInfo.getInterseccionActual() == null) return distanciaAux;
+		
 		for (GHOST g : GHOST.values()) {
-			double distancia = game.getDistance(mapInfo.getInterseccionActual().identificador,
+			double distancia = game.getDistance(
+					mapInfo.getInterseccionActual().identificador,
 					game.getGhostCurrentNodeIndex(g), DM.PATH);
 			//System.out.println(distancia);
 			//si es -1 es que está en la caseta de inicio
@@ -39,5 +55,13 @@ public class MsPacManInput extends Input {
 		//return false;
 		//System.out.println(distanciaAux);
 		return distanciaAux;
+	}
+
+	public int numGhostEadable() {
+		int num = 0;
+		for(GHOST g: GHOST.values()) {
+			if(game.isGhostEdible(g))num++;
+		}
+		return num;
 	}
 }
