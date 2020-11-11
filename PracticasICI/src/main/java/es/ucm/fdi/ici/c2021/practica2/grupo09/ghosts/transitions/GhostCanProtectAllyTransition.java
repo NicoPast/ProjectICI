@@ -51,6 +51,6 @@ public class GhostCanProtectAllyTransition implements Transition {
 	}
 
 	public String toString() {
-		return ghost.name() + " can protect an ally";
+		return ghost.name() + " can protect an ally"+Math.random();
 	}
 }

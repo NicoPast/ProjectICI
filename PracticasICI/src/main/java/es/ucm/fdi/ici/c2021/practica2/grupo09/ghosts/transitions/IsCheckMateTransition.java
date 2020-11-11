@@ -1,6 +1,7 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
@@ -13,11 +14,9 @@ import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-
 public class IsCheckMateTransition implements Transition {
 
 	MapaInfo mapa;
-
 	public IsCheckMateTransition(MapaInfo mapa) {
 		super();
 		this.mapa = mapa;
@@ -125,6 +124,6 @@ public class IsCheckMateTransition implements Transition {
 
 	@Override
 	public String toString() {
-		return "Check Mate!!";
+		return "Check Mate!!"+Math.random();
 	}
 }
