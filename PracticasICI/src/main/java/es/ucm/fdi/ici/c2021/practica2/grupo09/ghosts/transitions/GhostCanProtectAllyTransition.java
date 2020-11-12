@@ -15,10 +15,12 @@ public class GhostCanProtectAllyTransition implements Transition {
 
 	GHOST ghost;
 	double PACMAN_MIN_DISTANCE = 15;
+	int id;
 
-	public GhostCanProtectAllyTransition(GHOST ghost) {
+	public GhostCanProtectAllyTransition(GHOST ghost, int id) {
 		super();
 		this.ghost = ghost;
+		this.id = id;
 	}
 
 	@Override
@@ -35,13 +37,13 @@ public class GhostCanProtectAllyTransition implements Transition {
 			for (int i = 0; i < edibleGhosts.size(); i++) {
 				ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
 			}
-			// vemos cuál es la distancia al fantasma edible más cercano del pacman para su
-			// último
+			// vemos cuï¿½l es la distancia al fantasma edible mï¿½s cercano del pacman para su
+			// ï¿½ltimo
 			// movimiento
 			double nearest = input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
 					input.getPacmanRealMoveMade()).d;
-			// No hace falta comprobar si yo estoy más cerca de él que el pacman
-			// porque el otro fantasma tratará de acercarse a mi
+			// No hace falta comprobar si yo estoy mï¿½s cerca de ï¿½l que el pacman
+			// porque el otro fantasma tratarï¿½ de acercarse a mi
 
 			return nearest < PACMAN_MIN_DISTANCE;
 
@@ -51,6 +53,6 @@ public class GhostCanProtectAllyTransition implements Transition {
 	}
 
 	public String toString() {
-		return ghost.name() + " can protect an ally"+Math.random();
+		return ghost.name() + " can protect an ally"+ id;
 	}
 }

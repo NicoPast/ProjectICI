@@ -60,33 +60,39 @@ public class GhostsFSM extends GhostController {
 			SimpleState runAway = new SimpleState("runAway", new RunAwayAction(ghost, mapInfo));
 
 			GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
-			// PacManNearPPillTransition near = new PacManNearPPillTransition(); ¿no se
-			// usaba?
 			GhostsNotEdibleAndPacManFarPPill toChaseTransition = new GhostsNotEdibleAndPacManFarPPill(ghost);
 			GhostCanBeProtectedTransition cbp = new GhostCanBeProtectedTransition(ghost, mapInfo);
 			GhostCannotProtectAlly cannotProtect = new GhostCannotProtectAlly(ghost);
-			GhostCanProtectAllyTransition canProtect = new GhostCanProtectAllyTransition(ghost);
+			
+			GhostCanProtectAllyTransition canProtect0 = new GhostCanProtectAllyTransition(ghost, 0);
+			GhostCanProtectAllyTransition canProtect1 = new GhostCanProtectAllyTransition(ghost, 1);
+
 			GhostCanSecurePPillTransition canSecure = new GhostCanSecurePPillTransition(ghost);
 			GhostDiedTransition died = new GhostDiedTransition(ghost);
 			GhostFarFromActiveGhostTransition far = new GhostFarFromActiveGhostTransition(ghost, mapInfo);
 			GhostNotSecuringPPillTransition notsec = new GhostNotSecuringPPillTransition(ghost);
 			GhostRespawnedTransition respawn = new GhostRespawnedTransition(ghost);
-			IsCheckMateTransition checkmate = new IsCheckMateTransition(mapInfo);
+			
+			IsCheckMateTransition checkmate0 = new IsCheckMateTransition(mapInfo, 0);
+			IsCheckMateTransition checkmate1 = new IsCheckMateTransition(mapInfo, 1);
+			IsCheckMateTransition checkmate2 = new IsCheckMateTransition(mapInfo, 2);
+			IsCheckMateTransition checkmate3 = new IsCheckMateTransition(mapInfo, 3);
 
-			FSM fsmChase = new FSM(ghost.name()+"chase");
+			FSM fsmChase = new FSM(ghost.name()+" chase");
 			fsmChase.addObserver(gchase);
-			fsmChase.add(chase, checkmate, checkMate);
-			fsmChase.add(protectAllies, checkmate, checkMate);
-			fsmChase.add(securePPill, checkmate, checkMate);
-			fsmChase.add(chase, canProtect, protectAllies);
+			fsmChase.add(chase, checkmate0, checkMate);
+			fsmChase.add(checkMate, checkmate1, checkMate);
+			fsmChase.add(protectAllies, checkmate2, checkMate);
+			fsmChase.add(securePPill, checkmate3, checkMate);
+			fsmChase.add(chase, canProtect0, protectAllies);
 			fsmChase.add(protectAllies, cannotProtect, chase);
 //			fsmChase.add(protectAllies, canSecure, securePPill);
-			fsmChase.add(securePPill, canProtect, protectAllies);
+			fsmChase.add(securePPill, canProtect1, protectAllies);
 			fsmChase.add(chase, canSecure, securePPill);
 			fsmChase.add(securePPill, notsec, chase);
 			fsmChase.ready(chase);
 
-			FSM fsmWeak = new FSM(ghost.name()+"weak");
+			FSM fsmWeak = new FSM(ghost.name()+" weak");
 			fsmWeak.addObserver(gweak);
 			fsmWeak.add(runAway, cbp, goToActive);
 			fsmWeak.add(goToActive, far, runAway);

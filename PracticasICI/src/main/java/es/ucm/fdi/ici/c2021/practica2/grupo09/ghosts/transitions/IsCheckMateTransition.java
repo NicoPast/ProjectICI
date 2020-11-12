@@ -17,9 +17,11 @@ import pacman.game.Game;
 public class IsCheckMateTransition implements Transition {
 
 	MapaInfo mapa;
-	public IsCheckMateTransition(MapaInfo mapa) {
+	int id;
+	public IsCheckMateTransition(MapaInfo mapa, int id) {
 		super();
 		this.mapa = mapa;
+		this.id = id;
 	}
 
 	private class interseccion_plus{
@@ -57,7 +59,7 @@ public class IsCheckMateTransition implements Transition {
 		int i = 0;
 		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0 && i < visitadas.size()) {
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i].intersection.identificador, ghosts);
-			if(gyd.distance <= 1){
+			if(gyd.distance <= 4){
 				mapa.movesCheckMate.put(gyd.ghost, g.getNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(gyd.ghost), DM.EUCLID));
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
@@ -124,6 +126,6 @@ public class IsCheckMateTransition implements Transition {
 
 	@Override
 	public String toString() {
-		return "Check Mate!!"+Math.random();
+		return "Check Mate!!"+id;
 	}
 }

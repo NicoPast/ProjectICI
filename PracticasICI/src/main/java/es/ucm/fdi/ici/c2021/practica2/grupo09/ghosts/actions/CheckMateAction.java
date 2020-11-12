@@ -19,10 +19,13 @@ public class CheckMateAction implements Action {
 
 	@Override
 	public MOVE execute(Game game) {
+		if(!game.doesGhostRequireAction(ghost))
+			return null;
 		if(mapa.movesCheckMate.get(ghost) == null)
 			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.EUCLID);
-		else 
+		else {
 			return mapa.movesCheckMate.get(ghost);
+		}
 	}
 }
 
