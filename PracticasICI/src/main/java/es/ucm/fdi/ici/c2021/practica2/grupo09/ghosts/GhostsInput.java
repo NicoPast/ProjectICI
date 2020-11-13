@@ -102,7 +102,7 @@ public class GhostsInput extends Input {
 		int nearestP=-1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.EUCLID);
+			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.PATH);
 			if (aux < nearestDist) {
 				nearestDist = aux;
 				nearestP=p;

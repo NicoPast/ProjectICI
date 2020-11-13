@@ -38,7 +38,7 @@ public class GhostCanProtectAllyTransition implements Transition {
 			// �ltimo
 			// movimiento
 			double nearest = input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
-					input.getPacmanRealMoveMade()).d;
+					game.getPacmanLastMoveMade()).d;
 			// No hace falta comprobar si yo estoy m�s cerca de �l que el pacman
 			// porque el otro fantasma tratar� de acercarse a mi
 

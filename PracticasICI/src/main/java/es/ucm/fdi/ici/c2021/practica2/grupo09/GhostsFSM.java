@@ -46,11 +46,11 @@ public class GhostsFSM extends GhostController {
 		fsms = new EnumMap<GHOST, FSM>(GHOST.class);
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
-			//fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
+			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
 			// GraphFSMObserver gweak = new GraphFSMObserver(ghost.name() + "weak");
 			// GraphFSMObserver gchase = new GraphFSMObserver(ghost.name()+"chase");
-//			GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
-//			fsm.addObserver(graphObserver);
+			// GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
+			// fsm.addObserver(graphObserver);
 
 			SimpleState checkMate = new SimpleState("checkMate", new CheckMateAction(ghost, mapInfo));
 			SimpleState goToActive = new SimpleState("goToActive", new GoToActiveGhostAction(ghost, mapInfo));
@@ -80,14 +80,16 @@ public class GhostsFSM extends GhostController {
 			FSM fsmChase = new FSM(ghost.name()+" chase");
 				//fsmChase.addObserver(gchase);
 				fsmChase.add(chase, checkmate1, checkMate);
-				fsmChase.add(protectAllies, checkmate2, checkMate);
-				fsmChase.add(securePPill, checkmate3, checkMate);
 				fsmChase.add(chase, canProtect0, protectAllies);
-				fsmChase.add(protectAllies, cannotProtect, chase);
-	//			fsmChase.add(protectAllies, canSecure, securePPill);
-				fsmChase.add(securePPill, canProtect1, protectAllies);
 				fsmChase.add(chase, canSecure, securePPill);
+
+				fsmChase.add(protectAllies, checkmate2, checkMate);
+				fsmChase.add(protectAllies, cannotProtect, chase);
+
+				fsmChase.add(securePPill, checkmate3, checkMate);
+				fsmChase.add(securePPill, canProtect1, protectAllies);
 				fsmChase.add(securePPill, notsec, chase);
+
 				fsmChase.ready(chase);
 
 			FSM fsmWeak = new FSM(ghost.name()+" weak");
@@ -102,13 +104,14 @@ public class GhostsFSM extends GhostController {
 
 //			graphObserver.showInFrame(null);
 
-			fsm.add(intouchable, edible, weak);
-			fsm.add(weak, toChaseTransition, intouchable);
-			fsm.add(intouchable, pacManEaten, prisoner);
-
 			fsm.add(prisoner, respawn, intouchable);
+
+			fsm.add(intouchable, pacManEaten, prisoner);
+			fsm.add(intouchable, edible, weak);
+			
+			fsm.add(weak, pacManEaten, prisoner);		
 			fsm.add(weak, died, prisoner);
-			fsm.add(weak, pacManEaten, prisoner);
+			fsm.add(weak, toChaseTransition, intouchable);
 			
 //			gweak.showInFrame(null);
 			fsm.ready(prisoner);

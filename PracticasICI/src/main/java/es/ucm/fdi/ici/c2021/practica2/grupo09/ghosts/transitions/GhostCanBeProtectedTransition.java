@@ -24,11 +24,6 @@ public class GhostCanBeProtectedTransition implements Transition {
 		this.mymap = map;
 	}
 
-	
-	
-
-	
-
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;

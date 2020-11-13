@@ -6,7 +6,7 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class PacManNearPPillTransition implements Transition {
 
-	public int thresold = 30;
+	public int threshold = 30;
 	
 	public PacManNearPPillTransition() {
 		super();
@@ -16,7 +16,7 @@ public class PacManNearPPillTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput) in;
-		return input.isPacManCloserToPowerPill() && input.getMinPacmanDistancePPill() < thresold;
+		return input.isPacManCloserToPowerPill() && input.getMinPacmanDistancePPill() < threshold;
 	}
 
 

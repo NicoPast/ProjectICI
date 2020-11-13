@@ -29,7 +29,7 @@ public class GhostNotSecuringPPillTransition implements Transition {
 		ClosestPowerPillAndDistance my_cpad = input.getClosestPowerPillAndDistance(ghost);
 		double dist_pacman = game.getDistance(game.getPacmanCurrentNodeIndex(), my_cpad.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
 
-		if(dist_pacman < my_cpad.distance) //Si el pacman llega antes que yo a mi powerpill, no puedo asegurarla
+		if(dist_pacman <= my_cpad.distance) //Si el pacman llega antes que yo a mi powerpill, no puedo asegurarla
 			return true;
 
 		for(ClosestPowerPillAndDistance cpad : input.getClosestPowerPillAndDistances().values()){
