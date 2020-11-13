@@ -46,9 +46,9 @@ public class GhostsFSM extends GhostController {
 		fsms = new EnumMap<GHOST, FSM>(GHOST.class);
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
-//			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
-			GraphFSMObserver gweak = new GraphFSMObserver(ghost.name() + "weak");
-			GraphFSMObserver gchase = new GraphFSMObserver(ghost.name()+"chase");
+			//fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
+			// GraphFSMObserver gweak = new GraphFSMObserver(ghost.name() + "weak");
+			// GraphFSMObserver gchase = new GraphFSMObserver(ghost.name()+"chase");
 //			GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
 //			fsm.addObserver(graphObserver);
 
@@ -63,25 +63,22 @@ public class GhostsFSM extends GhostController {
 			GhostsWeakTransition edible = new GhostsWeakTransition(ghost);
 			GhostsNotEdibleAndPacManFarPPill toChaseTransition = new GhostsNotEdibleAndPacManFarPPill(ghost);
 			GhostCanBeProtectedTransition cbp = new GhostCanBeProtectedTransition(ghost, mapInfo);
-			GhostCannotProtectAlly cannotProtect = new GhostCannotProtectAlly(ghost);
-			
-			GhostCanProtectAllyTransition canProtect0 = new GhostCanProtectAllyTransition(ghost, 0);
-			GhostCanProtectAllyTransition canProtect1 = new GhostCanProtectAllyTransition(ghost, 1);
-
+			GhostCannotProtectAlly cannotProtect = new GhostCannotProtectAlly(ghost);	
 			GhostCanSecurePPillTransition canSecure = new GhostCanSecurePPillTransition(ghost);
 			GhostDiedTransition died = new GhostDiedTransition(ghost);
 			GhostFarFromActiveGhostTransition far = new GhostFarFromActiveGhostTransition(ghost, mapInfo);
 			GhostNotSecuringPPillTransition notsec = new GhostNotSecuringPPillTransition(ghost);
 			GhostRespawnedTransition respawn = new GhostRespawnedTransition(ghost);
+			PacManEaten pacManEaten = new PacManEaten(ghost);
 			
+			GhostCanProtectAllyTransition canProtect0 = new GhostCanProtectAllyTransition(ghost, 0);
+			GhostCanProtectAllyTransition canProtect1 = new GhostCanProtectAllyTransition(ghost, 1);
 			IsCheckMateTransition checkmate1 = new IsCheckMateTransition(mapInfo, 0);
 			IsCheckMateTransition checkmate2 = new IsCheckMateTransition(mapInfo, 2);
 			IsCheckMateTransition checkmate3 = new IsCheckMateTransition(mapInfo, 3);
 
-			PacManEaten pacManEaten = new PacManEaten(ghost);
-
 			FSM fsmChase = new FSM(ghost.name()+" chase");
-				fsmChase.addObserver(gchase);
+				//fsmChase.addObserver(gchase);
 				fsmChase.add(chase, checkmate1, checkMate);
 				fsmChase.add(protectAllies, checkmate2, checkMate);
 				fsmChase.add(securePPill, checkmate3, checkMate);
@@ -94,7 +91,7 @@ public class GhostsFSM extends GhostController {
 				fsmChase.ready(chase);
 
 			FSM fsmWeak = new FSM(ghost.name()+" weak");
-				fsmWeak.addObserver(gweak);
+				//fsmWeak.addObserver(gweak);
 				fsmWeak.add(runAway, cbp, goToActive);
 				fsmWeak.add(goToActive, far, runAway);
 				fsmWeak.ready(runAway);
@@ -117,14 +114,14 @@ public class GhostsFSM extends GhostController {
 			fsm.ready(prisoner);
 			fsms.put(ghost, fsm);
 			
-			JFrame frame = new JFrame();
-			JPanel main = new JPanel();
-			main.setLayout(new BorderLayout());
-			main.add(gchase.getAsPanel(true, null), BorderLayout.CENTER);
-			main.add(gweak.getAsPanel(true, null), BorderLayout.SOUTH);
-			frame.getContentPane().add(main);
-			frame.pack();
-			frame.setVisible(true);
+			// JFrame frame = new JFrame();
+			// JPanel main = new JPanel();
+			// main.setLayout(new BorderLayout());
+			// main.add(gchase.getAsPanel(true, null), BorderLayout.CENTER);
+			// main.add(gweak.getAsPanel(true, null), BorderLayout.SOUTH);
+			// frame.getContentPane().add(main);
+			// frame.pack();
+			// frame.setVisible(true);
 		}
 	}
 
