@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
@@ -18,9 +17,8 @@ public class GhostsNotEdibleAndPacManFarPPill implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		GhostsEdibleTransition edible = new GhostsEdibleTransition(ghost);
 		PacManNearPPillTransition near = new PacManNearPPillTransition();
-		return !edible.evaluate(input) && !near.evaluate(input);
+		return !input.getGame().isGhostEdible(ghost) && !near.evaluate(input);
 	}
 
 	@Override

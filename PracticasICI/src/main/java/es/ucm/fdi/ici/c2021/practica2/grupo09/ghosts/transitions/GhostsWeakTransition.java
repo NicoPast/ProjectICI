@@ -5,10 +5,10 @@ import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.GHOST;
 //or pacman is near from powerPill
-public class GhostsEdibleTransition implements Transition  {
+public class GhostsWeakTransition implements Transition  {
 
 	GHOST ghost;
-	public GhostsEdibleTransition(GHOST ghost) {
+	public GhostsWeakTransition(GHOST ghost) {
 		super();
 		this.ghost = ghost;
 	}
@@ -18,7 +18,8 @@ public class GhostsEdibleTransition implements Transition  {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		return input.getGame().isGhostEdible(ghost);
+		PacManNearPPillTransition near = new PacManNearPPillTransition();
+		return input.getGame().isGhostEdible(ghost) || !near.evaluate(in);
 	}
 
 
