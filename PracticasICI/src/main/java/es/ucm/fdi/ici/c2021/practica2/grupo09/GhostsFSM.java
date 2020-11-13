@@ -25,6 +25,7 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions.GhostRespawnedT
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions.GhostsEdibleTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions.GhostsNotEdibleAndPacManFarPPill;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions.IsCheckMateTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions.PacManEaten;
 import es.ucm.fdi.ici.fsm.CompoundState;
 import es.ucm.fdi.ici.fsm.FSM;
 import es.ucm.fdi.ici.fsm.SimpleState;
@@ -74,14 +75,14 @@ public class GhostsFSM extends GhostController {
 			GhostRespawnedTransition respawn = new GhostRespawnedTransition(ghost);
 			
 			IsCheckMateTransition checkmate0 = new IsCheckMateTransition(mapInfo, 0);
-			IsCheckMateTransition checkmate1 = new IsCheckMateTransition(mapInfo, 1);
 			IsCheckMateTransition checkmate2 = new IsCheckMateTransition(mapInfo, 2);
 			IsCheckMateTransition checkmate3 = new IsCheckMateTransition(mapInfo, 3);
+
+			PacManEaten pacManEaten = new PacManEaten(ghost);
 
 			FSM fsmChase = new FSM(ghost.name()+" chase");
 			fsmChase.addObserver(gchase);
 			fsmChase.add(chase, checkmate0, checkMate);
-			fsmChase.add(checkMate, checkmate1, checkMate);
 			fsmChase.add(protectAllies, checkmate2, checkMate);
 			fsmChase.add(securePPill, checkmate3, checkMate);
 			fsmChase.add(chase, canProtect0, protectAllies);
@@ -106,9 +107,11 @@ public class GhostsFSM extends GhostController {
 
 			fsm.add(intouchable, edible, weak);
 			fsm.add(weak, toChaseTransition, intouchable);
+			fsm.add(intouchable, pacManEaten, prisoner);
 
 			fsm.add(prisoner, respawn, intouchable);
 			fsm.add(weak, died, prisoner);
+			fsm.add(weak, pacManEaten, prisoner);
 			
 //			gweak.showInFrame(null);
 			fsm.ready(prisoner);

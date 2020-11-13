@@ -59,14 +59,14 @@ public class IsCheckMateTransition implements Transition {
 		int i = 0;
 		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0 && i < visitadas.size()) {
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(g, aux[i].intersection.identificador, ghosts);
-			if(gyd.distance <= 4){
-				mapa.movesCheckMate.put(gyd.ghost, g.getNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(gyd.ghost), DM.EUCLID));
+			if(gyd.distance <= 1){
+				mapa.movesCheckMate.put(gyd.ghost, g.getPacmanCurrentNodeIndex());
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			}
 			else if (gyd.distance < g.getDistance(g.getPacmanCurrentNodeIndex(), aux[i].intersection.identificador, g.getPacmanLastMoveMade(), DM.PATH)) {
-				mapa.movesCheckMate.put(gyd.ghost, g.getNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(gyd.ghost), aux[i].intersection.identificador, g.getGhostLastMoveMade(gyd.ghost),  DM.EUCLID));
+				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
 				ghosts.remove(gyd.ghost);
 				nodosFijos.add(g.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;

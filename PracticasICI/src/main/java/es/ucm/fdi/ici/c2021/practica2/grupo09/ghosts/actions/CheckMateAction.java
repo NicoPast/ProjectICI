@@ -21,10 +21,13 @@ public class CheckMateAction implements Action {
 	public MOVE execute(Game game) {
 		if(!game.doesGhostRequireAction(ghost))
 			return null;
-		if(mapa.movesCheckMate.get(ghost) == null)
-			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.EUCLID);
+		int mypos = game.getGhostCurrentNodeIndex(ghost);
+		MOVE lastmove = game.getGhostLastMoveMade(ghost);
+		//Si no tengo movimiento o ya he llegado al destino, me dirijo al pacman
+		if(mapa.movesCheckMate.get(ghost) == null || game.getDistance(mypos, mapa.movesCheckMate.get(ghost), lastmove, DM.PATH) < 2)
+			return game.getNextMoveTowardsTarget(mypos, game.getPacmanCurrentNodeIndex(), lastmove, DM.EUCLID);
 		else {
-			return mapa.movesCheckMate.get(ghost);
+			return game.getNextMoveTowardsTarget(mypos, mapa.movesCheckMate.get(ghost), lastmove, DM.EUCLID);
 		}
 	}
 }

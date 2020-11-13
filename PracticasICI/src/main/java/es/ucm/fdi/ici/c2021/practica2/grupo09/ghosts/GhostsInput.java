@@ -40,6 +40,8 @@ public class GhostsInput extends Input {
 
 	//Usados con los metodos checkMates, porque la informacion ahi les sirve a todos
 	public boolean isCheckMate, checkMateCalculated;
+
+	public boolean pacManEaten;
 	
 	public GhostsInput(Game game, MapaInfo mapaInfo) {
 		super(game);
@@ -66,6 +68,8 @@ public class GhostsInput extends Input {
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
 
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
+
+		this.pacManEaten = game.wasPacManEaten();
 	}
 
 	private void initCppads(){
