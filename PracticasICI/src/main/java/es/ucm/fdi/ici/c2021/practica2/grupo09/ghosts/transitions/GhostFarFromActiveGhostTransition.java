@@ -16,7 +16,7 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 
 	GHOST ghost;
 	MapaInfo mymap;
-	double CONST_LIMIT_DISTANCE = 15;
+	double CONST_LIMIT_DISTANCE = 40;
 
 	public GhostFarFromActiveGhostTransition(GHOST ghost, MapaInfo map) {
 		super();

@@ -11,7 +11,7 @@ import pacman.game.Game;
 public class GhostCannotProtectAlly implements Transition {
 
 	GHOST ghost;
-	double PACMAN_MIN_DISTANCE = 15;
+	double PACMAN_MIN_DISTANCE = 40;
 
 	public GhostCannotProtectAlly(GHOST ghost) {
 		super();

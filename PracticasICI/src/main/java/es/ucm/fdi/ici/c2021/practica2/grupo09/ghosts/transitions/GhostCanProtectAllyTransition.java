@@ -11,7 +11,7 @@ import pacman.game.Game;
 public class GhostCanProtectAllyTransition implements Transition {
 
 	GHOST ghost;
-	double PACMAN_MIN_DISTANCE = 30;
+	double PACMAN_MIN_DISTANCE = 50;
 	int id;
 
 	public GhostCanProtectAllyTransition(GHOST ghost, int id) {

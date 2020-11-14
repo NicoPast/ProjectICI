@@ -31,7 +31,7 @@ public class GoToActiveGhostAction implements Action {
 
 	private double nearestGhostDistance(int[] pos, MOVE m, Game game) {
 
-		int nearestp = 0;
+		int nearestp = -1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
 			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, /* constant dm */DM.PATH);
