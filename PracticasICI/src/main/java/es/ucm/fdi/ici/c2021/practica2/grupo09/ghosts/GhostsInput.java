@@ -1,10 +1,13 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts;
 
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.auxiliarClasses.GHOSTANDDISTANCE;
 import es.ucm.fdi.ici.fsm.Input;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -39,7 +42,7 @@ public class GhostsInput extends Input {
 	private int ppillsLeft;
 
 	//Usados con los metodos checkMates, porque la informacion ahi les sirve a todos
-	public boolean isCheckMate, checkMateCalculated;
+	public boolean isCheckMate;
 
 	public boolean pacManEaten;
 	
@@ -56,20 +59,111 @@ public class GhostsInput extends Input {
 
 		mapa.update(game);
 
-		isCheckMate = false;
-		checkMateCalculated = false;
+		isCheckMate = calculateCheckMate();
 
 		initCppads();
 
 		proximaInterseccionPacMan = null;
-		if(mapa.getCheckLastModeMade()) proximaInterseccionPacMan = mapa.getInterseccionActual();
-		else if(mapa.getInterseccionActual() != null) proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
+		if(mapa.getCheckLastModeMade())
+			proximaInterseccionPacMan = mapa.getInterseccionActual();
+		else if(mapa.getInterseccionActual() != null && mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()) != null) 
+			proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
 
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
 
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
 
 		this.pacManEaten = game.wasPacManEaten();
+	}
+
+	private class interseccion_plus{
+		public interseccion intersection;
+		public interseccion prohibida;
+		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
+	};
+
+	private boolean calculateCheckMate(){
+		if(isPacManCloserToPowerPill()) 
+			return false;
+
+		Set<interseccion_plus> visitadas = new HashSet<interseccion_plus>();
+		// rellenamos un array con los nodos de los fantasmas
+		Vector<GHOST> ghosts = getActiveGhosts();
+		if(ghosts.isEmpty())
+			return false;
+
+		Vector<Integer> nodosFijos = new Vector<Integer>();
+
+		interseccion_plus[] aux = new interseccion_plus[6];
+		rellenarProxDestinosPacMan(visitadas, nodosFijos);
+		
+		if(!visitadas.isEmpty())
+			visitadas.toArray(aux);
+
+		int i = 0;
+		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0 && i < visitadas.size()) {
+			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, ghosts);
+			if(gyd.distance <= 1){
+				mapa.movesCheckMate.put(gyd.ghost, game.getPacmanCurrentNodeIndex());
+				ghosts.remove(gyd.ghost);
+				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
+				i++;
+			}
+			else if (gyd.distance <= game.getDistance(game.getPacmanCurrentNodeIndex(), aux[i].intersection.identificador, game.getPacmanLastMoveMade(), DM.PATH)) {
+				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
+				ghosts.remove(gyd.ghost);
+				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
+				i++;
+			}
+			else {
+				rellenarProxDestinosPacMan(visitadas, nodosFijos);
+				visitadas.toArray(aux);
+				i = 0;
+			}		
+		}
+		return visitadas.size() - i == 0;
+	}
+
+	private class GHOSTANDDISTANCE {
+		public GHOST ghost;
+		public double distance = Double.MAX_VALUE;
+	}
+
+	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, int inter, Vector<GHOST> libres) {
+		GHOSTANDDISTANCE gyd = new GHOSTANDDISTANCE();
+		for (GHOST ghost : libres) {
+			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), inter, game.getGhostLastMoveMade(ghost), DM.PATH);
+			if (aux < gyd.distance) {
+				gyd.ghost = ghost;
+				gyd.distance = aux;
+			}
+		}
+		return gyd;
+	}
+
+	private void rellenarProxDestinosPacMan(Set<interseccion_plus> inters, Vector<Integer> nodosFijos) {
+		interseccion intActual = mapa.getInterseccionActual();
+		if (inters.isEmpty()){
+			if(mapa.getCheckLastModeMade()) 
+				inters.add(new interseccion_plus(intActual, intActual));
+			else 
+				inters.add(new interseccion_plus(mapa.getInterseccion(intActual.destinos.get(mapa.getUltimoMovReal())), intActual));
+		}
+		else {
+			Set<interseccion_plus> aux = new HashSet<interseccion_plus>(inters);
+			inters.clear();
+			// Buscamos las intersecciones correspondientes a los movimientos posibles
+			// y si ya está esa intersección fijada no expandimos su rama
+			for (interseccion_plus a : aux) {
+				if (!nodosFijos.contains(a.intersection.identificador)) {
+					for (MOVE mo : a.intersection.destinos.keySet()) {
+						if(mapa.getInterseccion(a.intersection.destinos.get(mo)) != a.prohibida){
+							inters.add(new interseccion_plus(mapa.getInterseccion(a.intersection.destinos.get(mo)), a.intersection));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void initCppads(){
