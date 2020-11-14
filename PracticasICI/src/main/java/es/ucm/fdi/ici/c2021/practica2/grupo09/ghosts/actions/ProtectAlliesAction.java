@@ -34,7 +34,7 @@ public class ProtectAlliesAction implements Action {
 		int nearestP = -1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.EUCLID);
+			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.PATH);
 			if (aux < nearestDist) {
 				nearestDist = aux;
 				nearestP = p;
@@ -56,7 +56,7 @@ public class ProtectAlliesAction implements Action {
 			// vemos cuál es la distancia al fantasma edible más cercano del pacman para su
 			// último movimiento
 			int nearest = nearestGhostDistance(game, game.getPacmanCurrentNodeIndex(), ediblePos,
-					mymap.getUltimoMovReal());
+					game.getPacmanLastMoveMade());
 			// No hace falta comprobar si yo estoy más cerca de él que el pacman
 			// porque el otro fantasma tratará de acercarse a mi
 

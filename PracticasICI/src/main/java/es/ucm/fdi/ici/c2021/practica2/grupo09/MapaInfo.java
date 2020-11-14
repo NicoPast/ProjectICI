@@ -179,12 +179,13 @@ public class MapaInfo {
 
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {
 		interseccion interLlegada = getInterseccion(proximoNodo);
-		for (MOVE m : MOVE.values()) {
-			if (interLlegada.distancias.get(m) != null
-					&& interLlegada.destinos.get(m) == interseccionActual.identificador
-					&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
-				return m;
-		}
+		if (interLlegada != null)
+			for (MOVE m : MOVE.values()) {
+				if (interLlegada.distancias.get(m) != null
+						&& interLlegada.destinos.get(m) == interseccionActual.identificador
+						&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
+					return m;
+			}
 		return MOVE.NEUTRAL; // nunca deberia llegar
 	}
 

@@ -46,9 +46,9 @@ public class GhostsFSM extends GhostController {
 		fsms = new EnumMap<GHOST, FSM>(GHOST.class);
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());
-			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
-			GraphFSMObserver gweak = new GraphFSMObserver(ghost.name() + "weak");
-			GraphFSMObserver gchase = new GraphFSMObserver(ghost.name()+"chase");
+//			fsm.addObserver(new ConsoleFSMObserver(ghost.name()));
+//			GraphFSMObserver gweak = new GraphFSMObserver(ghost.name() + "weak");
+//			GraphFSMObserver gchase = new GraphFSMObserver(ghost.name()+"chase");
 			// GraphFSMObserver graphObserver = new GraphFSMObserver(ghost.name());
 			// fsm.addObserver(graphObserver);
 
@@ -78,7 +78,7 @@ public class GhostsFSM extends GhostController {
 			IsCheckMateTransition checkmate3 = new IsCheckMateTransition(mapInfo, 3);
 
 			FSM fsmChase = new FSM(ghost.name()+" chase");
-				fsmChase.addObserver(gchase);
+//				fsmChase.addObserver(gchase);
 				fsmChase.add(chase, checkmate1, checkMate);
 				fsmChase.add(chase, canProtect0, protectAllies);
 				fsmChase.add(chase, canSecure, securePPill);
@@ -93,7 +93,7 @@ public class GhostsFSM extends GhostController {
 				fsmChase.ready(chase);
 
 			FSM fsmWeak = new FSM(ghost.name()+" weak");
-				fsmWeak.addObserver(gweak);
+//				fsmWeak.addObserver(gweak);
 				fsmWeak.add(runAway, cbp, goToActive);
 				fsmWeak.add(goToActive, far, runAway);
 				fsmWeak.ready(runAway);
@@ -117,14 +117,14 @@ public class GhostsFSM extends GhostController {
 			fsm.ready(prisoner);
 			fsms.put(ghost, fsm);
 			
-			JFrame frame = new JFrame();
-			JPanel main = new JPanel();
-			main.setLayout(new BorderLayout());
-			main.add(gchase.getAsPanel(true, null), BorderLayout.CENTER);
-			main.add(gweak.getAsPanel(true, null), BorderLayout.SOUTH);
-			frame.getContentPane().add(main);
-			frame.pack();
-			frame.setVisible(true);
+//			JFrame frame = new JFrame();
+//			JPanel main = new JPanel();
+//			main.setLayout(new BorderLayout());
+//			main.add(gchase.getAsPanel(true, null), BorderLayout.CENTER);
+//			main.add(gweak.getAsPanel(true, null), BorderLayout.SOUTH);
+//			frame.getContentPane().add(main);
+//			frame.pack();
+//			frame.setVisible(true);
 		}
 	}
 

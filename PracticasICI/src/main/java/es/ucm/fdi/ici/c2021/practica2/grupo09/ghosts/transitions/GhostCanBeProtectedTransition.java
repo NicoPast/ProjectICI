@@ -16,7 +16,7 @@ public class GhostCanBeProtectedTransition implements Transition {
 
 	GHOST ghost;
 	MapaInfo mymap;
-	double CONST_LIMIT_DISTANCE = 15;
+	double CONST_LIMIT_DISTANCE = 10;
 
 	public GhostCanBeProtectedTransition(GHOST ghost, MapaInfo map) {
 		super();

@@ -22,7 +22,9 @@ public class GhostCannotProtectAlly implements Transition {
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput) in;
 		Game game = input.getGame();
-		if (!game.doesGhostRequireAction(ghost) || game.isGhostEdible(ghost)) {
+		if(game.isGhostEdible(ghost))
+			return true;
+		if (game.doesGhostRequireAction(ghost)) {
 			Vector<GHOST> edibleGhosts = input.getEdibleGhosts();
 			// si ya no hay fantasmas comestibles no hay que proteger nada
 			if (edibleGhosts.isEmpty())
@@ -38,7 +40,7 @@ public class GhostCannotProtectAlly implements Transition {
 			// último
 			// movimiento
 			double nearest = input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
-					input.getPacmanRealMoveMade()).d;
+					game.getPacmanLastMoveMade()).d;
 			// No hace falta comprobar si yo estoy más cerca de él que el pacman
 			// porque el otro fantasma tratará de acercarse a mi
 
