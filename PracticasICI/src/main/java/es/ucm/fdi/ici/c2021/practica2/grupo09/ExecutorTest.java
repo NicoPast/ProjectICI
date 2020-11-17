@@ -2,8 +2,6 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09;
 
 import pacman.Executor;
 import pacman.controllers.GhostController;
-import pacman.controllers.HumanController;
-import pacman.controllers.KeyBoardInput;
 import pacman.controllers.PacmanController;
 
 public class ExecutorTest {
@@ -12,7 +10,7 @@ public class ExecutorTest {
 		Executor executor = new Executor.Builder()
 		.setTickLimit(4000)
 		.setVisual(true)
-		.setScaleFactor(3.0)		
+		.setScaleFactor(3.0)
 		.build();
 		
 		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacManFSM();

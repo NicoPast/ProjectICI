@@ -10,7 +10,8 @@ public class TranPerTransition implements Transition{
 	public boolean evaluate(Input in) {
 		MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
 		
-		return input.wasPowerPillEaten();
+		int numGhostEadable = input.numGhostEadable();
+		return numGhostEadable > 0;
 	}
 
 	@Override

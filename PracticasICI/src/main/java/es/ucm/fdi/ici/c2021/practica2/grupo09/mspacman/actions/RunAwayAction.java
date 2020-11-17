@@ -20,7 +20,7 @@ public class RunAwayAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
-		return MOVE.NEUTRAL;
+		return getBestMove(game);
 	}
 	
 	private MOVE getBestMove(Game game) {		

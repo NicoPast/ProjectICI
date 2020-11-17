@@ -10,7 +10,7 @@ import pacman.game.Constants.MOVE;
 public class ChaseAction implements Action{
 
 	MapaInfo mapInfo;
-	double distanciaPerseguir = 140;
+	double distanciaPerseguir = 400;
 	
 	public ChaseAction(MapaInfo map) {
 		mapInfo = map;

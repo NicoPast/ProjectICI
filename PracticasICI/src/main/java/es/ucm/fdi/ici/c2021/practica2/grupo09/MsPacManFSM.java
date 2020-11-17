@@ -8,8 +8,11 @@ import javax.swing.JPanel;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChaseAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChillAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatGhostDangerAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatPowerPillAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RunAwayAction;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComComFanTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComFanComTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComHuirTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComPerTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirComTransition;
@@ -55,20 +58,25 @@ public class MsPacManFSM extends PacmanController {
     	
     	
     	//Creacion de maquina de estados para usar en el CompoundState
-    	FSM cfsm1 = new FSM("Compound1");
+    	FSM cfsm1 = new FSM("Danger");
     	GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
     	cfsm1.addObserver(c1observer);
     	
     	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", new EatPowerPillAction(mapInfo));
     	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo)); 	
+    	SimpleState eatGhostDangerState = new SimpleState("eatGhostDanger", new EatGhostDangerAction(mapInfo));
     	Transition comHuirTran = new ComHuirTransition();
     	Transition comPerTran = new ComPerTransition();
     	Transition huirComerTran = new HuirComTransition();
+    	Transition comPowComFanTran = new ComComFanTransition();
+    	Transition comFanComPowTran = new ComFanComTransition();
     	cfsm1.add(eatPowerPillState, comHuirTran, runAwayState);
     	cfsm1.add(runAwayState, huirComerTran, eatPowerPillState);
+    	cfsm1.add(eatPowerPillState, comPowComFanTran, eatGhostDangerState);
+    	cfsm1.add(eatGhostDangerState, comFanComPowTran, eatPowerPillState);
     	cfsm1.ready(eatPowerPillState);
     	
-    	CompoundState peligroCompoundState = new CompoundState("compound1", cfsm1);
+    	CompoundState peligroCompoundState = new CompoundState("danger", cfsm1);
     	
     	fsm.add(chillState, tranCom, peligroCompoundState);
     	fsm.add(chillState, tranPer, chaseState);

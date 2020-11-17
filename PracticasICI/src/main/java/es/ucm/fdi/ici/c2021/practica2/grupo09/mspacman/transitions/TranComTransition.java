@@ -12,10 +12,7 @@ public class TranComTransition implements Transition{
 	public boolean evaluate(Input in) {
 		MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
 		
-		if(input.distToNearestGhost() < distanciaPeligro) {
-			return true;
-		}
-		else return false;
+		return input.distToNearestGhost() < distanciaPeligro;
 	}
 
 	@Override

@@ -47,6 +47,26 @@ public class MsPacManInput extends Input {
 					game.getGhostCurrentNodeIndex(g), DM.PATH);
 			//System.out.println(distancia);
 			//si es -1 es que está en la caseta de inicio
+			if (distancia != -1 && (distanciaAux == 0 || distancia < distanciaAux)) { // si tienes un fantasma cerca que te puedes comer
+				distanciaAux = distancia;
+			}
+		}
+
+		//return false;
+		//System.out.println(distanciaAux);
+		return distanciaAux;
+	}
+	
+	public double distToNearestGhostNonEadable() {
+		double distanciaAux = Double.MAX_VALUE; //para asegurarnos que si no hay fantasmas cerca, devuelva false
+		if(mapInfo.getInterseccionActual() == null) return distanciaAux;
+		
+		for (GHOST g : GHOST.values()) {
+			double distancia = game.getDistance(
+					mapInfo.getInterseccionActual().identificador,
+					game.getGhostCurrentNodeIndex(g), DM.PATH);
+			//System.out.println(distancia);
+			//si es -1 es que está en la caseta de inicio
 			if (distancia != -1 && !game.isGhostEdible(g) && (distanciaAux == 0 || distancia < distanciaAux)) { // si tienes un fantasma cerca que te puedes comer
 				distanciaAux = distancia;
 			}

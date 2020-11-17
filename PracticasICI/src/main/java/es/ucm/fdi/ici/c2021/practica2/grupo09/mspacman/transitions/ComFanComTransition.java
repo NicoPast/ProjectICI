@@ -4,23 +4,18 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 
-public class PerComTransition implements Transition {
-
-	private double distanciaPeligro = 40;
+public class ComFanComTransition implements Transition {
 	
 	@Override
 	public boolean evaluate(Input in) {
 		MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
 		
-		//quedan fantasmas vivos
-		//buscar el mas cercano
-		//mirar si en esa direccion hay otro fantasma que me pueda comer
-
-		return (input.distToNearestGhostNonEadable() < distanciaPeligro && input.numGhostEadable() > 0);
+		return input.numGhostEadable() == 0;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("AUN FALTA transition");
+		return String.format("No ghosts eadable danger transition");
 	}
+
 }
