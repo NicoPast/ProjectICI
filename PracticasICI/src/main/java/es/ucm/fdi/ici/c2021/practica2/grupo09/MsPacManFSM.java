@@ -11,13 +11,12 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChillAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatGhostDangerAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatPowerPillAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RunAwayAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComComFanTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComFanComTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComFanPerTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComHuirTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComPerTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirComTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirTranTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerComTransition;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerComFanTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerTranTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranComTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranPerTransition;
@@ -48,14 +47,12 @@ public class MsPacManFSM extends PacmanController {
     	fsm.addObserver(observer);
     	
     	SimpleState chillState = new SimpleState("chillState", new ChillAction(mapInfo));
-    	SimpleState chaseState = new SimpleState("chaseState", new ChaseAction(mapInfo));
     	
     	Transition tranCom = new TranComTransition();
     	Transition tranPer = new TranPerTransition();
     	Transition perTran = new PerTranTransition();
-    	Transition perCom = new PerComTransition();
     	Transition huirTran = new HuirTranTransition();
-    	
+    	Transition comPerTran = new ComPerTransition();
     	
     	//Creacion de maquina de estados para usar en el CompoundState
     	FSM cfsm1 = new FSM("Danger");
@@ -63,27 +60,38 @@ public class MsPacManFSM extends PacmanController {
     	cfsm1.addObserver(c1observer);
     	
     	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", new EatPowerPillAction(mapInfo));
-    	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo)); 	
-    	SimpleState eatGhostDangerState = new SimpleState("eatGhostDanger", new EatGhostDangerAction(mapInfo));
+    	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo));
     	Transition comHuirTran = new ComHuirTransition();
-    	Transition comPerTran = new ComPerTransition();
     	Transition huirComerTran = new HuirComTransition();
-    	Transition comPowComFanTran = new ComComFanTransition();
-    	Transition comFanComPowTran = new ComFanComTransition();
     	cfsm1.add(eatPowerPillState, comHuirTran, runAwayState);
     	cfsm1.add(runAwayState, huirComerTran, eatPowerPillState);
-    	cfsm1.add(eatPowerPillState, comPowComFanTran, eatGhostDangerState);
-    	cfsm1.add(eatGhostDangerState, comFanComPowTran, eatPowerPillState);
     	cfsm1.ready(eatPowerPillState);
     	
     	CompoundState peligroCompoundState = new CompoundState("danger", cfsm1);
     	
+    	
+    	//Creacion de maquina de estados para usar en el CompoundState
+    	FSM cfsm2 = new FSM("Chase");
+    	GraphFSMObserver c2observer = new GraphFSMObserver(cfsm2.toString());
+    	cfsm2.addObserver(c2observer);
+    	
+    	SimpleState chaseState = new SimpleState("chaseState", new ChaseAction(mapInfo));
+    	SimpleState eatGhostShaseState = new SimpleState("chaseStateDanger", new EatGhostDangerAction(mapInfo));
+    	Transition perComFan = new PerComFanTransition();
+    	Transition comFanPer = new ComFanPerTransition();
+    	cfsm2.add(chaseState, perComFan, eatGhostShaseState);
+    	cfsm2.add(eatGhostShaseState, comFanPer, chaseState);
+    	cfsm2.ready(chaseState);
+    	
+    	CompoundState perseguirCompoundState = new CompoundState("chase", cfsm2);
+    	
     	fsm.add(chillState, tranCom, peligroCompoundState);
-    	fsm.add(chillState, tranPer, chaseState);
-    	fsm.add(chaseState, perTran, chillState);
-    	fsm.add(chaseState, perCom, peligroCompoundState);
+    	
+    	//cambiar
+    	fsm.add(chillState, tranPer, perseguirCompoundState);
+    	fsm.add(perseguirCompoundState, perTran, chillState);
+    	fsm.add(peligroCompoundState,comPerTran , perseguirCompoundState);    	
     	fsm.add(peligroCompoundState, huirTran, chillState);
-    	fsm.add(peligroCompoundState, comPerTran, chaseState);
     	
     	fsm.ready(chillState);
     	
@@ -92,6 +100,7 @@ public class MsPacManFSM extends PacmanController {
     	main.setLayout(new BorderLayout());
     	main.add(observer.getAsPanel(true, null), BorderLayout.CENTER);
     	main.add(c1observer.getAsPanel(true, null), BorderLayout.SOUTH);
+    	main.add(c2observer.getAsPanel(true, null), BorderLayout.WEST);
     	frame.getContentPane().add(main);
     	frame.pack();
     	frame.setVisible(true);

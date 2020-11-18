@@ -4,7 +4,7 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 
-public class PerComTransition implements Transition {
+public class PerComFanTransition implements Transition {
 
 	private double distanciaPeligro = 40;
 	
@@ -16,11 +16,11 @@ public class PerComTransition implements Transition {
 		//buscar el mas cercano
 		//mirar si en esa direccion hay otro fantasma que me pueda comer
 
-		return (input.distToNearestGhostNonEadable() < distanciaPeligro && input.numGhostEadable() > 0);
+		return (input.distToNearestGhostNonEadable() < distanciaPeligro);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("AUN FALTA transition");
+		return String.format("Non eadable ghost near");
 	}
 }

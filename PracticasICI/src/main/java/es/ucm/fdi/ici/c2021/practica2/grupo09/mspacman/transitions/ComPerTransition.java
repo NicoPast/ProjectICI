@@ -12,7 +12,7 @@ public class ComPerTransition implements Transition{
 		
 		int numGhostEadable = input.numGhostEadable();
 		
-		return numGhostEadable == 4;
+		return numGhostEadable > 0;
 	}
 
 	@Override
