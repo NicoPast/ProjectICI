@@ -47,6 +47,7 @@ public class MsPacManFSM extends PacmanController {
     	fsm.addObserver(observer);
     	
     	SimpleState chillState = new SimpleState("chillState", new ChillAction(mapInfo));
+    	SimpleState chaseState = new SimpleState("chaseState", new EatGhostDangerAction(mapInfo));
     	
     	Transition tranCom = new TranComTransition();
     	Transition tranPer = new TranPerTransition();
@@ -70,28 +71,14 @@ public class MsPacManFSM extends PacmanController {
     	CompoundState peligroCompoundState = new CompoundState("danger", cfsm1);
     	
     	
-    	//Creacion de maquina de estados para usar en el CompoundState
-    	FSM cfsm2 = new FSM("Chase");
-    	GraphFSMObserver c2observer = new GraphFSMObserver(cfsm2.toString());
-    	cfsm2.addObserver(c2observer);
-    	
-    	SimpleState chaseState = new SimpleState("chaseState", new ChaseAction(mapInfo));
-    	SimpleState eatGhostShaseState = new SimpleState("chaseStateDanger", new EatGhostDangerAction(mapInfo));
-    	Transition perComFan = new PerComFanTransition();
-    	//Transition comFanPer = new ComFanPerTransition();
-    	cfsm2.add(chaseState, perComFan, eatGhostShaseState);
-    	//cfsm2.add(eatGhostShaseState, comFanPer, chaseState);
-    	cfsm2.ready(chaseState);
-    	
-    	CompoundState perseguirCompoundState = new CompoundState("chase", cfsm2);
-    	
     	fsm.add(chillState, tranCom, peligroCompoundState);
     	
     	//cambiar
-    	fsm.add(chillState, tranPer, perseguirCompoundState);
-    	fsm.add(perseguirCompoundState, perTran, chillState);
-    	fsm.add(peligroCompoundState,comPerTran , perseguirCompoundState);    	
+    	fsm.add(chillState, tranPer, chaseState);
+    	fsm.add(chaseState, perTran, chillState);
+    	fsm.add(peligroCompoundState,comPerTran , chaseState);    	
     	fsm.add(peligroCompoundState, huirTran, chillState);
+    	
     	
     	fsm.ready(chillState);
     	
@@ -100,7 +87,6 @@ public class MsPacManFSM extends PacmanController {
     	main.setLayout(new BorderLayout());
     	main.add(observer.getAsPanel(true, null), BorderLayout.CENTER);
     	main.add(c1observer.getAsPanel(true, null), BorderLayout.SOUTH);
-    	main.add(c2observer.getAsPanel(true, null), BorderLayout.WEST);
     	frame.getContentPane().add(main);
     	frame.pack();
     	frame.setVisible(true);
