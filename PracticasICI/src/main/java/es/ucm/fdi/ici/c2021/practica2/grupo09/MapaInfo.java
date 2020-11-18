@@ -20,7 +20,7 @@ public class MapaInfo {
 	private boolean mapaHecho = false;
 	private	String mapaActual = "a";
 	private interseccion interseccionActual;
-	private DM metrica = DM.MANHATTAN;
+	private DM metrica = DM.PATH;
 	
 	public EnumMap<GHOST, interseccion> destinosGhosts;
 	public EnumMap<GHOST, MOVE> movesCheckMate;

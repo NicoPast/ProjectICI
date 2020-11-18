@@ -78,9 +78,9 @@ public class MsPacManFSM extends PacmanController {
     	SimpleState chaseState = new SimpleState("chaseState", new ChaseAction(mapInfo));
     	SimpleState eatGhostShaseState = new SimpleState("chaseStateDanger", new EatGhostDangerAction(mapInfo));
     	Transition perComFan = new PerComFanTransition();
-    	Transition comFanPer = new ComFanPerTransition();
+    	//Transition comFanPer = new ComFanPerTransition();
     	cfsm2.add(chaseState, perComFan, eatGhostShaseState);
-    	cfsm2.add(eatGhostShaseState, comFanPer, chaseState);
+    	//cfsm2.add(eatGhostShaseState, comFanPer, chaseState);
     	cfsm2.ready(chaseState);
     	
     	CompoundState perseguirCompoundState = new CompoundState("chase", cfsm2);

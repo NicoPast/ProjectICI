@@ -6,13 +6,12 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class ComFanPerTransition implements Transition{
 
-	private double distanciaPeligro = 40;
 	
 	@Override
 	public boolean evaluate(Input in) {
 		MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
 		
-		return input.distToNearestGhostNonEadable() > distanciaPeligro;
+		return input.numGhostEadable() == 0;
 	}
 
 	@Override

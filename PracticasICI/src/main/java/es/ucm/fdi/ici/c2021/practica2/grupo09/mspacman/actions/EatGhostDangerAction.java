@@ -34,6 +34,7 @@ public class EatGhostDangerAction implements Action {
 
 		if(ghostInWay(moveToGhost, game)) {
 			//usar get best move
+			System.out.println("BestMove");
 			return getBestMove(game);
 		}
 		else {
@@ -88,32 +89,46 @@ public class EatGhostDangerAction implements Action {
 		Vector<MOVE> powerPills = new Vector<MOVE>();
 		Vector<MOVE> noPills = new Vector<MOVE>();
 		Vector<MOVE> pills = new Vector<MOVE>();
+		Vector<GHOST> fantasmasComibles = new Vector<GHOST>();
 		
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		
 		for (MOVE m : MOVE.values()) { //no puedes volver para atras
 			//mira si m no es de donde vienes, si no es neutral y si existe camino
+			
 			if (m != mapInfo.getUltimoMovimientoDeLlegada() && m != MOVE.NEUTRAL && interseccionActual.distancias.get(m) != null) {
 				
 				boolean hasGhost = false;
+				GHOST eadableGhost = null;
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
 				for (GHOST g : GHOST.values()) {
 					double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 							DM.PATH);
 					if (distancia != -1 && distancia < interseccionActual.distancias.get(m)) { // no pillar el camino						
-						hasGhost = true;
-						fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
-						break; //hacemos el breake por que ya no nos interesa seguir buscando
+						
+						if(!game.isGhostEdible(g)){
+							hasGhost = true;
+							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
+							break; //hacemos el breake por que ya no nos interesa seguir buscando
+						}
+						else {							
+							eadableGhost = g;						
+						}
+
 					}
 				}
+								
 				
 				if(!hasGhost) {
 						//mira si hay powerPills (en este momento no estamos en peligro por tanto no nos interesa comerlas)
-					if(interseccionActual.powerPill.get(m) > 0)
+					if(eadableGhost != null)
+						fantasmasComibles.add(eadableGhost);
+					else if(interseccionActual.powerPill.get(m) > 0)
 						powerPills.add(m);
 					else if(interseccionActual.pills.get(m)==0)//mira si el camino no tiene pills
 						noPills.add(m);
 					else if(interseccionActual.pills.get(m)>0) pills.add(m); //en el camino solo hay pills
+					
 				}
 			}
 		}	
@@ -122,7 +137,22 @@ public class EatGhostDangerAction implements Action {
 		int aux = 0;
 		MOVE actual = MOVE.NEUTRAL;
 		
-		if(pills.size()>0) {
+		if(fantasmasComibles.size()>0) {
+			GHOST ghostAux = null;
+			double auxDistGhost = Double.MAX_VALUE;
+			
+			for(GHOST g : fantasmasComibles) {
+				double dis = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
+						mapInfo.getMetrica());
+				if(dis < auxDistGhost) {
+					ghostAux = g;
+					auxDistGhost = dis;
+				}
+			}
+			actual = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
+					game.getGhostCurrentNodeIndex(ghostAux), game.getPacmanLastMoveMade(), mapInfo.getMetrica());
+		}
+		else if(pills.size()>0) {
 			for(int i=0;i<pills.size();i++) { //si hay pills
 					//System.out.println(interseccionActual.pills.get(pills.get(i)));
 				if(interseccionActual.pills.get(pills.get(i)) >= aux) {
