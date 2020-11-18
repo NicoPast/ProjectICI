@@ -20,8 +20,34 @@ public class RunAwayAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
-		return getBestMove(game);
+		//ir a por la pill mas cercana sin que te maten
+		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
+		
+		int pillCercana = getClosestPill(game);
+		
+		interseccion interseccionActual = mapInfo.getInterseccionActual();
+		
+		MOVE direccionPosible = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), 
+				pillCercana, mapInfo.getMetrica());
+		
+		boolean fantasmaEncontrado = false;
+		
+		for(GHOST g:GHOST.values()){ //recorremos todos los fantasmas
+			double distanciaFantasma = game.getDistance(interseccionActual.destinos.get(direccionPosible), 
+					game.getGhostCurrentNodeIndex(g), DM.PATH);
+			
+			if(distanciaFantasma <= interseccionActual.distancias.get(direccionPosible)) {//por este camino me pillan						
+				fantasmaEncontrado = true;
+				break;
+			}
+		}
+		
+		if(fantasmaEncontrado) return getBestMove(game);
+		else return direccionPosible;
 	}
+	
+	
+	
 	
 	private MOVE getBestMove(Game game) {		
 
