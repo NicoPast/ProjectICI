@@ -36,6 +36,8 @@ public class GhostsInput extends Input {
 	private ClosestPowerPillAndDistance cppad_PacMan;
 	private EnumMap<GHOST, ClosestPowerPillAndDistance> cppad_Ghosts;
 
+	private EnumMap<GHOST, Double> distanceToPacMan;
+
 	private interseccion proximaInterseccionPacMan;
 	private boolean isPacManCloserToAnyPowerPill;
 
@@ -74,6 +76,21 @@ public class GhostsInput extends Input {
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
 
 		this.pacManEaten = game.wasPacManEaten();
+
+		getDistancesToPacMan();
+	}
+
+
+	private void getDistancesToPacMan() {
+		distanceToPacMan = new EnumMap<>(GHOST.class);
+
+		for(GHOST g : GHOST.values()){
+			distanceToPacMan.put(g, game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(g), DM.PATH));
+		}
+	}
+
+	public double getDistanceToPacMan(GHOST ghostType) {
+		return distanceToPacMan.get(ghostType);
 	}
 
 	private class interseccion_plus{

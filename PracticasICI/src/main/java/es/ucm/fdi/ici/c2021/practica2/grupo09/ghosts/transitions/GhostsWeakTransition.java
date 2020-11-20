@@ -18,7 +18,7 @@ public class GhostsWeakTransition implements Transition  {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
-		PacManNearPPillTransition near = new PacManNearPPillTransition();
+		PacManNearPPillTransition near = new PacManNearPPillTransition(ghost);
 		return input.getGame().isGhostEdible(ghost) || near.evaluate(in);
 	}
 
