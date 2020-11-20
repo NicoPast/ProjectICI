@@ -98,7 +98,7 @@ public class GhostsInput extends Input {
 		public interseccion prohibida;
 		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
 	};
-
+	
 	private boolean calculateCheckMate(){
 		if(isPacManCloserToPowerPill()) 
 			return false;

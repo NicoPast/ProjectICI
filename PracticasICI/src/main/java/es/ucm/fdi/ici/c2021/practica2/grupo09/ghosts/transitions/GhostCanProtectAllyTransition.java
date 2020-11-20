@@ -3,15 +3,18 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 import java.util.Vector;
 
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput.NODEANDDISTANCE;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
+import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
 
 public class GhostCanProtectAllyTransition implements Transition {
 
 	GHOST ghost;
-	double PACMAN_MIN_DISTANCE = 50;
+	double PACMAN_MIN_DISTANCE = 30;
+	double MAX_DISTANCE_TO_WEAK_GHOST= 20;
 	int id;
 
 	public GhostCanProtectAllyTransition(GHOST ghost, int id) {
@@ -23,6 +26,9 @@ public class GhostCanProtectAllyTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput) in;
+		PacManNearPPillTransition nearPPill=new PacManNearPPillTransition(ghost);
+		if(nearPPill.evaluate(in))
+			return false;
 		Game game = input.getGame();
 		if (game.doesGhostRequireAction(ghost) && !game.isGhostEdible(ghost)) {
 			Vector<GHOST> edibleGhosts = input.getEdibleGhosts();
@@ -34,15 +40,17 @@ public class GhostCanProtectAllyTransition implements Transition {
 			for (int i = 0; i < edibleGhosts.size(); i++) {
 				ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
 			}
-			// vemos cu�l es la distancia al fantasma edible m�s cercano del pacman para su
-			// �ltimo
-			// movimiento
-			double nearest = input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
-					game.getPacmanLastMoveMade()).d;
-			// No hace falta comprobar si yo estoy m�s cerca de �l que el pacman
-			// porque el otro fantasma tratar� de acercarse a mi
+			// vemos cual es la distancia al fantasma edible m�s cercano del pacman para su
+			// ultimo movimiento
+			NODEANDDISTANCE a=input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
+					game.getPacmanLastMoveMade());
+			double nearest = a.d;
+			// No hace falta comprobar si yo estoy mas cerca de el que el pacman
+			// porque el otro fantasma tratara de acercarse a mi pero conviene comprobar
+			//que estoy lo suficientemente cerca
 
-			return nearest < PACMAN_MIN_DISTANCE;
+			return nearest < PACMAN_MIN_DISTANCE && 
+					game.getDistance(game.getGhostCurrentNodeIndex(ghost), a.n, DM.EUCLID)<MAX_DISTANCE_TO_WEAK_GHOST;
 
 		} else
 			return false;
