@@ -34,7 +34,7 @@ public class ProtectAlliesAction implements Action {
 		int nearestP = -1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.PATH);
+			double aux = game.getDistance(myPos, p, m, DM.PATH);
 			if (aux < nearestDist) {
 				nearestDist = aux;
 				nearestP = p;
@@ -61,7 +61,7 @@ public class ProtectAlliesAction implements Action {
 			// porque el otro fantasma tratará de acercarse a mi
 
 			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), nearest,
-					game.getGhostLastMoveMade(ghost), /* constant */ DM.EUCLID);
+					game.getGhostLastMoveMade(ghost),DM.EUCLID);
 		} else
 			return MOVE.NEUTRAL;
 

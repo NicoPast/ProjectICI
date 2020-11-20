@@ -26,6 +26,7 @@ public class GhostCanProtectAllyTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput) in;
+		//Si pacman está cerca de una PowerPill no puedo proteger a los aliados por si me come
 		PacManNearPPillTransition nearPPill=new PacManNearPPillTransition(ghost);
 		if(nearPPill.evaluate(in))
 			return false;
@@ -40,17 +41,18 @@ public class GhostCanProtectAllyTransition implements Transition {
 			for (int i = 0; i < edibleGhosts.size(); i++) {
 				ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
 			}
-			// vemos cual es la distancia al fantasma edible mï¿½s cercano del pacman para su
+			// vemos cual es la distancia al fantasma edible mas cercano del pacman para su
 			// ultimo movimiento
-			NODEANDDISTANCE a=input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
+			NODEANDDISTANCE nearestNodeAndDistance=input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
 					game.getPacmanLastMoveMade());
-			double nearest = a.d;
+			double nearest = nearestNodeAndDistance.d;
 			// No hace falta comprobar si yo estoy mas cerca de el que el pacman
 			// porque el otro fantasma tratara de acercarse a mi pero conviene comprobar
 			//que estoy lo suficientemente cerca
 
 			return nearest < PACMAN_MIN_DISTANCE && 
-					game.getDistance(game.getGhostCurrentNodeIndex(ghost), a.n, DM.EUCLID)<MAX_DISTANCE_TO_WEAK_GHOST;
+					game.getDistance(game.getGhostCurrentNodeIndex(ghost), nearestNodeAndDistance.n, DM.EUCLID)
+					< MAX_DISTANCE_TO_WEAK_GHOST;
 
 		} else
 			return false;

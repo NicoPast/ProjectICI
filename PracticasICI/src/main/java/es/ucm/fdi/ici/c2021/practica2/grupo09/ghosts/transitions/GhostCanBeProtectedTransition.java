@@ -16,7 +16,7 @@ public class GhostCanBeProtectedTransition implements Transition {
 
 	GHOST ghost;
 	MapaInfo mymap;
-	double CONST_LIMIT_DISTANCE = 40;
+	double CONST_LIMIT_DISTANCE = 20;
 
 	public GhostCanBeProtectedTransition(GHOST ghost, MapaInfo map) {
 		super();
@@ -38,19 +38,18 @@ public class GhostCanBeProtectedTransition implements Transition {
 				int[] posGhosts = new int[3];
 				int i = 0;
 				i = 0;
-				// rellenamos las posiciones de los fantasmas activos para ver a qu� distancia
-				// esta el m�s cercano
+				// rellenamos las posiciones de los fantasmas activos para ver a que distancia
+				// esta el mas cercano
 				for (GHOST gh : actives) {
 					if (gh == ghost)
 						continue;
 					posGhosts[i] = g.getGhostCurrentNodeIndex(gh);
 					i++;
 				}
-				MOVE prohibido = g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(ghost),
-						g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(ghost),
-						/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
+				
+				MOVE prohibido = input.GetMoveToPacman(ghost);
 				double nearest = 0;
-				//elegimos el fantasma m�s cercano buscando en todas direcciones excepto
+				//elegimos el fantasma mas cercano buscando en todas direcciones excepto
 				//en la prohibida
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)
@@ -61,7 +60,7 @@ public class GhostCanBeProtectedTransition implements Transition {
 
 					}
 				}
-				// si hay alg�n fantasma activo lo suficientemente cerca, hay que perseguirlo
+				// si hay algun fantasma activo lo suficientemente cerca, hay que perseguirlo
 				// para que si viene el pacman el fantasma lo mate
 				return nearest < CONST_LIMIT_DISTANCE;
 

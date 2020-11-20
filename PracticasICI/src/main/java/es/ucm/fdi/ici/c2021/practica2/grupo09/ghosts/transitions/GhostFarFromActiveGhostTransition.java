@@ -16,7 +16,7 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 
 	GHOST ghost;
 	MapaInfo mymap;
-	double CONST_LIMIT_DISTANCE = 40;
+	double CONST_LIMIT_DISTANCE = 32;
 
 	public GhostFarFromActiveGhostTransition(GHOST ghost, MapaInfo map) {
 		super();
@@ -42,17 +42,15 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 				int[] posGhosts = new int[3];
 				int i = 0;
 				i = 0;
-				// rellenamos las posiciones de los fantasmas activos para ver a qu� distancia
-				// esta el m�s cercano
+				// rellenamos las posiciones de los fantasmas activos para ver a que distancia
+				// esta el mas cercano
 				for (GHOST gh : actives) {
 					if (gh == ghost)
 						continue;
 					posGhosts[i] = g.getGhostCurrentNodeIndex(gh);
 					i++;
 				}
-				MOVE prohibido = g.getApproximateNextMoveTowardsTarget(g.getGhostCurrentNodeIndex(ghost),
-						g.getPacmanCurrentNodeIndex(), g.getGhostLastMoveMade(ghost),
-						/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
+				MOVE prohibido = input.GetMoveToPacman(ghost);
 				double nearest = 0;
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)

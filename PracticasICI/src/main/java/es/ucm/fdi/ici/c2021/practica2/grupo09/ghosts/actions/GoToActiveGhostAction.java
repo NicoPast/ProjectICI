@@ -31,13 +31,12 @@ public class GoToActiveGhostAction implements Action {
 
 	private double nearestGhostDistance(int[] pos, MOVE m, Game game) {
 
-		int nearestp = -1;
+
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
 			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, /* constant dm */DM.PATH);
 			if (aux < nearestDist) {
 				nearestDist = aux;
-				nearestp = p;
 			}
 		}
 
@@ -65,8 +64,7 @@ public class GoToActiveGhostAction implements Action {
 				i++;
 			}
 			MOVE prohibido = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
-					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),
-					/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
+					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),DM.EUCLID);
 			double nearest = 0;
 			// elegimos el fantasma más cercano buscando en todas direcciones excepto
 			// en la prohibida

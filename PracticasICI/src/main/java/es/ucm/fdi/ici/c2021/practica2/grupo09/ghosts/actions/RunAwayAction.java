@@ -47,14 +47,13 @@ public class RunAwayAction implements Action {
 
 	@Override
 	public MOVE execute(Game game) {
-		if (game.doesGhostRequireAction(ghost)) // if it requires an action
+		if (game.doesGhostRequireAction(ghost)) 
 		{
 			MOVE prohibido = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
 					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),
-					/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
+					DM.EUCLID);
 			MOVE bestMove = game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghost),
-					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),
-					/* CONSTANT_DIRECTION_MEASURE */DM.EUCLID);
+					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),DM.EUCLID);
 			interseccion inter = mymapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
 			if (inter != null) {
 				int[] posGhosts = new int[3];
@@ -68,7 +67,7 @@ public class RunAwayAction implements Action {
 					posGhosts[i] = game.getGhostCurrentNodeIndex(g);
 					i++;
 				}
-				// buscamos el fantasma más lejano en todas direcciones excepto
+				// buscamos el fantasma mas lejano en todas direcciones excepto
 				// la prohibida y vamos a por ese
 				double furthest = 0;
 				for (MOVE move : inter.destinos.keySet()) {

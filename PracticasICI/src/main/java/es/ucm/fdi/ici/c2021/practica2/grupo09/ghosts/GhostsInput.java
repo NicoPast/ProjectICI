@@ -7,7 +7,6 @@ import java.util.Vector;
 
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.auxiliarClasses.GHOSTANDDISTANCE;
 import es.ucm.fdi.ici.fsm.Input;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -98,6 +97,10 @@ public class GhostsInput extends Input {
 		public interseccion prohibida;
 		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
 	};
+	public MOVE GetMoveToPacman(GHOST ghost) {
+	return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
+			game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),DM.EUCLID);
+	}
 	
 	private boolean calculateCheckMate(){
 		if(isPacManCloserToPowerPill()) 
