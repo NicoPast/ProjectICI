@@ -61,7 +61,7 @@ public class ChaseAction implements Action{
     	
     	for(GHOST fantasma:GHOST.values()) {
     		if(fantasma != g && game.getDistance(game.getGhostCurrentNodeIndex(fantasma),
-    				mapInfo.getInterseccionActual().destinos.get(posibleMovimiento), mapInfo.getMetrica()) < distancia) { //nos come un fantasma
+    				mapInfo.getInterseccionActual().destinos.get(posibleMovimiento), mapInfo.getMetrica()) <= distancia) { //nos come un fantasma
     			return true;
     		}
     	}

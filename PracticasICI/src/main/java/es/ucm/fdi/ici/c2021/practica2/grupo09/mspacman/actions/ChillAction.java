@@ -42,9 +42,9 @@ public class ChillAction implements Action{
 				boolean hasGhost = false;
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
 				for (GHOST g : GHOST.values()) {
-					double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
-							DM.PATH);
-					if (distancia != -1 && distancia < interseccionActual.distancias.get(m)) { // no pillar el camino						
+					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
+							game.getGhostLastMoveMade(g),DM.PATH);
+					if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino						
 						hasGhost = true;
 						fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
 						break; //hacemos el breake por que ya no nos interesa seguir buscando

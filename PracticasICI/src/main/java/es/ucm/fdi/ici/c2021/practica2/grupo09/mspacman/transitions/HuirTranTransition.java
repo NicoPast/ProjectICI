@@ -6,7 +6,7 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class HuirTranTransition implements Transition{
 	
-	private double distanciaPeligro = 40;
+	private double distanciaPeligro = 35;
 	
 	@Override
 	public boolean evaluate(Input in) {

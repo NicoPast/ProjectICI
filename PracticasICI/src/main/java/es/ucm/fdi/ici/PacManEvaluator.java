@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import pacman.Executor;
+import pacman.controllers.Controller;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
 import pacman.game.util.Stats;
@@ -117,7 +118,13 @@ public class PacManEvaluator {
 	 void run()
 	{
 		int trials =  Integer.parseInt(properties.getProperty(KEY_TRIALS));
-		scores = new Scores(list_pacMan,list_ghosts);
+		Vector<String> names_pacMan = new Vector<String>();
+		Vector<String> names_ghosts = new Vector<String>();
+		for(Controller<?> c: list_pacMan)
+			names_pacMan.add(c.getName());
+		for(Controller<?> c: list_ghosts)
+			names_ghosts.add(c.getName());
+		scores = new Scores(names_pacMan,names_ghosts);
 	    int p = 0;
 	    for(PacmanController pacMan: list_pacMan)
 	    {
@@ -126,7 +133,7 @@ public class PacManEvaluator {
 	    	{
 	            try {  
 		    		Stats[] result = executor.runExperiment(pacMan, ghosts, trials, pacMan.getClass().getName()+ " - " + ghosts.getClass().getName());
-		    		scores.put(pacMan,ghosts, result[0]);
+		    		scores.put(pacMan.getName(),ghosts.getName(), result[0]);
 	        	}catch(Exception e) {
 	        		System.err.println("Error ejecutando pacman "+p+"  ghost: "+g);
 	        		System.err.println(e);	

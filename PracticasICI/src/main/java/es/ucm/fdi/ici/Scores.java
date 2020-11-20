@@ -10,23 +10,24 @@ import pacman.game.util.Stats;
 public class Scores {
 
 	
-	Vector<PacmanController> list_pacMan; 
-	Vector<GhostController> list_ghosts;
+	Vector<String> list_pacMan; 
+	Vector<String> list_ghosts;
 	Stats[][] stats;
 	Vector<ScorePair> pacManRanking;
 	Vector<ScorePair> ghostsRanking;
 
-	public Scores(Vector<PacmanController> list_pacMan,Vector<GhostController> list_ghosts)
+	public Scores(Vector<String> list_pacMan,Vector<String> list_ghosts)
 	{
 		this.list_pacMan = list_pacMan; 
 		this.list_ghosts = list_ghosts;
 		stats = new Stats[list_pacMan.size()][list_ghosts.size()];
 	}
 
-	void put(PacmanController pacMan, GhostController ghosts, Stats score) {
+	void put(String pacMan, String ghosts, Stats score) {
 		int posPacMan = list_pacMan.indexOf(pacMan);
 		int posGhosts = list_ghosts.indexOf(ghosts);
 		stats[posPacMan][posGhosts] = score;	
+		System.out.println(String.format("Scores.put %s, %s, %s",pacMan,ghosts,score.toString()));
 	}
 	
 	public Vector<ScorePair> getMsPacManRanking() {
@@ -61,7 +62,7 @@ public class Scores {
 	void computeRanking()
 	{
 		double[] pacManScores = new double[list_pacMan.size()]; 
-		double[] ghostScores = new double[list_pacMan.size()];
+		double[] ghostScores = new double[list_ghosts.size()];
 		
 		for(int pc = 0; pc<pacManScores.length; pc++)
 		{
@@ -81,12 +82,12 @@ public class Scores {
 		
 		pacManRanking = new Vector<ScorePair>();
 		int pos = 0;
-		for(Controller<?> c: list_pacMan)
+		for(String c: list_pacMan)
 			pacManRanking.add(new ScorePair(c,pacManScores[pos++]));
 		
 		ghostsRanking = new Vector<ScorePair>();
 		pos = 0;
-		for(Controller<?> c: list_ghosts)
+		for(String c: list_ghosts)
 			ghostsRanking.add(new ScorePair(c,ghostScores[pos++]));
 		
 		Collections.sort(pacManRanking);
@@ -95,9 +96,9 @@ public class Scores {
 	}
 	
 	public class ScorePair implements Comparable<ScorePair>{
-		Controller<?> controller;
+		String controller;
 		Double score;
-		public ScorePair(Controller<?> controller, Double score) {
+		public ScorePair(String controller, Double score) {
 			super();
 			this.controller = controller;
 			this.score = score;
@@ -113,7 +114,7 @@ public class Scores {
 		}
 		public String toString()
 		{
-			return this.controller.getName()+": "+String.format("%.2f", this.score);
+			return this.controller+": "+String.format("%.2f", this.score);
 		}
 		
 	}

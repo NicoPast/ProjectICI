@@ -14,6 +14,7 @@ public class EatGhostDangerAction implements Action {
 
 	MapaInfo mapInfo;
 	interseccion interseccionActual;
+	float distanciaMaximaPerseguir = 80;
 
 	public EatGhostDangerAction(MapaInfo map) {
 		mapInfo = map;
@@ -29,12 +30,13 @@ public class EatGhostDangerAction implements Action {
 		
 		//necesitamos el fantasma comible mas cercano
 		GHOST proxGhost = nearestEadableGhpost(game);
+		
 		MOVE moveToGhost = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
 				game.getGhostCurrentNodeIndex(proxGhost), game.getPacmanLastMoveMade(), DM.PATH);
 
-		if(ghostInWay(moveToGhost, game)) {
+		if(ghostInWay(moveToGhost, game) || game.getDistance(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(proxGhost),
+				mapInfo.getUltimoMovReal(), DM.PATH) > distanciaMaximaPerseguir) {
 			//usar get best move
-			System.out.println("BestMove");
 			return getBestMove(game);
 		}
 		else {
@@ -43,20 +45,24 @@ public class EatGhostDangerAction implements Action {
 	}
 	
 	private GHOST nearestEadableGhpost(Game game) {
-		GHOST ghost = GHOST.BLINKY;
+		GHOST ghost = null;
 		double distancia = Double.MAX_VALUE;
 		
 		for(GHOST g:GHOST.values()) {
 			if(game.isGhostEdible(g)) {
 				double distAux = game.getDistance(game.getGhostCurrentNodeIndex(g), 
-						interseccionActual.identificador, game.getGhostLastMoveMade(g), DM.PATH);
+						interseccionActual.identificador, DM.PATH);
+				
+				//System.out.println(g + " " + distAux);
+				
 				if(distAux < distancia) {
 					distancia = distAux;
 					ghost = g;
 				}
 			}
 		}
-		
+
+		//System.out.println("Fantasma objetivo: " + ghost);
 		return ghost;
 	}
 
@@ -68,13 +74,14 @@ public class EatGhostDangerAction implements Action {
 
 		// mira para todos los fantasmas, si avanzando por ese camino me pillan
 		for (GHOST g : GHOST.values()) {
-			double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
+			if(!game.isGhostEdible(g)) {
+				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 					DM.PATH);
-			if (distancia != -1 && distancia < interseccionActual.distancias.get(m)) { // no pillar el camino
-				hasGhost = true;
-				break; // hacemos el breake por que ya no nos interesa seguir buscando
-			}
-
+				if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino
+					hasGhost = true;
+					break; // hacemos el breake por que ya no nos interesa seguir buscando
+				}
+			}	
 		}
 
 		return hasGhost;
@@ -104,7 +111,7 @@ public class EatGhostDangerAction implements Action {
 				for (GHOST g : GHOST.values()) {
 					double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 							DM.PATH);
-					if (distancia != -1 && distancia < interseccionActual.distancias.get(m)) { // no pillar el camino						
+					if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino						
 						
 						if(!game.isGhostEdible(g)){
 							hasGhost = true;

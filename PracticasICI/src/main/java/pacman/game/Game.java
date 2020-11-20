@@ -1973,24 +1973,7 @@ public final class Game {
     public int[] getShortestPath(int fromNodeIndex, int toNodeIndex) {
         return caches[mazeIndex].getPathFromA2B(fromNodeIndex, toNodeIndex);
     }
-
-    /**
-     * Gets the approximate shortest path taking into account the last move made (i.e., no reversals).
-     * This is approximate only as the path is computed greedily. A more accurate path can be obtained
-     * using A* which is slightly more costly.
-     *
-     * @param fromNodeIndex The node index from where to start (i.e., current position)
-     * @param toNodeIndex   The target node index
-     * @param lastMoveMade  The last move made
-     * @return the shortest path from start to target
-     * @deprecated use getShortestPath() instead.
-     */
-    @Deprecated
-    @SuppressWarnings({"WeakerAccess", "unused"})
-    public int[] getApproximateShortestPath(int fromNodeIndex, int toNodeIndex, MOVE lastMoveMade) {
-        return getShortestPath(fromNodeIndex, toNodeIndex, lastMoveMade);
-    }
-
+    
     /**
      * Gets the shortest path taking into account the last move made (i.e., no reversals).
      * This is approximate only as the path is computed greedily. A more accurate path can be obtained
@@ -2010,6 +1993,24 @@ public final class Game {
 
         return caches[mazeIndex].getPathFromA2B(fromNodeIndex, toNodeIndex, lastMoveMade);
     }
+
+    /**
+     * Gets the approximate shortest path taking into account the last move made (i.e., no reversals).
+     * This is approximate only as the path is computed greedily. A more accurate path can be obtained
+     * using A* which is slightly more costly.
+     *
+     * @param fromNodeIndex The node index from where to start (i.e., current position)
+     * @param toNodeIndex   The target node index
+     * @param lastMoveMade  The last move made
+     * @return the shortest path from start to target
+     * @deprecated use getShortestPath() instead.
+     */
+    @Deprecated
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int[] getApproximateShortestPath(int fromNodeIndex, int toNodeIndex, MOVE lastMoveMade) {
+        return getShortestPath(fromNodeIndex, toNodeIndex, lastMoveMade);
+    }
+
 
     /**
      * Similar to getApproximateShortestPath but returns the distance of the path only. It is slightly

@@ -9,9 +9,11 @@ public class ExecutorTest {
 	public static void main(String[] args) {
 		Executor executor = new Executor.Builder()
 		.setTickLimit(4000)
+		.setTimeLimit(40)
 		.setVisual(true)
 		.setScaleFactor(3.0)
 		.build();
+		
 		
 		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacManFSM();
 		//PacmanController pacMan = new MsPacMan();
