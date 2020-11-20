@@ -3,7 +3,9 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Vector;
 
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -185,7 +187,169 @@ public class MapaInfo {
 
 	public interseccion getInterseccionActual() { return interseccionActual; }
 	public boolean getCheckLastModeMade() {return checkLastMoveMade;}
-	public MOVE getUltimoMovReal() { return ultimoMovimientoReal; }
 	public MOVE getUltimoMovimientoDeLlegada() {return movimientoDeLlegada;}
 	public DM getMetrica() {return metrica;}
+	
+
+	public MOVE getBestMove(Game game) {		
+
+	
+		Vector<MOVE> fantasmas = new Vector<MOVE>();
+		Vector<MOVE> powerPills = new Vector<MOVE>();
+		Vector<MOVE> noPills = new Vector<MOVE>();
+		Vector<MOVE> pills = new Vector<MOVE>();
+		Vector<GHOST> fantasmasComibles = new Vector<GHOST>();
+				
+		for (MOVE m : MOVE.values()) { 
+			//mira si m no es de donde vienes, si no es neutral y si existe camino
+			
+			if (m != movimientoDeLlegada && m != MOVE.NEUTRAL && interseccionActual.distancias.get(m) != null) {
+				
+				boolean hasGhost = false;
+				GHOST eadableGhost = null;
+				//mira para todos los fantasmas, si avanzando por ese camino me pillan
+				for (GHOST g : GHOST.values()) {
+					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
+							game.getGhostLastMoveMade(g),DM.PATH);
+					if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino						
+						
+						if(!game.isGhostEdible(g)){
+							hasGhost = true;
+							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
+							break; //hacemos el breake por que ya no nos interesa seguir buscando
+						}
+						else {							
+							eadableGhost = g;						
+						}
+
+					}
+				}
+								
+				
+				if(!hasGhost) {
+					if(eadableGhost != null)
+						fantasmasComibles.add(eadableGhost);
+					else if(interseccionActual.powerPill.get(m) > 0)
+						powerPills.add(m);
+					else if(interseccionActual.pills.get(m) == 0)//mira si el camino no tiene pills
+						noPills.add(m);
+					else
+						pills.add(m); //en el camino solo hay pills
+					
+				}
+			}
+		}	
+		
+		//Tenemos todas las direcciones almacenadas en los vectores
+		int aux = 0;
+		MOVE actual = MOVE.NEUTRAL;
+		
+		if(fantasmasComibles.size()>0) {
+			GHOST ghostAux = null;
+			double auxDistGhost = Double.MAX_VALUE;
+			
+			for(GHOST g : fantasmasComibles) {
+				double dis = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
+						game.getPacmanLastMoveMade(),metrica);
+				if(dis < auxDistGhost) {
+					ghostAux = g;
+					auxDistGhost = dis;
+				}
+			}
+			//tenemos que mirar si en esta direccion no hay otros fantasmas
+			
+			actual = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
+					game.getGhostCurrentNodeIndex(ghostAux), game.getPacmanLastMoveMade(), metrica);
+			
+			if(!fantasmas.contains(actual)) return actual;
+		}
+		
+		
+		if(pills.size()>0) {
+			for(int i=0;i<pills.size();i++) { //si hay pills
+					//System.out.println(interseccionActual.pills.get(pills.get(i)));
+				if(interseccionActual.pills.get(pills.get(i)) >= aux) {
+					aux = interseccionActual.pills.get(pills.get(i));
+					actual = pills.get(i);
+				}
+			}		
+		}
+		else if(noPills.size()>0) {			
+			//MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game),
+			//game.getPacmanLastMoveMade(), metrica);	
+			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game), 
+					game.getPacmanLastMoveMade(), DM.PATH);
+			
+			boolean encontrado = false;
+			int i=0;
+			while(!encontrado && i<noPills.size()) {
+				
+				if(noPills.get(i) == auxMove) {
+					encontrado = true;
+					actual = auxMove;
+				}				
+				i++;
+			}
+			
+			if(!encontrado) { //buscamos el mas corto
+				double distanciaMinima = Double.MAX_VALUE;
+				for(MOVE m:noPills) {
+					double distAux = game.getDistance(interseccionActual.identificador, interseccionActual.destinos.get(m),
+							metrica);
+					if(distAux < distanciaMinima ) {
+						distanciaMinima = distAux;
+						actual = m;
+					}
+				}
+			}
+		}
+		else if(powerPills.size()>0) { //coge el camino con menos powerPills
+			aux = 0; //ahora pasa a ser powerPills
+			for(int i=0;i<powerPills.size();i++) { //si hay pills
+				if(interseccionActual.powerPill.get(powerPills.get(i))>aux) {
+					aux = interseccionActual.powerPill.get(powerPills.get(i));
+					actual = powerPills.elementAt(i);
+				}
+			}
+		}
+		else if(fantasmas.size()>0) { //se sabe que morimos. Prioridades: 1- powerPills, 2- Pills, 3- Distancia Corta
+			aux = -1; //ahora pasa a ser distancias
+			int maxPills = 0;
+			for(int i=0;i<fantasmas.size();i++) { //si hay pills
+				if(interseccionActual.powerPill.get(fantasmas.get(i)) > 0) {
+					actual = fantasmas.elementAt(i);
+					break;
+				}
+				else if(interseccionActual.pills.get(fantasmas.get(i)) > maxPills) {
+					maxPills = interseccionActual.pills.get(fantasmas.get(i));
+					actual = fantasmas.elementAt(i);
+				}
+				else if(maxPills == 0 &&(aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) > aux)) {
+					aux = interseccionActual.distancias.get(fantasmas.get(i));
+					actual = fantasmas.elementAt(i);
+				}
+			}
+		}		
+		
+		if(actual == MOVE.NEUTRAL) {
+			System.out.println("Se mamó");
+		}
+		return actual;
+	}
+	
+	
+    public int getClosestPill(Game game) {
+        int closestPill = -1;
+        int pacmanPos = game.getPacmanCurrentNodeIndex();
+        double closestDistance = Double.MAX_VALUE;
+        for (int currentPill : game.getActivePillsIndices()) {
+            double aux = game.getDistance(pacmanPos, currentPill, metrica);
+            if (aux < closestDistance) {
+                closestPill = currentPill;
+                closestDistance = aux;
+            }
+        }
+        return closestPill;
+    }
+	
 }
