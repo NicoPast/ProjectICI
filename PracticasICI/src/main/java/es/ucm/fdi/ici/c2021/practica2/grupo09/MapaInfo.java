@@ -164,17 +164,7 @@ public class MapaInfo {
 				interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
 				interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
 			}
-		} else if (game.wasPowerPillEaten()) {
-			interseccion interSalida = getInterseccion(ultimoNodo);
-			interseccion interLlegada = getInterseccion(proximoNodo);
-			int pills = interSalida.powePill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que
-																		// pasaria de 1 a 0,
-			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper
-																				// el programa poniendo mas de
-			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos
-																				// intersecciones le podemos callar
-																				// la boca
-		}
+		} 
 	}
 
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {

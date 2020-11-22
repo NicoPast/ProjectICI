@@ -34,26 +34,32 @@ public class ChaseAction implements Action {
 				if(mapa.getCheckLastModeMade()) proximaInterseccionPacman = interseccionActual;
 				else proximaInterseccionPacman = mapa.getInterseccion(interseccionActual.destinos.get(mapa.getUltimoMovReal()));
 
+			//Miro el movimiento mas logico para el pacman y me dirigo hacia ahi
 			for (MOVE m : proximaInterseccionPacman.destinos.keySet()) {
+				//El pacman no puede dar marcha atras 
 				if(proximaInterseccionPacman.destinos.get(m) == interseccionActual.identificador)
 					continue;
+				//Si estoy en esa interseccion, voy hacia el pacman
 				if(myPos == proximaInterseccionPacman.destinos.get(m)){
 					destino = proximaInterseccionPacman.identificador;
 					break;
 				}
+
 				//Valor = pills del camino / (distancia a la siguiente interseccion + distancia ghost a la interseccion)
 				double distanceG = game.getDistance(myPos, proximaInterseccionPacman.identificador, mylastMove, CONSTANT_MEASURE_DISTANCE);
 				valor = (float)proximaInterseccionPacman.pills.get(m) / 
 						(float)(proximaInterseccionPacman.distancias.get(m) + distanceG);
 
-				for (GHOST g : mapa.destinosGhosts.keySet()) { // Si hay un fantasma que se dirige hacia ahí y llega antes, no voy ahí
-				 	if (mapa.destinosGhosts.get(g) != null && g != ghostType && mapa.destinosGhosts.get(g).identificador != destino
+ 				// Si hay un fantasma que se dirige hacia ahí, y llega antes, yo no voy ahí
+				for (GHOST g : mapa.destinosGhosts.keySet()) {
+					//si existe un destino && no soy yo && si el destino es el mismo && llega antes que yo
+				 	if (mapa.destinosGhosts.get(g) != null && g != ghostType && mapa.destinosGhosts.get(g).identificador == destino
 				 		&& distanceG < game.getDistance(myPos, proximaInterseccionPacman.destinos.get(m), mylastMove, CONSTANT_MEASURE_DISTANCE)) {
 				 		valor--;
 				 		break;
 				 	}
 				}
-				if (valor > valorMasAlto) { // si el valor es mas alto o si ya hay un fantasma que llega antes ahí
+				if (valor > valorMasAlto) {
 					valorMasAlto = valor;
 					destino = proximaInterseccionPacman.destinos.get(m);
 				}
