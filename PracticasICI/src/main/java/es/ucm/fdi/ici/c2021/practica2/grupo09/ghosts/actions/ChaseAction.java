@@ -11,7 +11,7 @@ import pacman.game.Game;
 public class ChaseAction implements Action {
 
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
-	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
+	DM CONSTANT_MEASURE_DIRECTION = DM.MANHATTAN;
 
 	private MapaInfo mapa;
 	GHOST ghostType;

@@ -10,6 +10,9 @@ import pacman.game.Game;
 
 public class SecurePPillAction implements Action {
 
+	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
+	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
+
 	private MapaInfo mapa;
     GHOST ghost;
 	public SecurePPillAction( GHOST ghost,MapaInfo map ) {
@@ -28,9 +31,9 @@ public class SecurePPillAction implements Action {
 		double greaterDistance = 0;
 
 		double distanceToPowerPillPacMan = (cppadToGhost.powerpill == cppadToPacMan.powerpill) ? 
-		cppadToPacMan.distance : game.getDistance(game.getPacmanCurrentNodeIndex(), cppadToGhost.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
+		cppadToPacMan.distance : game.getDistance(game.getPacmanCurrentNodeIndex(), cppadToGhost.powerpill, game.getPacmanLastMoveMade(), CONSTANT_MEASURE_DISTANCE);
 		
-		MOVE bestMove = game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), cppadToGhost.powerpill, game.getGhostLastMoveMade(ghost), DM.EUCLID);
+		MOVE bestMove = game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), cppadToGhost.powerpill, game.getGhostLastMoveMade(ghost), CONSTANT_MEASURE_DIRECTION);
 		if(inter != null) {		
 			for (MOVE move : inter.distancias.keySet()) {
 				if(move == game.getGhostLastMoveMade(ghost).opposite()) //No valoro el movimiento OPOSITE
@@ -63,14 +66,14 @@ public class SecurePPillAction implements Action {
 				break;
 			}
 		}
-		d += game.getDistance(sig.identificador, ppil, ultimo, DM.PATH); //Distancia de llegada a la interseccion + distancia para ir a la ppil desde ahi 
+		d += game.getDistance(sig.identificador, ppil, ultimo, CONSTANT_MEASURE_DISTANCE); //Distancia de llegada a la interseccion + distancia para ir a la ppil desde ahi 
 		return d;
 	}
 
 	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(Game game, int pos, MOVE lastMoveMade){
 		ClosestPowerPillAndDistance cpad = new ClosestPowerPillAndDistance();
 		for (int currentPill : game.getActivePowerPillsIndices()) {
-			double aux = game.getDistance(pos, currentPill, lastMoveMade, DM.PATH);
+			double aux = game.getDistance(pos, currentPill, lastMoveMade, CONSTANT_MEASURE_DISTANCE);
 			if (aux < cpad.distance) {
 				cpad.distance = aux;
 				cpad.powerpill = currentPill;
