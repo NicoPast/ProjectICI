@@ -57,7 +57,7 @@ public class ChaseAction implements Action{
     	posibleMovimiento = game.getApproximateNextMoveTowardsTarget(mapInfo.getInterseccionActual().identificador,
     			game.getGhostCurrentNodeIndex(g), game.getPacmanLastMoveMade(), mapInfo.getMetrica());
     	
-    	double distancia = mapInfo.getInterseccionActual().distancias.get(posibleMovimiento);
+    	double distancia = mapInfo.getInterseccionActual().distancias.get(posibleMovimiento) + 2;
     	
     	for(GHOST fantasma:GHOST.values()) {
     		if(fantasma != g && game.getDistance(game.getGhostCurrentNodeIndex(fantasma),

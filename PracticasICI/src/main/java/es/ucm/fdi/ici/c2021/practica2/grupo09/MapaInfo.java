@@ -211,11 +211,15 @@ public class MapaInfo {
 				for (GHOST g : GHOST.values()) {
 					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
 							game.getGhostLastMoveMade(g),DM.PATH);
-					if (distancia != -1 && distancia <= interseccionActual.distancias.get(m) + 2) { // no pillar el camino						
+					if (distancia > 0 && (distancia <= interseccionActual.distancias.get(m) + 2 ||
+							game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
+									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2))
+					{ // no pillar el camino						
 						
 						if(!game.isGhostEdible(g)){
 							hasGhost = true;
-							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas						
+							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas		
+							eadableGhost = null;	
 							break; //hacemos el breake por que ya no nos interesa seguir buscando
 						}
 						else {							
@@ -324,7 +328,7 @@ public class MapaInfo {
 					maxPills = interseccionActual.pills.get(fantasmas.get(i));
 					actual = fantasmas.elementAt(i);
 				}
-				else if(maxPills == 0 &&(aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) + 2 > aux)) {
+				else if(maxPills == 0 && (aux == -1 || interseccionActual.distancias.get(fantasmas.get(i)) + 2 > aux)) {
 					aux = interseccionActual.distancias.get(fantasmas.get(i)) + 2;
 					actual = fantasmas.elementAt(i);
 				}
