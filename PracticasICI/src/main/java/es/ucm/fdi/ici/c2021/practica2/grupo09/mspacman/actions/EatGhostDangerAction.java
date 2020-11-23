@@ -31,8 +31,9 @@ public class EatGhostDangerAction implements Action {
 		//necesitamos el fantasma comible mas cercano
 		GHOST proxGhost = nearestEadableGhpost(game);
 		
-		MOVE moveToGhost = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
-				game.getGhostCurrentNodeIndex(proxGhost), DM.PATH);
+		
+		MOVE moveToGhost = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(proxGhost),
+				game.getPacmanLastMoveMade(), DM.PATH);
 
 		//si hay un fantasma no comible en el camino o esta muy lejos
 		if(ghostInWay(moveToGhost, game) || game.getDistance(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(proxGhost),
@@ -78,7 +79,10 @@ public class EatGhostDangerAction implements Action {
 			if(!game.isGhostEdible(g)) {
 				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 					DM.PATH);
-				if (distancia != -1 && distancia <= interseccionActual.distancias.get(m)) { // no pillar el camino
+				
+				
+														//hay que poner un +2 para que se cuenten las posiciones de las intersecciones
+				if (distancia != -1 && distancia <= (interseccionActual.distancias.get(m) + 2) && !hasPowerPill(m,g, game)) { // no pillar el camino
 					hasGhost = true;
 					break; // hacemos el breake por que ya no nos interesa seguir buscando
 				}
@@ -86,6 +90,37 @@ public class EatGhostDangerAction implements Action {
 		}
 
 		return hasGhost;
+	}
+	
+	
+	//mira si llegamos antes a la power pill que el proximo fantasma
+	private boolean hasPowerPill(MOVE proxMove, GHOST proxGhost, Game game) { 
+		
+		if(interseccionActual.powerPill.get(proxMove) != null) {
+			//hay power pill, ahora hay que mirar quien llega antes
+			int powerPillIndex = getPowerPillCercana(game);
+			
+			if(game.getDistance(game.getPacmanCurrentNodeIndex(), powerPillIndex,
+					game.getPacmanLastMoveMade(), DM.PATH) < game.getDistance(game.getGhostCurrentNodeIndex(proxGhost), powerPillIndex,
+							game.getGhostLastMoveMade(proxGhost), DM.PATH)) return true;
+			
+		}
+		
+		return false;
+	}
+	
+	private int getPowerPillCercana(Game game) {
+        int closestPowerPill = -1;
+        int pacmanPos = game.getPacmanCurrentNodeIndex();
+        double closestDistance = Double.MAX_VALUE;
+        for (int currentPill : game.getActivePowerPillsIndices()) {
+            double aux = game.getDistance(pacmanPos, currentPill, mapInfo.getMetrica());
+            if (aux < closestDistance) {
+                closestPowerPill = currentPill;
+                closestDistance = aux;
+            }
+        }
+        return closestPowerPill;
 	}
 
 

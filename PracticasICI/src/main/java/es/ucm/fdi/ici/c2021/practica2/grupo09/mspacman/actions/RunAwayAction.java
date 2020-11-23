@@ -36,7 +36,7 @@ public class RunAwayAction implements Action{
 			double distanciaFantasma = game.getDistance(interseccionActual.destinos.get(direccionPosible), 
 					game.getGhostCurrentNodeIndex(g), DM.PATH);
 			
-			if(distanciaFantasma <= interseccionActual.distancias.get(direccionPosible)) {//por este camino me pillan						
+			if(distanciaFantasma <= interseccionActual.distancias.get(direccionPosible) + 2) {//por este camino me pillan						
 				fantasmaEncontrado = true;
 				break;
 			}
