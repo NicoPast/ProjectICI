@@ -8,7 +8,7 @@ import pacman.game.Constants.GHOST;
 
 public class MsPacManInput extends Input {
 
-	private MapaInfo mapInfo;
+	private MapaInfo mapInfo = null;
 	
 	public MsPacManInput(Game game, MapaInfo map){
 		super(game);
@@ -20,9 +20,11 @@ public class MsPacManInput extends Input {
 	public void parseInput() {		
 		if(mapInfo != null) mapInfo.update(game);	
 		else {
-			System.out.println("null");
+			//System.out.println("null");
+			return;
 		}
 	}
+
 
 	
 	public double distanceToNearestPowerPill() {

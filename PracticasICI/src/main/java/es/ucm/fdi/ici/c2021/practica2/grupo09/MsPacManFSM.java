@@ -36,12 +36,13 @@ import pacman.game.Game;
 public class MsPacManFSM extends PacmanController {
 
 	FSM fsm;
-	MapaInfo mapInfo;
+	MapaInfo mapInfo = null;
 	
+
 	public MsPacManFSM() {
     	fsm = new FSM("MsPacMan");
-    	
     	mapInfo = new MapaInfo();
+    	
     	
     	//GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
     	//fsm.addObserver(observer);
@@ -95,6 +96,7 @@ public class MsPacManFSM extends PacmanController {
 	
 	public void preCompute(String opponent) {
     	fsm.reset();
+    	mapInfo.setReset();
     }
 	
 	

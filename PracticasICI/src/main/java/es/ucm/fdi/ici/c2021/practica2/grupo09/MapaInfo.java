@@ -23,6 +23,7 @@ public class MapaInfo {
 	private	String mapaActual = "a";
 	private interseccion interseccionActual;
 	private DM metrica = DM.PATH;
+	private boolean necesitamosReset = false;
 	
 	public EnumMap<GHOST, interseccion> destinosGhosts;
 	public EnumMap<GHOST, MOVE> movesCheckMate;
@@ -51,10 +52,14 @@ public class MapaInfo {
 	}
 
     public void update(Game game){
+    	
+    	
         if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
+			mapaHecho = false;
 		}
+        
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
@@ -163,9 +168,12 @@ public class MapaInfo {
 		if (game.wasPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
-			int pills = interSalida.pills.get(ultimoMovimientoReal);
-			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
-			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+			if(interSalida != null) {
+					int pills = interSalida.pills.get(ultimoMovimientoReal);
+					interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
+					interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+			}
+
 		}
 		else if (game.wasPowerPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
@@ -356,6 +364,17 @@ public class MapaInfo {
             }
         }
         return closestPill;
+    }
+    
+    public void setReset() {
+    	mapaHecho = false;
+        mapaActual = "a";
+		mapa.clear();
+		
+		ultimoNodo = -1; proximoNodo = -1; // -1 es que aun no ha registrado nada
+		ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
+		movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
+		checkLastMoveMade = false;
     }
 	
 }
