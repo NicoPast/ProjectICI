@@ -20,9 +20,8 @@ public class ChillAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
-return MOVE.NEUTRAL;/*	
 		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) != null) return mapInfo.getBestMove(game);
-		else return MOVE.NEUTRAL;*/
+		else return MOVE.NEUTRAL;
 	}
 	
 }

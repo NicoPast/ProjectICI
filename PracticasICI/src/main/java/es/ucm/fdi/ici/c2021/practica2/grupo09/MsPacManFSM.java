@@ -43,8 +43,8 @@ public class MsPacManFSM extends PacmanController {
     	
     	mapInfo = new MapaInfo();
     	
-    	GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
-    	fsm.addObserver(observer);
+    	//GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
+    	//fsm.addObserver(observer);
     	
     	SimpleState chillState = new SimpleState("chillState", new ChillAction(mapInfo));
     	SimpleState chaseState = new SimpleState("chaseState", new EatGhostDangerAction(mapInfo));
@@ -57,8 +57,8 @@ public class MsPacManFSM extends PacmanController {
     	
     	//Creacion de maquina de estados para usar en el CompoundState
     	FSM cfsm1 = new FSM("Danger");
-    	GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
-    	cfsm1.addObserver(c1observer);
+    	//GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
+    	//cfsm1.addObserver(c1observer);
     	
     	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", new EatPowerPillAction(mapInfo));
     	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo));
@@ -82,19 +82,19 @@ public class MsPacManFSM extends PacmanController {
     	
     	fsm.ready(chillState);
     	
-    	JFrame frame = new JFrame();
+    	/*JFrame frame = new JFrame();
     	JPanel main = new JPanel();
     	main.setLayout(new BorderLayout());
     	main.add(observer.getAsPanel(true, null), BorderLayout.CENTER);
     	main.add(c1observer.getAsPanel(true, null), BorderLayout.SOUTH);
     	frame.getContentPane().add(main);
     	frame.pack();
-    	frame.setVisible(true);
+    	frame.setVisible(true);*/
 	}
 	
 	
 	public void preCompute(String opponent) {
-    		fsm.reset();
+    	fsm.reset();
     }
 	
 	

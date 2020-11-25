@@ -95,7 +95,6 @@ public class EatGhostDangerAction implements Action {
 	//mira si llegamos antes a la power pill que el proximo fantasma
 	private boolean hasPowerPill(MOVE proxMove, GHOST proxGhost, Game game) { 
 		
-		System.out.println(interseccionActual.powerPill.get(proxMove));
 		if(interseccionActual.powerPill.get(proxMove) > 0) {
 			//hay power pill, ahora hay que mirar quien llega antes
 			int powerPillIndex = getPowerPillCercana(game);
