@@ -122,5 +122,8 @@ public class EatGhostDangerAction implements Action {
         return closestPowerPill;
 	}
 
-
+	
+	public void setMap(MapaInfo map) {
+		mapInfo = map;
+	}
 }

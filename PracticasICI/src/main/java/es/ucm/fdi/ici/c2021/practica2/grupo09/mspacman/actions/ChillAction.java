@@ -24,4 +24,8 @@ public class ChillAction implements Action{
 		else return MOVE.NEUTRAL;
 	}
 	
+	public void setMap(MapaInfo map) {
+		mapInfo = map;
+	}
+	
 }

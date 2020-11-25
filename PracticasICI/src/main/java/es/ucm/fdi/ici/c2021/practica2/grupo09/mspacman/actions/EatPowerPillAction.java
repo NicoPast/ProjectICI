@@ -97,6 +97,8 @@ public class EatPowerPillAction implements Action{
 	}
 	
 	
-	
+	public void setMap(MapaInfo map) {
+		mapInfo = map;
+	}
 
 }

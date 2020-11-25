@@ -45,4 +45,8 @@ public class RunAwayAction implements Action{
 		if(fantasmaEncontrado) return mapInfo.getBestMove(game);
 		else return direccionPosible;
 	}
+	
+	public void setMap(MapaInfo map) {
+		mapInfo = map;
+	}
 }

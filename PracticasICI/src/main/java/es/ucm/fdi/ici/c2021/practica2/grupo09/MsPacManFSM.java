@@ -1,22 +1,14 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChaseAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChillAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatGhostDangerAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatPowerPillAction;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RunAwayAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComFanPerTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComHuirTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComPerTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirComTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirTranTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerComFanTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerTranTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranComTransition;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranPerTransition;
@@ -25,7 +17,6 @@ import es.ucm.fdi.ici.fsm.FSM;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.SimpleState;
 import es.ucm.fdi.ici.fsm.Transition;
-import es.ucm.fdi.ici.fsm.observers.GraphFSMObserver;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -38,6 +29,10 @@ public class MsPacManFSM extends PacmanController {
 	FSM fsm;
 	MapaInfo mapInfo = null;
 	
+	ChillAction chillAction;
+	EatGhostDangerAction eatGhostDangerAction;
+	EatPowerPillAction eatPowerPillAction;
+	RunAwayAction runAwayAction;
 
 	public MsPacManFSM() {
     	fsm = new FSM("MsPacMan");
@@ -47,8 +42,10 @@ public class MsPacManFSM extends PacmanController {
     	//GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
     	//fsm.addObserver(observer);
     	
-    	SimpleState chillState = new SimpleState("chillState", new ChillAction(mapInfo));
-    	SimpleState chaseState = new SimpleState("chaseState", new EatGhostDangerAction(mapInfo));
+    	chillAction = new ChillAction(mapInfo);
+    	SimpleState chillState = new SimpleState("chillState", chillAction);
+    	eatGhostDangerAction = new EatGhostDangerAction(mapInfo);
+    	SimpleState chaseState = new SimpleState("chaseState", eatGhostDangerAction);
     	
     	Transition tranCom = new TranComTransition();
     	Transition tranPer = new TranPerTransition();
@@ -61,8 +58,10 @@ public class MsPacManFSM extends PacmanController {
     	//GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
     	//cfsm1.addObserver(c1observer);
     	
-    	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", new EatPowerPillAction(mapInfo));
-    	SimpleState runAwayState = new SimpleState("runAwayState", new RunAwayAction(mapInfo));
+    	eatPowerPillAction = new EatPowerPillAction(mapInfo);
+    	runAwayAction = new RunAwayAction(mapInfo);
+    	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", eatPowerPillAction);
+    	SimpleState runAwayState = new SimpleState("runAwayState", runAwayAction);
     	Transition comHuirTran = new ComHuirTransition();
     	Transition huirComerTran = new HuirComTransition();
     	cfsm1.add(eatPowerPillState, comHuirTran, runAwayState);
@@ -96,7 +95,12 @@ public class MsPacManFSM extends PacmanController {
 	
 	public void preCompute(String opponent) {
     	fsm.reset();
-    	mapInfo.setReset();
+    	mapInfo = new MapaInfo();
+    	
+    	chillAction.setMap(mapInfo);
+    	eatGhostDangerAction.setMap(mapInfo);
+    	eatPowerPillAction.setMap(mapInfo);
+    	runAwayAction.setMap(mapInfo);
     }
 	
 	
