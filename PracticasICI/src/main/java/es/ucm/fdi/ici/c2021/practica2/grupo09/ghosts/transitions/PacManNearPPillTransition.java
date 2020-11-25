@@ -7,8 +7,8 @@ import pacman.game.Constants.GHOST;
 
 public class PacManNearPPillTransition implements Transition {
 
-	int threshold = 30;
-	int closeThreshold = 20;
+	int threshold = 25;
+	int closeThreshold = 25;
 	GHOST ghost;
 	
 	public PacManNearPPillTransition(GHOST ghost) {
