@@ -13,16 +13,12 @@ public class MsPacManInput extends Input {
 	public MsPacManInput(Game game, MapaInfo map){
 		super(game);
 		this.mapInfo = map;
-		parseInput();
+		mapInfo.update(game);
 	}
 
 	@Override
 	public void parseInput() {		
-		if(mapInfo != null) mapInfo.update(game);	
-		else {
-			//System.out.println("null");
-			return;
-		}
+		
 	}
 
 

@@ -94,13 +94,16 @@ public class MsPacManFSM extends PacmanController {
 	
 	
 	public void preCompute(String opponent) {
-    	fsm.reset();
+		mapInfo = null;
     	mapInfo = new MapaInfo();
     	
     	chillAction.setMap(mapInfo);
     	eatGhostDangerAction.setMap(mapInfo);
     	eatPowerPillAction.setMap(mapInfo);
     	runAwayAction.setMap(mapInfo);
+    	
+    	
+    	fsm.reset();
     }
 	
 	

@@ -51,9 +51,7 @@ public class MapaInfo {
 		public EnumMap<MOVE, Integer> powerPill; // powerPills en ese camino
 	}
 
-    public void update(Game game){
-    	
-    	
+    public void update(Game game){    	
         if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
