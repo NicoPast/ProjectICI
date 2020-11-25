@@ -7,11 +7,13 @@ import es.ucm.fdi.ici.fsm.Transition;
 public class TranPerTransition implements Transition{
 
 	@Override
-	public boolean evaluate(Input in) {
-		MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
+	public boolean evaluate(Input in) {	
+		return false;
+		
+		/*MsPacManInput input = (MsPacManInput)in; //usaremos esto para ver si hay un fantasma cerca o no
 		
 		int numGhostEadable = input.numGhostEadable();
-		return numGhostEadable > 0;
+		return numGhostEadable > 0;*/
 	}
 
 	@Override

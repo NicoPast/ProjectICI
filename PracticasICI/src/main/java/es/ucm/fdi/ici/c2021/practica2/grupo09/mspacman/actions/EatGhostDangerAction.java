@@ -78,8 +78,7 @@ public class EatGhostDangerAction implements Action {
 		for (GHOST g : GHOST.values()) {
 			if(!game.isGhostEdible(g)) {
 				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
-					DM.PATH);
-				
+					DM.PATH);				
 				
 														//hay que poner un +2 para que se cuenten las posiciones de las intersecciones
 				if (distancia != -1 && distancia <= (interseccionActual.distancias.get(m) + 2) && !hasPowerPill(m,g, game)) { // no pillar el camino
@@ -96,6 +95,7 @@ public class EatGhostDangerAction implements Action {
 	//mira si llegamos antes a la power pill que el proximo fantasma
 	private boolean hasPowerPill(MOVE proxMove, GHOST proxGhost, Game game) { 
 		
+		System.out.println(interseccionActual.powerPill.get(proxMove));
 		if(interseccionActual.powerPill.get(proxMove) > 0) {
 			//hay power pill, ahora hay que mirar quien llega antes
 			int powerPillIndex = getPowerPillCercana(game);

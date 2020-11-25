@@ -64,6 +64,7 @@ public class MapaInfo {
 
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
+		
 		if (aux == null) { // si es null, no estas en una interseccion (AKA, estas en un pasillo)
 			if (ultimoNodo != -1 && proximoNodo != -1)
 				updateMapa(game); // solo hay que actualizarlo durante las rectas
@@ -165,12 +166,13 @@ public class MapaInfo {
 			int pills = interSalida.pills.get(ultimoMovimientoReal);
 			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
 			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
-		} else if (game.wasPowerPillEaten()) {
+		}
+		else if (game.wasPowerPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
 			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria de 1 a 0,
-			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el programa poniendo mas de
-			interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos intersecciones le podemos callar la boca
+			interSalida.powerPill.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el programa poniendo mas de
+			interLlegada.powerPill.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos intersecciones le podemos callar la boca
 		}
 	}
 

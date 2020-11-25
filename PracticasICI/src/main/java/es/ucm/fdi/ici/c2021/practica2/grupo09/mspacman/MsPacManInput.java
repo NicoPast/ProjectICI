@@ -18,7 +18,7 @@ public class MsPacManInput extends Input {
 
 	@Override
 	public void parseInput() {		
-		if(mapInfo != null)mapInfo.update(game);	
+		if(mapInfo != null) mapInfo.update(game);	
 	}
 
 	
