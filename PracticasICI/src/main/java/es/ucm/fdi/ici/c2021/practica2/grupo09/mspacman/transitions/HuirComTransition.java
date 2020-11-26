@@ -6,7 +6,7 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class HuirComTransition implements Transition{
 	
-	double minDistanceToPowerPill = 400;
+	double minDistanceToPowerPill = 350;
 	
 	@Override
 	public boolean evaluate(Input in) {

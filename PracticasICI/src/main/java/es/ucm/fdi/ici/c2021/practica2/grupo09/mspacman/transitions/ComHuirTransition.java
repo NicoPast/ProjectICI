@@ -6,7 +6,7 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class ComHuirTransition implements Transition{
 
-	double maxDistanceToPowerPill = 400;
+	double maxDistanceToPowerPill = 350;
 	
 	@Override
 	public boolean evaluate(Input in) {

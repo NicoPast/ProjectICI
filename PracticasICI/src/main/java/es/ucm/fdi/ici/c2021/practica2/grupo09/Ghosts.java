@@ -80,7 +80,6 @@ public final class Ghosts extends GhostController {
 	}
 
 	private void crearMapa(Game game) {
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAa");
 		Node[] graph = game.getCurrentMaze().graph;
 
 		for (Node nodo : graph) { // recorre todos los nodos del mapa
