@@ -168,8 +168,10 @@ public class MapaInfo {
 			interseccion interLlegada = getInterseccion(proximoNodo);
 			if(interSalida != null) {
 					int pills = interSalida.pills.get(ultimoMovimientoReal);
-					interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
-					interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+					if(pills > 0) {
+						interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
+						interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+					}				
 			}
 
 		}
@@ -308,7 +310,7 @@ public class MapaInfo {
 				for(MOVE m:noPills) {
 					double distAux = game.getDistance(interseccionActual.identificador, interseccionActual.destinos.get(m),
 							metrica);
-					if(distAux < distanciaMinima ) {
+					if(distAux < distanciaMinima + 2 ) {
 						distanciaMinima = distAux;
 						actual = m;
 					}
