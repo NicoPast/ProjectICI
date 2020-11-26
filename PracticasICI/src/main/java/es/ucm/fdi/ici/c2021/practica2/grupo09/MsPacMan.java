@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica1.grupo09;
+package es.ucm.fdi.ici.c2021.practica2.grupo09;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -395,7 +395,6 @@ public final class MsPacMan extends PacmanController {
 			else return mAux;
 		}
 		else return direccion;
-		//else return direccion;
 	}
 
 	private MOVE mejorDireccion(Game game) {

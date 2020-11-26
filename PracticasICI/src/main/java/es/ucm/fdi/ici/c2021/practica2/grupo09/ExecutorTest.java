@@ -1,9 +1,7 @@
-package es.ucm.fdi.ici.c2021.practica1.grupo09;
+package es.ucm.fdi.ici.c2021.practica2.grupo09;
 
 import pacman.Executor;
 import pacman.controllers.GhostController;
-import pacman.controllers.HumanController;
-import pacman.controllers.KeyBoardInput;
 import pacman.controllers.PacmanController;
 
 public class ExecutorTest {
@@ -11,14 +9,17 @@ public class ExecutorTest {
 	public static void main(String[] args) {
 		Executor executor = new Executor.Builder()
 		.setTickLimit(4000)
+		.setTimeLimit(40)
 		.setVisual(true)
-		.setScaleFactor(3.0)		
+		.setScaleFactor(3.0)
 		.build();
 		
-		PacmanController pacMan = new HumanController(new KeyBoardInput());
+		
+		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacManFSM();
+		//PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
 		System.out.println(
-		executor.runGame(pacMan, ghosts, 50)
+		executor.runGame(pacMan, ghosts, 40)
 		);
 		
 	}

@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica1.grupo09;
+package es.ucm.fdi.ici.c2021.practica2.grupo09;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -80,6 +80,7 @@ public final class Ghosts extends GhostController {
 	}
 
 	private void crearMapa(Game game) {
+		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAa");
 		Node[] graph = game.getCurrentMaze().graph;
 
 		for (Node nodo : graph) { // recorre todos los nodos del mapa
