@@ -7,7 +7,6 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
-import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -23,10 +22,6 @@ public class GhostFarFromActiveGhostTransition implements Transition {
 		this.ghost = ghost;
 		this.mymap = map;
 	}
-
-	
-
-	
 
 	@Override
 	public boolean evaluate(Input in) {

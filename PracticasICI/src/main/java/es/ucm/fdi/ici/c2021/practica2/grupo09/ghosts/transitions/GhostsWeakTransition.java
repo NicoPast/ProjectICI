@@ -4,7 +4,7 @@ import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.GHOST;
-//or pacman is near from powerPill
+
 public class GhostsWeakTransition implements Transition  {
 
 	GHOST ghost;

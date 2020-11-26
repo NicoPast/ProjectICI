@@ -3,7 +3,6 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 import java.util.Vector;
 
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput.NODEANDDISTANCE;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -53,12 +52,12 @@ public class ProtectAlliesAction implements Action {
 			for (int i = 0; i < edibleGhosts.size(); i++) {
 				ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
 			}
-			// vemos cuál es la distancia al fantasma edible más cercano del pacman para su
-			// último movimiento
+			// vemos cuï¿½l es la distancia al fantasma edible mï¿½s cercano del pacman para su
+			// ï¿½ltimo movimiento
 			int nearest = nearestGhostDistance(game, game.getPacmanCurrentNodeIndex(), ediblePos,
 					game.getPacmanLastMoveMade());
-			// No hace falta comprobar si yo estoy más cerca de él que el pacman
-			// porque el otro fantasma tratará de acercarse a mi
+			// No hace falta comprobar si yo estoy mï¿½s cerca de ï¿½l que el pacman
+			// porque el otro fantasma tratarï¿½ de acercarse a mi
 
 			return game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), nearest,
 					game.getGhostLastMoveMade(ghost),DM.EUCLID);

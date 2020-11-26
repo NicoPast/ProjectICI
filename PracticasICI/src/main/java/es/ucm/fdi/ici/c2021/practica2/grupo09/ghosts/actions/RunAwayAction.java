@@ -2,7 +2,6 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.GhostsFSM;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fsm.Action;
@@ -20,8 +19,6 @@ public class RunAwayAction implements Action {
 		this.ghost = ghost;
 		mymapa = map;
 	}
-
-	
 
 	private Vector<GHOST> edibleGhosts(Game game) {
 		Vector<GHOST> edibleGhosts = new Vector<GHOST>();

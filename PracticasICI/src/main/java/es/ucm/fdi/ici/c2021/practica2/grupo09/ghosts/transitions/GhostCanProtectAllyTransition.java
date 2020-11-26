@@ -26,7 +26,7 @@ public class GhostCanProtectAllyTransition implements Transition {
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput) in;
-		//Si pacman está cerca de una PowerPill no puedo proteger a los aliados por si me come
+		//Si pacman estï¿½ cerca de una PowerPill no puedo proteger a los aliados por si me come
 		PacManNearPPillTransition nearPPill=new PacManNearPPillTransition(ghost);
 		if(nearPPill.evaluate(in))
 			return false;
