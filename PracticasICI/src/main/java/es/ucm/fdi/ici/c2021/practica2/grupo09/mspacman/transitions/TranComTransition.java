@@ -6,7 +6,7 @@ import es.ucm.fdi.ici.fsm.Transition;
 
 public class TranComTransition implements Transition{
 	
-	private double distanciaPeligro = 35;
+	private double distanciaPeligro = 93;
 	
 	@Override
 	public boolean evaluate(Input in) {
