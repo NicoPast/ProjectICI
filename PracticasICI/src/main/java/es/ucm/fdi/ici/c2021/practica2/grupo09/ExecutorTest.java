@@ -15,7 +15,7 @@ public class ExecutorTest {
 		.build();
 		
 		
-		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacManFSM();
+		PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacMan();
 		//PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
 		System.out.println(
