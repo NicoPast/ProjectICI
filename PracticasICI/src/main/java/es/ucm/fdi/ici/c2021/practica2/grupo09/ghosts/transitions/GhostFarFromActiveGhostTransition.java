@@ -2,8 +2,8 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
@@ -14,10 +14,10 @@ import pacman.game.Game;
 public class GhostFarFromActiveGhostTransition implements Transition {
 
 	GHOST ghost;
-	MapaInfo mymap;
+	MapaInfoGhost mymap;
 	double CONST_LIMIT_DISTANCE = 25;
 
-	public GhostFarFromActiveGhostTransition(GHOST ghost, MapaInfo map) {
+	public GhostFarFromActiveGhostTransition(GHOST ghost, MapaInfoGhost map) {
 		super();
 		this.ghost = ghost;
 		this.mymap = map;

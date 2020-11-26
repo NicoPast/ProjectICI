@@ -39,10 +39,10 @@ import pacman.game.Game;
 public class GhostsFSM extends GhostController {
 
 	EnumMap<GHOST, FSM> fsms;
-	MapaInfo mapInfo;
+	MapaInfoGhost mapInfo;
 
 	public GhostsFSM() {
-		mapInfo = new MapaInfo();
+		mapInfo = new MapaInfoGhost();
 		fsms = new EnumMap<GHOST, FSM>(GHOST.class);
 		for (GHOST ghost : GHOST.values()) {
 			FSM fsm = new FSM(ghost.name());

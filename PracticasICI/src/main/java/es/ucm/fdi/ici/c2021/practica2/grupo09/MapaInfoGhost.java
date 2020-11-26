@@ -9,7 +9,7 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.internal.Node;
 
-public class MapaInfo {
+public class MapaInfoGhost {
 
 	private List<interseccion> mapa = new ArrayList<interseccion>();
 	private int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
@@ -23,7 +23,7 @@ public class MapaInfo {
 	public EnumMap<GHOST, interseccion> destinosGhosts;
 	public EnumMap<GHOST, Integer> movesCheckMate;
 
-	public MapaInfo() {
+	public MapaInfoGhost() {
 
 	}
 

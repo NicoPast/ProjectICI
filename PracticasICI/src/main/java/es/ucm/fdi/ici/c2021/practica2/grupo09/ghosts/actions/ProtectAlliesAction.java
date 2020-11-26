@@ -2,7 +2,7 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -11,10 +11,10 @@ import pacman.game.Game;
 
 public class ProtectAlliesAction implements Action {
 
-	private MapaInfo mymap;
+	private MapaInfoGhost mymap;
 	GHOST ghost;
 
-	public ProtectAlliesAction(GHOST ghost, MapaInfo map) {
+	public ProtectAlliesAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		this.mymap = map;
 	}

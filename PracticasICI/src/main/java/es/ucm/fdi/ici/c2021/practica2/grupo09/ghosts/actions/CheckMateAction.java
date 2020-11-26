@@ -1,6 +1,6 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -9,10 +9,10 @@ import pacman.game.Game;
 
 public class CheckMateAction implements Action {
 
-	private MapaInfo mapa;
+	private MapaInfoGhost mapa;
 	GHOST ghost;
 	
-	public CheckMateAction( GHOST ghost, MapaInfo mapa) {
+	public CheckMateAction( GHOST ghost, MapaInfoGhost mapa) {
 		this.ghost = ghost;
 		this.mapa = mapa;
 	}

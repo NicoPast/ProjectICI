@@ -1,7 +1,7 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -13,10 +13,10 @@ public class ChaseAction implements Action {
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
 	DM CONSTANT_MEASURE_DIRECTION = DM.MANHATTAN;
 
-	private MapaInfo mapa;
+	private MapaInfoGhost mapa;
 	GHOST ghostType;
 	
-	public ChaseAction( GHOST ghost, MapaInfo mapa_ ) {
+	public ChaseAction( GHOST ghost, MapaInfoGhost mapa_ ) {
 		this.ghostType = ghost;
 		this.mapa= mapa_;
 	}

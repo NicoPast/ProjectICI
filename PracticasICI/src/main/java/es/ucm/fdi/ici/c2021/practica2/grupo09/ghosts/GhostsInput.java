@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fsm.Input;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -41,7 +41,7 @@ public class GhostsInput extends Input {
 		public double distance = Double.MAX_VALUE;
 	}
 
-	private MapaInfo mapa;
+	private MapaInfoGhost mapa;
 
 	private ClosestPowerPillAndDistance cppad_PacMan;
 	private EnumMap<GHOST, ClosestPowerPillAndDistance> cppad_Ghosts;
@@ -59,7 +59,7 @@ public class GhostsInput extends Input {
 	private Vector<GHOST> activeGhosts;
 	private Vector<GHOST> edibleGhosts;
 	
-	public GhostsInput(Game game, MapaInfo mapaInfo) {
+	public GhostsInput(Game game, MapaInfoGhost mapaInfo) {
 		super(game);
 		this.mapa = mapaInfo;
 		parseInput();

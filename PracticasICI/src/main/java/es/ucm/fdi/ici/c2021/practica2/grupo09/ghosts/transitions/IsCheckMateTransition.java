@@ -1,14 +1,14 @@
 package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 public class IsCheckMateTransition implements Transition {
 
-	MapaInfo mapa;
+	MapaInfoGhost mapa;
 	int id;
-	public IsCheckMateTransition(MapaInfo mapa, int id) {
+	public IsCheckMateTransition(MapaInfoGhost mapa, int id) {
 		super();
 		this.mapa = mapa;
 		this.id = id;

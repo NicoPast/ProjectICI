@@ -2,8 +2,8 @@ package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fsm.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -13,9 +13,9 @@ import pacman.game.Game;
 public class RunAwayAction implements Action {
 
 	GHOST ghost;
-	MapaInfo mymapa;
+	MapaInfoGhost mymapa;
 
-	public RunAwayAction(GHOST ghost, MapaInfo map) {
+	public RunAwayAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		mymapa = map;
 	}
