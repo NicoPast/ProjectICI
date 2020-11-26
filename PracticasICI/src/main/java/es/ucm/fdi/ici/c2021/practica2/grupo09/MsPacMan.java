@@ -104,14 +104,14 @@ public final class MsPacMan extends PacmanController {
 	}
 
 	private interseccion interseccion_rec(int ini, int fin, int iden) {
-		if (fin - ini > 1) { // sigue habiendo varios nodos en el rango de búsqueda
+		if (fin - ini > 1) { // sigue habiendo varios nodos en el rango de bï¿½squeda
 			int mid = (fin - ini) / 2 + ini;
 			if (mapa.get(mid).identificador <= iden)
 				return interseccion_rec(mid, fin, iden); // esta en el lado derecho
 			else
 				return interseccion_rec(ini, mid, iden); // esta en el lado izquierdo
 		} else if (mapa.get(ini).identificador == iden)
-			return mapa.get(ini); // es de tamaño 1 por tanto devuelve el elemento inicial
+			return mapa.get(ini); // es de tamaï¿½o 1 por tanto devuelve el elemento inicial
 		else
 			return null;
 	}
@@ -130,7 +130,7 @@ public final class MsPacMan extends PacmanController {
 		} else if (game.wasPowerPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
-			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no haría falta esta variable ya que pasaria
+			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no harï¿½a falta esta variable ya que pasaria
 																		// de 1 a 0,
 			interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el
 																				// programa poniendo mas de
@@ -145,7 +145,7 @@ public final class MsPacMan extends PacmanController {
 			double distancia = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
 					DM.PATH);
 			//System.out.println(distancia);
-			//si es -1 es que está en la caseta de inicio
+			//si es -1 es que estï¿½ en la caseta de inicio
 			if (distancia != -1 && !game.isGhostEdible(g) && (distanciaAux == 0 || distancia < distanciaAux)) { // si tienes un fantasma cerca que te puedes comer
 				distanciaAux = distancia;
 			}
@@ -260,7 +260,7 @@ public final class MsPacMan extends PacmanController {
 		}		
 		
 		if(actual == MOVE.NEUTRAL) {
-			System.out.println("Se mamó");
+			System.out.println("Se mamï¿½");
 		}
 		return actual;
 	}
@@ -316,7 +316,7 @@ public final class MsPacMan extends PacmanController {
 			}
 		}
 
-		if (distancia < distanciaPerseguir) { // hay fantasmas para comer y está cerca
+		if (distancia < distanciaPerseguir) { // hay fantasmas para comer y estï¿½ cerca
 			return fantasma;
 		} 
 		else return null;
