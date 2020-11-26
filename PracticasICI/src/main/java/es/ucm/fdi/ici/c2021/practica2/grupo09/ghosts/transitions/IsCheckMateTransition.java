@@ -18,7 +18,7 @@ public class IsCheckMateTransition implements Transition {
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
 
-		return input.isCheckMate;
+		return input.getIsCheckMate();
 	}
 
 	@Override

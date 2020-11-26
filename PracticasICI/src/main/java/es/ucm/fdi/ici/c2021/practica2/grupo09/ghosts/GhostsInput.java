@@ -30,6 +30,17 @@ public class GhostsInput extends Input {
 		}
 	}
 
+	private class interseccion_plus{
+		public interseccion intersection;
+		public interseccion prohibida;
+		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
+	};
+
+	private class GHOSTANDDISTANCE {
+		public GHOST ghost;
+		public double distance = Double.MAX_VALUE;
+	}
+
 	private MapaInfo mapa;
 
 	private ClosestPowerPillAndDistance cppad_PacMan;
@@ -42,10 +53,11 @@ public class GhostsInput extends Input {
 
 	private int ppillsLeft;
 
-	//Usados con los metodos checkMates, porque la informacion ahi les sirve a todos
-	public boolean isCheckMate;
+	private boolean isCheckMate;
+	private boolean pacManEaten;
 
-	public boolean pacManEaten;
+	private Vector<GHOST> activeGhosts;
+	private Vector<GHOST> edibleGhosts;
 	
 	public GhostsInput(Game game, MapaInfo mapaInfo) {
 		super(game);
@@ -55,11 +67,15 @@ public class GhostsInput extends Input {
 
 	@Override
 	public void parseInput() {
-		if(mapa == null)
+		if(mapa == null) //Hecho asi porque parseInput se llama en super(game) pero necesitamos el mapa
 			return;
 
 		mapa.update(game);
 
+		getActiveGhosts_();
+		getEdibleGhosts_();
+
+		//En caso de haber jaqueMate, la solucion se guarda en mapaInfo
 		isCheckMate = calculateCheckMate();
 
 		initCppads();
@@ -79,6 +95,60 @@ public class GhostsInput extends Input {
 		getDistancesToPacMan();
 	}
 
+	public boolean getIsCheckMate() {
+		return this.isCheckMate;
+	}
+
+	public boolean getPacManEaten() {
+		return this.pacManEaten;
+	}
+
+	public double getDistanceToPacMan(GHOST ghostType) {
+		return distanceToPacMan.get(ghostType);
+	}
+
+	public MOVE GetMoveToPacman(GHOST ghost) { //Usado en GhostCanBeProtected & GhostFarFromActiveGhost
+		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
+			game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.EUCLID);
+	}
+	
+	public Vector<GHOST> getActiveGhosts(){
+		return activeGhosts;
+	}
+	
+	public Vector<GHOST> getEdibleGhosts(){
+		return edibleGhosts;
+	}
+
+	public NODEANDDISTANCE nearestGhostDistance(int myPos, int[] pos, MOVE m) {
+		int nearestP=-1;
+		double nearestDist = Double.MAX_VALUE;
+		for (int p : pos) {
+			double aux = game.getDistance(myPos, p, m, DM.PATH);
+			if (aux < nearestDist) {
+				nearestDist = aux;
+				nearestP=p;
+			}
+		}
+
+		return new NODEANDDISTANCE(nearestP,nearestDist);
+	}
+
+	private void getActiveGhosts_(){
+		activeGhosts = new Vector<>();
+		for(GHOST ghostType : GHOST.values()){
+			if(!game.isGhostEdible(ghostType) && game.getGhostLairTime(ghostType) <= 0) 
+				activeGhosts.add(ghostType);
+		}
+	}
+
+	private void getEdibleGhosts_() {
+		edibleGhosts = new Vector<GHOST>();
+		for (GHOST ghost : GHOST.values()) {
+			if (game.isGhostEdible(ghost))
+				edibleGhosts.add(ghost);
+		}
+	}
 
 	private void getDistancesToPacMan() {
 		distanceToPacMan = new EnumMap<>(GHOST.class);
@@ -88,20 +158,6 @@ public class GhostsInput extends Input {
 		}
 	}
 
-	public double getDistanceToPacMan(GHOST ghostType) {
-		return distanceToPacMan.get(ghostType);
-	}
-
-	private class interseccion_plus{
-		public interseccion intersection;
-		public interseccion prohibida;
-		public interseccion_plus(interseccion i, interseccion iProhibida) { intersection = i; prohibida = iProhibida;}
-	};
-	public MOVE GetMoveToPacman(GHOST ghost) {
-	return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
-			game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),DM.EUCLID);
-	}
-	
 	private boolean calculateCheckMate(){
 		if(isPacManCloserToPowerPill()) 
 			return false;
@@ -142,11 +198,6 @@ public class GhostsInput extends Input {
 			}		
 		}
 		return visitadas.size() - i == 0;
-	}
-
-	private class GHOSTANDDISTANCE {
-		public GHOST ghost;
-		public double distance = Double.MAX_VALUE;
 	}
 
 	private GHOSTANDDISTANCE closestGhostToIntersection(Game game, int inter, Vector<GHOST> libres) {
@@ -192,38 +243,6 @@ public class GhostsInput extends Input {
 		for(GHOST g : GHOST.values()){
 			cppad_Ghosts.put(g, getClosestPowerPillAndDistance(game.getGhostCurrentNodeIndex(g), game.getGhostLastMoveMade(g)));
 		}
-	}
-
-	public Vector<GHOST> getActiveGhosts(){
-		Vector<GHOST> actives = new Vector<>();
-		for(GHOST ghostType : GHOST.values()){
-			if(!game.isGhostEdible(ghostType) && game.getGhostLairTime(ghostType) <= 0) 
-				actives.add(ghostType);
-		}
-
-		return actives;
-	}
-	public Vector<GHOST> getEdibleGhosts() {
-		Vector<GHOST> edibleGhosts = new Vector<GHOST>();
-		for (GHOST ghost : GHOST.values()) {
-			if (game.isGhostEdible(ghost))
-				edibleGhosts.add(ghost);
-		}
-		return edibleGhosts;
-	}
-	public NODEANDDISTANCE nearestGhostDistance(int myPos,int[] pos, MOVE m) {
-
-		int nearestP=-1;
-		double nearestDist = Double.MAX_VALUE;
-		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, /* constant dm */DM.PATH);
-			if (aux < nearestDist) {
-				nearestDist = aux;
-				nearestP=p;
-			}
-		}
-
-		return new NODEANDDISTANCE(nearestP,nearestDist);
 	}
 
 	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(int pos, MOVE lastMoveMade){

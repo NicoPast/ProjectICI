@@ -13,9 +13,10 @@ public class SecurePPillAction implements Action {
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
 	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
 
-	private MapaInfo mapa;
-    GHOST ghost;
-	public SecurePPillAction( GHOST ghost,MapaInfo map ) {
+	MapaInfo mapa;
+	GHOST ghost;
+	
+	public SecurePPillAction( GHOST ghost, MapaInfo map ) {
 		this.ghost = ghost;
 		this.mapa = map;
 	}
@@ -33,6 +34,7 @@ public class SecurePPillAction implements Action {
 		double distanceToPowerPillPacMan = (cppadToGhost.powerpill == cppadToPacMan.powerpill) ? 
 		cppadToPacMan.distance : game.getDistance(game.getPacmanCurrentNodeIndex(), cppadToGhost.powerpill, game.getPacmanLastMoveMade(), CONSTANT_MEASURE_DISTANCE);
 		
+		//El mejor movimiento es hacia la pildora, pero busco el movimiento que más me aleje de esta
 		MOVE bestMove = game.getNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), cppadToGhost.powerpill, game.getGhostLastMoveMade(ghost), CONSTANT_MEASURE_DIRECTION);
 		if(inter != null) {		
 			for (MOVE move : inter.distancias.keySet()) {
@@ -49,11 +51,6 @@ public class SecurePPillAction implements Action {
 		return bestMove;
 	}
 
-	public class ClosestPowerPillAndDistance{
-		public int powerpill = 0;
-		public double distance =  Double.MAX_VALUE;
-	}
-
 	private double getDistance(Game game, interseccion actual, MOVE move, int ppil){
 		double d = actual.distancias.get(move); //Distancia para llegar a la siguiente interseccion
 		interseccion sig = mapa.getInterseccion(actual.destinos.get(move));
@@ -68,6 +65,11 @@ public class SecurePPillAction implements Action {
 		}
 		d += game.getDistance(sig.identificador, ppil, ultimo, CONSTANT_MEASURE_DISTANCE); //Distancia de llegada a la interseccion + distancia para ir a la ppil desde ahi 
 		return d;
+	}
+
+	private class ClosestPowerPillAndDistance{
+		public int powerpill = 0;
+		public double distance =  Double.MAX_VALUE;
 	}
 
 	private ClosestPowerPillAndDistance getClosestPowerPillAndDistance(Game game, int pos, MOVE lastMoveMade){

@@ -13,8 +13,6 @@ public class GhostsWeakTransition implements Transition  {
 		this.ghost = ghost;
 	}
 
-
-
 	@Override
 	public boolean evaluate(Input in) {
 		GhostsInput input = (GhostsInput)in;
@@ -22,13 +20,8 @@ public class GhostsWeakTransition implements Transition  {
 		return input.getGame().isGhostEdible(ghost) || near.evaluate(in);
 	}
 
-
-
 	@Override
 	public String toString() {
 		return ghost.name()+" is edible";
-	}
-
-	
-	
+	}	
 }
