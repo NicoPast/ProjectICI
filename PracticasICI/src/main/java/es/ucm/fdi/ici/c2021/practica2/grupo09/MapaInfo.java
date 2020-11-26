@@ -310,7 +310,7 @@ public class MapaInfo {
 				for(MOVE m:noPills) {
 					double distAux = game.getDistance(interseccionActual.identificador, interseccionActual.destinos.get(m),
 							metrica);
-					if(distAux < distanciaMinima + 2 ) {
+					if(distAux < distanciaMinima) {
 						distanciaMinima = distAux;
 						actual = m;
 					}
