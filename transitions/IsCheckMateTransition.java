@@ -1,7 +1,7 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.transitions;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 public class IsCheckMateTransition implements Transition {

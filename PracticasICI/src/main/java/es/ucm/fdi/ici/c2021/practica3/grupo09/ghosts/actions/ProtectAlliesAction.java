@@ -1,9 +1,10 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.fsm.Action;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.rules.Action;
+import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -17,6 +18,10 @@ public class ProtectAlliesAction implements Action {
 	public ProtectAlliesAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		this.mymap = map;
+	}
+
+	public void parseFact(Fact actionFact){
+		
 	}
 
 	private Vector<GHOST> EdibleGhosts(Game game) {

@@ -1,10 +1,11 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
-import es.ucm.fdi.ici.fsm.Action;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost.interseccion;
+import es.ucm.fdi.ici.rules.Action;
+import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -18,6 +19,10 @@ public class RunAwayAction implements Action {
 	public RunAwayAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		mymapa = map;
+	}
+
+	public void parseFact(Fact actionFact){
+		
 	}
 
 	private Vector<GHOST> edibleGhosts(Game game) {

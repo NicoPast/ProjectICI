@@ -1,13 +1,14 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
-import es.ucm.fdi.ici.fsm.Input;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost.interseccion;
+import es.ucm.fdi.ici.rules.Input;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -299,5 +300,18 @@ public class GhostsInput extends Input {
 
 	public ClosestPowerPillAndDistance getClosestPowerPillAndDistancePacMan(){
 		return cppad_PacMan;
+	}
+
+
+	@Override
+	public Collection<String> getFacts() {
+		Vector<String> facts = new Vector<String>();
+		// facts.add(String.format("(BLINKY (edible %s))", this.BLINKYedible));
+		// facts.add(String.format("(INKY (edible %s))", this.INKYedible));
+		// facts.add(String.format("(PINKY (edible %s))", this.PINKYedible));
+		// facts.add(String.format("(SUE (edible %s))", this.SUEedible));
+		// facts.add(String.format("(MSPACMAN (mindistancePPill %d))", 
+		// 						(int)this.minPacmanDistancePPill));
+		return facts;
 	}
 }

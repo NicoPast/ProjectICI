@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.practica3.demorules.ghosts;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.demorules.ghosts;
 
 import java.util.Collection;
 import java.util.Vector;

@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.practica3.demorules.ghosts.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.demorules.ghosts.actions;
 
 import es.ucm.fdi.ici.rules.Action;
 import jess.Fact;

@@ -1,9 +1,9 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.transitions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput.NODEANDDISTANCE;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.GhostsInput;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.GhostsInput.NODEANDDISTANCE;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.DM;
@@ -27,7 +27,7 @@ public class GhostCannotProtectAlly implements Transition {
 		Game game = input.getGame();
 		if(game.isGhostEdible(ghost))
 			return true;
-		//Si pacman está cerca de una PowerPill no puedo proteger a los aliados por si me come
+		//Si pacman estï¿½ cerca de una PowerPill no puedo proteger a los aliados por si me come
 		PacManNearPPillTransition nearPPill=new PacManNearPPillTransition(ghost);
 		if(nearPPill.evaluate(in))
 			return true;
@@ -49,8 +49,8 @@ public class GhostCannotProtectAlly implements Transition {
 			NODEANDDISTANCE nearestNodeAndDistance=input.nearestGhostDistance(game.getPacmanCurrentNodeIndex(), ediblePos,
 					game.getPacmanLastMoveMade());
 			double nearest = nearestNodeAndDistance.d;
-			// No hace falta comprobar si yo estoy más cerca de él que el pacman
-			// porque el otro fantasma tratará de acercarse a mi pero conviene comprobar
+			// No hace falta comprobar si yo estoy mï¿½s cerca de ï¿½l que el pacman
+			// porque el otro fantasma tratarï¿½ de acercarse a mi pero conviene comprobar
 			//que estoy lo suficientemente cerca
 
 			return nearest >= PACMAN_MIN_DISTANCE && 

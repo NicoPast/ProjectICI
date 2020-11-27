@@ -1,10 +1,11 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
-import es.ucm.fdi.ici.fsm.Action;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost.interseccion;
+import es.ucm.fdi.ici.rules.Action;
+import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -18,6 +19,10 @@ public class GoToActiveGhostAction implements Action {
 	public GoToActiveGhostAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		this.mymap = map;
+	}
+
+	public void parseFact(Fact actionFact){
+		
 	}
 
 	private Vector<GHOST> activeGhosts(Game game) {
@@ -46,8 +51,8 @@ public class GoToActiveGhostAction implements Action {
 	@Override
 	public MOVE execute(Game game) {
 
-		//No hace falta comprobar que el vector de activos está vacío ya que si estamos en 
-		//este estado existe alguno que está a la distancia suficiente para perseguirlo
+		//No hace falta comprobar que el vector de activos estï¿½ vacï¿½o ya que si estamos en 
+		//este estado existe alguno que estï¿½ a la distancia suficiente para perseguirlo
 		Vector<GHOST> actives = activeGhosts(game);
 		MOVE best = MOVE.NEUTRAL;
 		interseccion inter = mymap.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
@@ -55,8 +60,8 @@ public class GoToActiveGhostAction implements Action {
 			int[] posGhosts = new int[3];
 			int i = 0;
 			i = 0;
-			// rellenamos las posiciones de los fantasmas activos para ver a qué distancia
-			// esta el más cercano y elegirlo a él para perseguirlo
+			// rellenamos las posiciones de los fantasmas activos para ver a quï¿½ distancia
+			// esta el mï¿½s cercano y elegirlo a ï¿½l para perseguirlo
 			for (GHOST gh : actives) {
 				if (gh == ghost)
 					continue;
@@ -66,7 +71,7 @@ public class GoToActiveGhostAction implements Action {
 			MOVE prohibido = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
 					game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost),DM.EUCLID);
 			double nearest = 0;
-			// elegimos el fantasma más cercano buscando en todas direcciones excepto
+			// elegimos el fantasma mï¿½s cercano buscando en todas direcciones excepto
 			// en la prohibida
 			for (MOVE move : inter.destinos.keySet()) {
 				if (move == prohibido)

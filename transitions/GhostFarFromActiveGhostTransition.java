@@ -1,10 +1,10 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.transitions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.transitions;
 
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfoGhost.interseccion;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.ghosts.GhostsInput;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfoGhost.interseccion;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.fsm.Input;
 import es.ucm.fdi.ici.fsm.Transition;
 import pacman.game.Constants.GHOST;
