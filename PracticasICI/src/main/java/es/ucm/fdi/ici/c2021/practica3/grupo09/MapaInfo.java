@@ -1,11 +1,10 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09;
+package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Vector;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.MapaInfo.interseccion;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
