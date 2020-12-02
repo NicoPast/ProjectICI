@@ -1,44 +1,74 @@
+;FACTS ASSERTED BY GAME INPUT
 (deftemplate BLINKY
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))	
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
 
-	
-(deftemplate INKY
-	(slot run (type SYMBOL)))
 	(slot seekProtection (type SYMBOL))
+)
+		
+(deftemplate INKY
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
-	
+
+	(slot seekProtection (type SYMBOL))
+)
+
 (deftemplate PINKY
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))	
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
+
+	(slot seekProtection (type SYMBOL))
+)
 
 (deftemplate SUE
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))	
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
-	
-(deftemplate MSPACMAN 
-    (slot mindistancePPill))
-    
-(deftemplate ACTION
-	(slot id))   
 
-(defrule PINKYchases
-	(PINKY (run false)) => (assert (ACTION (id PINKYchases))))
+	(slot seekProtection (type SYMBOL))
+)
+
+(deftemplate CHECKMATE 
+    (slot isCheckMate (type SYMBOL))
+)
+    
+;DEFINITION OF THE ACTION FACT
+(deftemplate ACTION
+	(slot id) (slot info (default "")) 
+) 
+
+(defrule PINKYcheckmate
+	(PINKY (strong true)) (CHECKMATE (isCheckMate true))
+	=> 
+	(assert (ACTION (id PINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule PINKYprotects
-	(PINKY (canProtectAlly true)) 
+	(PINKY (strong true)) (PINKY (canProtectAlly true))
 	=> 
-	(assert (ACTION (id PINKYprotects) (info "Un aliado esta en apuros --> voy a salvarlo") )))	
+	(assert (ACTION (id PINKYprotects) (info "puedo proteger aliado --> protejo") )))	
 
+(defrule PINKYsecure
+	(PINKY (strong true)) (PINKY (canSecurePPill true))
+	=> 
+	(assert (ACTION (id PINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
+
+(defrule PINKYchase
+	(PINKY (strong true))
+	=> 
+	(assert (ACTION (id PINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule PINKYseeksProtection
-	(PINKY seekProtection true)
+	(PINKY (strong false)) (PINKY (seekProtection true))
 	=>
-	(assert (ACTION (id PINKYgoToActive) (info "soy débil y hay alguien que me proteja --> me acerco a él) )))
+	(assert (ACTION (id PINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el) )))
 
-(defrule BLINKYrunsAway
-	(PINKY (run true)) =>  (assert (ACTION (id PINKYrunsAway))))
+(defrule PINKYrunsAway
+	(PINKY (strong false))
+	=>  
+	(assert (ACTION (id PINKYrunsAway) (info "soy debil --> huyo") )))
+	
 
+	

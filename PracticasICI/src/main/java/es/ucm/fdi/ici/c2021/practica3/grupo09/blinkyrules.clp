@@ -1,58 +1,74 @@
 ;FACTS ASSERTED BY GAME INPUT
 (deftemplate BLINKY
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))
-	(slot canProtectAlly (type SYMBOL))	
-	
-(deftemplate INKY
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
 
+	(slot seekProtection (type SYMBOL))
+)
+		
+(deftemplate INKY
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
+	(slot canProtectAlly (type SYMBOL))	
+
+	(slot seekProtection (type SYMBOL))
+)
 
 (deftemplate PINKY
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))	
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
 
+	(slot seekProtection (type SYMBOL))
+)
+
 (deftemplate SUE
-	(slot run (type SYMBOL)))
-	(slot seekProtection (type SYMBOL))	
+	(slot strong (type SYMBOL))	
+	(slot canSecurePPill (type SYMBOL))	
 	(slot canProtectAlly (type SYMBOL))	
-	
-(deftemplate MSPACMAN 
-    (slot mindistancePPill (type NUMBER)) )
+
+	(slot seekProtection (type SYMBOL))
+)
+
+(deftemplate CHECKMATE 
+    (slot isCheckMate (type SYMBOL))
+)
     
 ;DEFINITION OF THE ACTION FACT
 (deftemplate ACTION
-	(slot id) (slot info (default "")) ) 
-   
-;RULES 
-;(defrule BLINKYrunsAwayMSPACMANclosePPill
-;	(MSPACMAN (mindistancePPill ?d)) (test (<= ?d 30)) 
-;	=>  
-;	(assert (ACTION (id BLINKYrunsAway) (info "MSPacMan cerca PPill"))) )
+	(slot id) (slot info (default "")) 
+) 
 
-(defrule BLINKYchases
-	(BLINKY (edible false)) 
+(defrule BLINKYcheckmate
+	(BLINKY (strong true)) (CHECKMATE (isCheckMate true))
 	=> 
-	(assert (ACTION (id BLINKYchases) (info "No comestible --> perseguir") )))	
+	(assert (ACTION (id BLINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule BLINKYprotects
-	(BLINKY (canProtectAlly true)) 
+	(BLINKY (strong true)) (BLINKY (canProtectAlly true))
 	=> 
-	(assert (ACTION (id BLINKYprotects) (info "Un aliado esta en apuros --> voy a salvarlo") )))	
+	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") )))	
 
+(defrule BLINKYsecure
+	(BLINKY (strong true)) (BLINKY (canSecurePPill true))
+	=> 
+	(assert (ACTION (id BLINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
+
+(defrule BLINKYchase
+	(BLINKY (strong true))
+	=> 
+	(assert (ACTION (id BLINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule BLINKYseeksProtection
-	(BLINKY seekProtection true)
+	(BLINKY (strong false)) (BLINKY (seekProtection true))
 	=>
-	(assert (ACTION (id BLINKYgoToActive) (info "soy débil y hay alguien que me proteja --> me acerco a él) )))
+	(assert (ACTION (id BLINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el) )))
 
 (defrule BLINKYrunsAway
-	(BLINKY (run true)) 
+	(BLINKY (strong false))
 	=>  
-	(assert (ACTION (id BLINKYrunsAway) (info "Comestible --> huir") )))
+	(assert (ACTION (id BLINKYrunsAway) (info "soy debil --> huyo") )))
 	
 
 	
