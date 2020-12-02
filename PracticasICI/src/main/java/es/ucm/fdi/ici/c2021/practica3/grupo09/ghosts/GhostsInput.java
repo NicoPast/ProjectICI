@@ -67,9 +67,9 @@ public class GhostsInput extends Input {
 	// --------------------------------bools weak-----------------------------------------
 
 	private boolean isGhostWeak(GHOST ghost) {
-		// es comestible o el pacman est� lo suficientemente cerca de la ppill y de �l
+		// es comestible o el pacman est� lo suficientemente cerca de la ppill y de �l
 		return game.isGhostEdible(ghost)
-				|| (isPacManCloserToAnyPowerPill && distanceToPacMan.get(ghost) < GhostsClosePacmanTreshold);
+				|| (isPacManCloserToAnyPowerPill && cppad_PacMan.distance < PacmanPPillTreshold && this.distanceToPacMan.get(ghost) < GhostsClosePacmanTreshold);
 	}
 
 	private boolean GhostCanSeekProtection(GHOST ghost) {
@@ -126,20 +126,20 @@ public class GhostsInput extends Input {
 	private boolean PinkyCanSeekProtection;
 	private boolean InkyCanSeekProtection;
 	private boolean SueCanSeekProtection;
-
+ 
 	// --------------------------------bools strong----------------------------------------
 	private boolean isGhostStrong(GHOST ghost) {
-		return !game.isGhostEdible(ghost) && !isPacManCloserToAnyPowerPill;
+		return !game.isGhostEdible(ghost) && 
+			!(isPacManCloserToAnyPowerPill && cppad_PacMan.distance < PacmanPPillTreshold && this.distanceToPacMan.get(ghost) < GhostsClosePacmanTreshold);
 	}
 	
 	private boolean calculateCheckMate() {
-		if (isPacManCloserToPowerPill())
+		if (isPacManCloserToAnyPowerPill)
 			return false;
 
 		Set<interseccion_plus> visitadas = new HashSet<interseccion_plus>();
 		// rellenamos un array con los nodos de los fantasmas
-		Vector<GHOST> ghosts = getActiveGhosts();
-		if (ghosts.isEmpty())
+		if (activeGhosts.isEmpty())
 			return false;
 
 		Vector<Integer> nodosFijos = new Vector<Integer>();
@@ -151,18 +151,18 @@ public class GhostsInput extends Input {
 			visitadas.toArray(aux);
 
 		int i = 0;
-		while (ghosts.size() > 0 && visitadas.size() > 0 && ghosts.size() - visitadas.size() >= 0
+		while (activeGhosts.size() > 0 && visitadas.size() > 0 && activeGhosts.size() - visitadas.size() >= 0
 				&& i < visitadas.size()) {
-			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, ghosts);
+			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, activeGhosts);
 			if (gyd.distance <= 1) {
 				mapa.movesCheckMate.put(gyd.ghost, game.getPacmanCurrentNodeIndex());
-				ghosts.remove(gyd.ghost);
+				activeGhosts.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			} else if (gyd.distance <= game.getDistance(game.getPacmanCurrentNodeIndex(),
 					aux[i].intersection.identificador, game.getPacmanLastMoveMade(), DM.PATH)) {
 				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
-				ghosts.remove(gyd.ghost);
+				activeGhosts.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			} else {
@@ -172,6 +172,29 @@ public class GhostsInput extends Input {
 			}
 		}
 		return visitadas.size() - i == 0;
+	}
+
+	private boolean canSecurePPill(GHOST ghost){
+		if(ppillsLeft == 0){
+			return false;
+		}
+
+		ClosestPowerPillAndDistance my_cpad = cppad_Ghosts.get(ghost);
+		double dist_pacman = game.getDistance(game.getPacmanCurrentNodeIndex(), my_cpad.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
+
+		if(dist_pacman < my_cpad.distance) //Si el pacman llega antes que yo a mi powerpill, no puedo asegurarla
+			return false;
+
+		for(ClosestPowerPillAndDistance cpad : cppad_Ghosts.values()){
+			if(cpad.distance == my_cpad.distance && cpad.powerpill == my_cpad.powerpill) //No me valoro a mi mismo
+				continue;
+			//Si alguien está más cerca de la powerpill, que la asegure el otro, no yo
+			if(cpad.powerpill == my_cpad.powerpill && cpad.distance < my_cpad.distance){ 
+				return false;	
+			}
+		}
+		//Si soy el más cercano a la powerpill más cercana a mi, la aseguro
+		return true;
 	}
 
 	private boolean GhostCanProtectAlly(GHOST ghost) {
@@ -205,10 +228,8 @@ public class GhostsInput extends Input {
 
 	private boolean isCheckMate;
 	private boolean pacManEaten;
-	private boolean BlinkyCanProtectAlly;
-	private boolean PinkyCanProtectAlly;
-	private boolean InkyCanProtectAlly;
-	private boolean SueCanProtectAlly;
+
+	private EnumMap<GHOST, Boolean> strong, canProtect, canSecurePPill;
 
 	// -------------------------------------------------------------------------------------
 	private Vector<GHOST> activeGhosts;
@@ -217,6 +238,11 @@ public class GhostsInput extends Input {
 	public GhostsInput(Game game, MapaInfoGhost mapaInfo) {
 		super(game);
 		this.mapa = mapaInfo;
+
+		this.strong = new EnumMap<>(GHOST.class);
+		this.canSecurePPill = new EnumMap<>(GHOST.class);
+		this.canProtect = new EnumMap<>(GHOST.class);
+
 		parseInput();
 	}
 
@@ -259,34 +285,20 @@ public class GhostsInput extends Input {
 		this.InkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.INKY);
 		this.PinkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.PINKY);
 		this.SueCanSeekProtection = this.GhostCanSeekProtection(GHOST.SUE);
+
+		for(GHOST ghost : GHOST.values()){
+			strong.put(ghost, isGhostStrong(ghost));
+			canSecurePPill.put(ghost, canSecurePPill(ghost));
+			canProtect.put(ghost, GhostCanProtectAlly(ghost));
+		}
 	}
 
-	public boolean getIsCheckMate() {
-		return this.isCheckMate;
-	}
-
-	public boolean getPacManEaten() {
-		return this.pacManEaten;
-	}
-
-	public double getDistanceToPacMan(GHOST ghostType) {
-		return distanceToPacMan.get(ghostType);
-	}
-
-	public MOVE GetMoveToPacman(GHOST ghost) { // Usado en GhostCanBeProtected & GhostFarFromActiveGhost
+	private MOVE GetMoveToPacman(GHOST ghost) { // Usado en GhostCanBeProtected & GhostFarFromActiveGhost
 		return game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
 				game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.EUCLID);
 	}
 
-	public Vector<GHOST> getActiveGhosts() {
-		return activeGhosts;
-	}
-
-	public Vector<GHOST> getEdibleGhosts() {
-		return edibleGhosts;
-	}
-
-	public NODEANDDISTANCE nearestGhostDistance(int myPos, int[] pos, MOVE m) {
+	private NODEANDDISTANCE nearestGhostDistance(int myPos, int[] pos, MOVE m) {
 		int nearestP = -1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
@@ -344,8 +356,7 @@ public class GhostsInput extends Input {
 			if (mapa.getCheckLastModeMade())
 				inters.add(new interseccion_plus(intActual, intActual));
 			else
-				inters.add(new interseccion_plus(mapa.getInterseccion(intActual.destinos.get(mapa.getUltimoMovReal())),
-						intActual));
+				inters.add(new interseccion_plus(mapa.getInterseccion(intActual.destinos.get(mapa.getUltimoMovReal())), intActual));
 		} else {
 			Set<interseccion_plus> aux = new HashSet<interseccion_plus>(inters);
 			inters.clear();
@@ -390,7 +401,7 @@ public class GhostsInput extends Input {
 		// Solo miro si esta en el rango del fairplay
 		double distMin = Double.MAX_VALUE;
 		if (cppad_PacMan.distance < limit) {
-			for (GHOST ghostType : getActiveGhosts()) {
+			for (GHOST ghostType : activeGhosts) {
 				double dist = game.getDistance(game.getGhostCurrentNodeIndex(ghostType), cppad_PacMan.powerpill,
 						game.getGhostLastMoveMade(ghostType), DM.PATH);
 				distMin = Math.min(dist, distMin);
@@ -398,42 +409,6 @@ public class GhostsInput extends Input {
 			return distMin > cppad_PacMan.distance && cppad_PacMan.distance < limit * 1.55;
 		}
 		return false;
-	}
-
-	public int getNumberOfActivePPilsLeft() {
-		return ppillsLeft;
-	}
-
-	public boolean isPacManCloserToPowerPill() {
-		return isPacManCloserToAnyPowerPill;
-	}
-
-	public double getMinPacmanDistancePPill() {
-		return cppad_PacMan.distance;
-	}
-
-	public interseccion getProximaInterseccionPacMan() {
-		return proximaInterseccionPacMan;
-	}
-
-	public interseccion getProximaInterseccionGhost(int pos) {
-		return mapa.getInterseccion(pos);
-	}
-
-	public MOVE getPacmanRealMoveMade() {
-		return mapa.getUltimoMovReal();
-	}
-
-	public ClosestPowerPillAndDistance getClosestPowerPillAndDistance(GHOST ghostType) {
-		return cppad_Ghosts.get(ghostType);
-	}
-
-	public EnumMap<GHOST, ClosestPowerPillAndDistance> getClosestPowerPillAndDistances() {
-		return cppad_Ghosts;
-	}
-
-	public ClosestPowerPillAndDistance getClosestPowerPillAndDistancePacMan() {
-		return cppad_PacMan;
 	}
 
 	@Override
@@ -445,6 +420,28 @@ public class GhostsInput extends Input {
 		// facts.add(String.format("(SUE (edible %s))", this.SUEedible));
 		// facts.add(String.format("(MSPACMAN (mindistancePPill %d))",
 		// (int)this.minPacmanDistancePPill));
+
+		//Strongs
+		facts.add(String.format("(BLINKY (strong %s))", strong.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (strong %s))", strong.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (strong %s))", strong.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (strong %s))", strong.get(GHOST.SUE)));
+
+		//Can secure ppill
+		facts.add(String.format("(BLINKY (canSecurePPill %s))", canSecurePPill.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (canSecurePPill %s))", canSecurePPill.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (canSecurePPill %s))", canSecurePPill.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (canSecurePPill %s))", canSecurePPill.get(GHOST.SUE)));
+
+		//Can protect ally
+		facts.add(String.format("(BLINKY (canProtectAlly %s))", canProtect.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (canProtectAlly %s))", canProtect.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (canProtectAlly %s))", canProtect.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (canProtectAlly %s))", canProtect.get(GHOST.SUE)));
+
+		facts.add(String.format("(CHECKMATE (isCheckMate %s))", isCheckMate));
+		facts.add(String.format("(MSPACMAN (wasMsPacManEaten %s))", pacManEaten));
+
 		return facts;
 	}
 }
