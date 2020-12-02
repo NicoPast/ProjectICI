@@ -10,11 +10,11 @@
 (deftemplate SUE
 	(slot edible (type SYMBOL)))
 	
-(deftemplate MSPACMAN 
+(deftemplate MSPACMAN
     (slot mindistancePPill))
     
 (deftemplate ACTION
-	(slot id))   
+	(slot id))
     
 (defrule SUEchases
 	(SUE (edible false)) => (assert (ACTION (id SUEchases))))
