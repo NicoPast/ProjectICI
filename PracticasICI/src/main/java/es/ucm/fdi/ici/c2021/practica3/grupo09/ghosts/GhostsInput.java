@@ -53,7 +53,7 @@ public class GhostsInput extends Input {
 
 	private EnumMap<GHOST, Double> distanceToPacMan;
 
-	private interseccion proximaInterseccionPacMan;
+	//private interseccion proximaInterseccionPacMan;
 
 	private int ppillsLeft;
 
@@ -117,16 +117,10 @@ public class GhostsInput extends Input {
 
 	private boolean isPacManCloserToAnyPowerPill;
 
-	private boolean BlinkyHasToRun;
-	private boolean PinkyHasToRun;
-	private boolean InkyHasToRun;
-	private boolean SueHasToRun;
+	EnumMap<GHOST,Boolean> hasToRun;
+	
+	EnumMap<GHOST,Boolean> canSeekProtection;
 
-	private boolean BlinkyCanSeekProtection;
-	private boolean PinkyCanSeekProtection;
-	private boolean InkyCanSeekProtection;
-	private boolean SueCanSeekProtection;
- 
 	// --------------------------------bools strong----------------------------------------
 	private boolean isGhostStrong(GHOST ghost) {
 		return !game.isGhostEdible(ghost) && 
@@ -231,6 +225,7 @@ public class GhostsInput extends Input {
 
 	private EnumMap<GHOST, Boolean> strong, canProtect, canSecurePPill;
 
+	
 	// -------------------------------------------------------------------------------------
 	private Vector<GHOST> activeGhosts;
 	private Vector<GHOST> edibleGhosts;
@@ -239,10 +234,15 @@ public class GhostsInput extends Input {
 		super(game);
 		this.mapa = mapaInfo;
 
+		//STRONG
 		this.strong = new EnumMap<>(GHOST.class);
 		this.canSecurePPill = new EnumMap<>(GHOST.class);
 		this.canProtect = new EnumMap<>(GHOST.class);
 
+		//WEAK
+		this.hasToRun=new EnumMap<>(GHOST.class);
+		this.canSeekProtection=new EnumMap<>(GHOST.class);
+		
 		parseInput();
 	}
 
@@ -261,13 +261,13 @@ public class GhostsInput extends Input {
 
 		initCppads();
 
-		proximaInterseccionPacMan = null;
-		if (mapa.getCheckLastModeMade())
-			proximaInterseccionPacMan = mapa.getInterseccionActual();
-		else if (mapa.getInterseccionActual() != null
-				&& mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()) != null)
-			proximaInterseccionPacMan = mapa
-					.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
+		// proximaInterseccionPacMan = null;
+		// if (mapa.getCheckLastModeMade())
+		// 	proximaInterseccionPacMan = mapa.getInterseccionActual();
+		// else if (mapa.getInterseccionActual() != null
+		// 		&& mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()) != null)
+		// 	proximaInterseccionPacMan = mapa
+		// 			.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
 
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
 
@@ -276,20 +276,15 @@ public class GhostsInput extends Input {
 		this.pacManEaten = game.wasPacManEaten();
 
 		getDistancesToPacMan();
-		this.BlinkyHasToRun = this.isGhostWeak(GHOST.BLINKY);
-		this.InkyHasToRun = this.isGhostWeak(GHOST.INKY);
-		this.PinkyHasToRun = this.isGhostWeak(GHOST.PINKY);
-		this.SueHasToRun = this.isGhostWeak(GHOST.SUE);
 
-		this.BlinkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.BLINKY);
-		this.InkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.INKY);
-		this.PinkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.PINKY);
-		this.SueCanSeekProtection = this.GhostCanSeekProtection(GHOST.SUE);
+		for(GHOST ghost : GHOST.values())
+		{			
+			this.strong.put(ghost, isGhostStrong(ghost));
+			this.canSecurePPill.put(ghost, canSecurePPill(ghost));
+			this.canProtect.put(ghost, GhostCanProtectAlly(ghost));
 
-		for(GHOST ghost : GHOST.values()){
-			strong.put(ghost, isGhostStrong(ghost));
-			canSecurePPill.put(ghost, canSecurePPill(ghost));
-			canProtect.put(ghost, GhostCanProtectAlly(ghost));
+			this.hasToRun.put(ghost, isGhostWeak(ghost));
+			this.canSeekProtection.put(ghost, GhostCanSeekProtection(ghost));
 		}
 	}
 
@@ -414,7 +409,6 @@ public class GhostsInput extends Input {
 	@Override
 	public Collection<String> getFacts() {
 		Vector<String> facts = new Vector<String>();
-		facts.add(String.format("(BLINKY (run %s))", this.BlinkyHasToRun));
 		// facts.add(String.format("(INKY (edible %s))", this.INKYedible));
 		// facts.add(String.format("(PINKY (edible %s))", this.PINKYedible));
 		// facts.add(String.format("(SUE (edible %s))", this.SUEedible));
@@ -422,26 +416,35 @@ public class GhostsInput extends Input {
 		// (int)this.minPacmanDistancePPill));
 
 		//Strongs
-		facts.add(String.format("(BLINKY (strong %s))", strong.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (strong %s))", strong.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (strong %s))", strong.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (strong %s))", strong.get(GHOST.SUE)));
+		facts.add(String.format("(BLINKY (strong %s))", this.strong.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (strong %s))", this.strong.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (strong %s))", this.strong.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (strong %s))", this.strong.get(GHOST.SUE)));
 
 		//Can secure ppill
-		facts.add(String.format("(BLINKY (canSecurePPill %s))", canSecurePPill.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (canSecurePPill %s))", canSecurePPill.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (canSecurePPill %s))", canSecurePPill.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (canSecurePPill %s))", canSecurePPill.get(GHOST.SUE)));
+		facts.add(String.format("(BLINKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (canSecurePPill %s))", this.canSecurePPill.get(GHOST.SUE)));
 
 		//Can protect ally
-		facts.add(String.format("(BLINKY (canProtectAlly %s))", canProtect.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (canProtectAlly %s))", canProtect.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (canProtectAlly %s))", canProtect.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (canProtectAlly %s))", canProtect.get(GHOST.SUE)));
+		facts.add(String.format("(BLINKY (canProtectAlly %s))", this.canProtect.get(GHOST.BLINKY)));
+		facts.add(String.format("(PINKY (canProtectAlly %s))", this.canProtect.get(GHOST.PINKY)));
+		facts.add(String.format("(INKY (canProtectAlly %s))", this.canProtect.get(GHOST.INKY)));
+		facts.add(String.format("(SUE (canProtectAlly %s))", this.canProtect.get(GHOST.SUE)));
 
-		facts.add(String.format("(CHECKMATE (isCheckMate %s))", isCheckMate));
-		facts.add(String.format("(MSPACMAN (wasMsPacManEaten %s))", pacManEaten));
+		facts.add(String.format("(CHECKMATE (isCheckMate %s))", this.isCheckMate));
+		facts.add(String.format("(MSPACMAN (wasMsPacManEaten %s))", this.pacManEaten));
 
+		facts.add(String.format("(BLINKY (run %s))", this.hasToRun.get(GHOST.BLINKY)));
+		facts.add(String.format("(INKY (run %s))", this.hasToRun.get(GHOST.INKY)));
+		facts.add(String.format("(PINKY (run %s))", this.hasToRun.get(GHOST.PINKY)));
+		facts.add(String.format("(SUE (run %s))", this.hasToRun.get(GHOST.SUE)));
+		
+		facts.add(String.format("(BLINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.BLINKY)));
+		facts.add(String.format("(INKY (seekProtection %s))", this.canSeekProtection.get(GHOST.INKY)));
+		facts.add(String.format("(PINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.PINKY)));
+		facts.add(String.format("(SUE (seekProtection %s))", this.canSeekProtection.get(GHOST.SUE)));
 		return facts;
 	}
 }
