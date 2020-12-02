@@ -5,7 +5,11 @@ import java.util.HashMap;
 
 import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.ChaseAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.CheckMateAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.GoToActiveGhostAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.ProtectAlliesAction;
 import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.RunAwayAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.ghosts.actions.SecurePPillAction;
 import es.ucm.fdi.ici.rules.Action;
 import es.ucm.fdi.ici.rules.Input;
 import es.ucm.fdi.ici.rules.RuleEngine;
@@ -25,28 +29,29 @@ public class Ghosts extends GhostController {
 	
 	EnumMap<GHOST,RuleEngine> ghostRuleEngines;
 	
-	
 	public Ghosts() {
 		
 		map = new HashMap<String,Action>();
-		//Fill Actions
-		// Action BLINKYchases = new ChaseAction(GHOST.BLINKY);
-		// Action INKYchases = new ChaseAction(GHOST.INKY);
-		// Action PINKYchases = new ChaseAction(GHOST.PINKY);
-		// Action SUEchases = new ChaseAction(GHOST.SUE);
-		// Action BLINKYrunsAway = new RunAwayAction(GHOST.BLINKY);
-		// Action INKYrunsAway = new RunAwayAction(GHOST.INKY);
-		// Action PINKYrunsAway = new RunAwayAction(GHOST.PINKY);
-		// Action SUErunsAway = new RunAwayAction(GHOST.SUE);
-		
-		// map.put("BLINKYchases", BLINKYchases);
-		// map.put("INKYchases", INKYchases);
-		// map.put("PINKYchases", PINKYchases);
-		// map.put("SUEchases", SUEchases);	
-		// map.put("BLINKYrunsAway", BLINKYrunsAway);
-		// map.put("INKYrunsAway", INKYrunsAway);
-		// map.put("PINKYrunsAway", PINKYrunsAway);
-		// map.put("SUErunsAway", SUErunsAway);
+
+		for(GHOST ghost : GHOST.values()){
+			Action checkmate = new CheckMateAction(ghost, mapInfo);
+			map.put(ghost.toString() + "checkmate", checkmate);
+			
+			Action protectAlly = new ProtectAlliesAction(ghost, mapInfo);
+			map.put(ghost.toString() + "protects", protectAlly);
+
+			Action securePPill = new SecurePPillAction(ghost, mapInfo);
+			map.put(ghost.toString() + "secure", securePPill);
+
+			Action chase = new ChaseAction(ghost, mapInfo);
+			map.put(ghost.toString() + "chase", chase);
+
+			Action seekProtection = new GoToActiveGhostAction(ghost, mapInfo);
+			map.put(ghost.toString() + "seeksProtection", seekProtection);
+
+			Action runAway = new RunAwayAction(ghost, mapInfo);
+			map.put(ghost.toString() + "runsAway", runAway);			
+		}
 		
 		ghostRuleEngines = new EnumMap<GHOST,RuleEngine>(GHOST.class);
 		for(GHOST ghost: GHOST.values())
