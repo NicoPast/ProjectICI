@@ -117,15 +117,10 @@ public class GhostsInput extends Input {
 
 	private boolean isPacManCloserToAnyPowerPill;
 
-	private boolean BlinkyHasToRun;
-	private boolean PinkyHasToRun;
-	private boolean InkyHasToRun;
-	private boolean SueHasToRun;
+	EnumMap<GHOST,Boolean> hasToRun;
+	
+	EnumMap<GHOST,Boolean> canSeekProtection;
 
-	private boolean BlinkyCanSeekProtection;
-	private boolean PinkyCanSeekProtection;
-	private boolean InkyCanSeekProtection;
-	private boolean SueCanSeekProtection;
 
 	// --------------------------------bools strong----------------------------------------
 	private boolean isGhostStrong(GHOST ghost) {
@@ -205,11 +200,11 @@ public class GhostsInput extends Input {
 
 	private boolean isCheckMate;
 	private boolean pacManEaten;
-	private boolean BlinkyCanProtectAlly;
-	private boolean PinkyCanProtectAlly;
-	private boolean InkyCanProtectAlly;
-	private boolean SueCanProtectAlly;
+	
+	private EnumMap<GHOST,Boolean>CanProtectAlly;
 
+
+	
 	// -------------------------------------------------------------------------------------
 	private Vector<GHOST> activeGhosts;
 	private Vector<GHOST> edibleGhosts;
@@ -217,6 +212,9 @@ public class GhostsInput extends Input {
 	public GhostsInput(Game game, MapaInfoGhost mapaInfo) {
 		super(game);
 		this.mapa = mapaInfo;
+		this.hasToRun=new EnumMap<>(GHOST.class);
+		this.CanProtectAlly=new EnumMap<>(GHOST.class);
+		this.canSeekProtection=new EnumMap<>(GHOST.class);
 		parseInput();
 	}
 
@@ -250,15 +248,13 @@ public class GhostsInput extends Input {
 		this.pacManEaten = game.wasPacManEaten();
 
 		getDistancesToPacMan();
-		this.BlinkyHasToRun = this.isGhostWeak(GHOST.BLINKY);
-		this.InkyHasToRun = this.isGhostWeak(GHOST.INKY);
-		this.PinkyHasToRun = this.isGhostWeak(GHOST.PINKY);
-		this.SueHasToRun = this.isGhostWeak(GHOST.SUE);
-
-		this.BlinkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.BLINKY);
-		this.InkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.INKY);
-		this.PinkyCanSeekProtection = this.GhostCanSeekProtection(GHOST.PINKY);
-		this.SueCanSeekProtection = this.GhostCanSeekProtection(GHOST.SUE);
+		for(GHOST g:GHOST.values())
+		{
+			this.hasToRun.put(g, isGhostWeak(g));
+			this.canSeekProtection.put(g, GhostCanSeekProtection(g));
+			this.CanProtectAlly.put(g, GhostCanProtectAlly(g));
+		}
+		
 	}
 
 	public boolean getIsCheckMate() {
@@ -439,12 +435,20 @@ public class GhostsInput extends Input {
 	@Override
 	public Collection<String> getFacts() {
 		Vector<String> facts = new Vector<String>();
-		facts.add(String.format("(BLINKY (run %s))", this.BlinkyHasToRun));
-		// facts.add(String.format("(INKY (edible %s))", this.INKYedible));
-		// facts.add(String.format("(PINKY (edible %s))", this.PINKYedible));
-		// facts.add(String.format("(SUE (edible %s))", this.SUEedible));
-		// facts.add(String.format("(MSPACMAN (mindistancePPill %d))",
-		// (int)this.minPacmanDistancePPill));
+		facts.add(String.format("(BLINKY (run %s))", this.hasToRun.get(GHOST.BLINKY)));
+		facts.add(String.format("(INKY (run %s))", this.hasToRun.get(GHOST.INKY)));
+		facts.add(String.format("(PINKY (run %s))", this.hasToRun.get(GHOST.PINKY)));
+		facts.add(String.format("(SUE (run %s))", this.hasToRun.get(GHOST.SUE)));
+		
+		facts.add(String.format("(BLINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.BLINKY)));
+		facts.add(String.format("(INKY (seekProtection %s))", this.canSeekProtection.get(GHOST.INKY)));
+		facts.add(String.format("(PINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.PINKY)));
+		facts.add(String.format("(SUE (seekProtection %s))", this.canSeekProtection.get(GHOST.SUE)));
+		
+		facts.add(String.format("(BLINKY (canProtectAlly %s))", this.CanProtectAlly.get(GHOST.BLINKY)));
+		facts.add(String.format("(INKY (canProtectAlly %s))", this.CanProtectAlly.get(GHOST.INKY)));
+		facts.add(String.format("(PINKY (canProtectAlly %s))", this.CanProtectAlly.get(GHOST.PINKY)));
+		facts.add(String.format("(SUE (canProtectAlly %s))", this.CanProtectAlly.get(GHOST.SUE)));
 		return facts;
 	}
 }
