@@ -63,7 +63,7 @@
 (defrule PINKYseeksProtection
 	(PINKY (strong false)) (PINKY (seekProtection true))
 	=>
-	(assert (ACTION (id PINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el) )))
+	(assert (ACTION (id PINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 
 (defrule PINKYrunsAway
 	(PINKY (strong false))

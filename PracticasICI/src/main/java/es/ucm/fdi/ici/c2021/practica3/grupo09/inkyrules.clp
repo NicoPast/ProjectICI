@@ -63,12 +63,10 @@
 (defrule INKYseeksProtection
 	(INKY (strong false)) (INKY (seekProtection true))
 	=>
-	(assert (ACTION (id INKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el) )))
+	(assert (ACTION (id INKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 
 (defrule INKYrunsAway
 	(INKY (strong false))
 	=>  
 	(assert (ACTION (id INKYrunsAway) (info "soy debil --> huyo") )))
-	
-
 	

@@ -23,7 +23,7 @@ public class Ghosts extends GhostController {
 
 	MapaInfoGhost mapInfo;
 
-	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/grupo09/practica3/demorules/";
+	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica3/grupo09";
 	
 	HashMap<String,Action> map;
 	
@@ -32,7 +32,7 @@ public class Ghosts extends GhostController {
 	public Ghosts() {
 		
 		map = new HashMap<String,Action>();
-
+		mapInfo = new MapaInfoGhost();
 		for(GHOST ghost : GHOST.values()){
 			Action checkmate = new CheckMateAction(ghost, mapInfo);
 			map.put(ghost.toString() + "checkmate", checkmate);
@@ -57,7 +57,7 @@ public class Ghosts extends GhostController {
 		for(GHOST ghost: GHOST.values())
 		{
 			String rulesFile = String.format("%s/%srules.clp", RULES_PATH, ghost.name().toLowerCase());
-			RuleEngine engine  = new RuleEngine(ghost.name(),rulesFile, map);
+			RuleEngine engine  = new RuleEngine(ghost.name(), rulesFile, map);
 			ghostRuleEngines.put(ghost, engine);
 			
 			//add observer to every Ghost
@@ -66,8 +66,8 @@ public class Ghosts extends GhostController {
 		}
 		
 		//add observer only to BLINKY
-		ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver(GHOST.BLINKY.name(), true);
-		ghostRuleEngines.get(GHOST.BLINKY).addObserver(observer);
+		//ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver(GHOST.BLINKY.name(), true);
+		//ghostRuleEngines.get(GHOST.BLINKY).addObserver(observer);
 		
 	}
 

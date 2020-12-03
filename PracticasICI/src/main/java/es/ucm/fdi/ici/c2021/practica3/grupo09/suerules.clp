@@ -63,7 +63,7 @@
 (defrule SUEseeksProtection
 	(SUE (strong false)) (SUE (seekProtection true))
 	=>
-	(assert (ACTION (id SUEseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el) )))
+	(assert (ACTION (id SUEseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 
 (defrule SUErunsAway
 	(SUE (strong false))
