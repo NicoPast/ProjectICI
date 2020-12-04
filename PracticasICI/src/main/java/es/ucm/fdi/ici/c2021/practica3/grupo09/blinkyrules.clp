@@ -2,30 +2,34 @@
 (deftemplate BLINKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL)))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 		
 (deftemplate INKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL)))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 
 (deftemplate PINKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL)))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 
 (deftemplate SUE
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL)))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 
 (deftemplate CHECKMATE 
     (slot isCheckMate  (type SYMBOL)))
@@ -40,7 +44,7 @@
 	(assert (ACTION (id BLINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule BLINKYprotects
-	(BLINKY (strong true)) (BLINKY (canProtectAlly true))
+	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (BLINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
 	=> 
 	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") )))	
 
@@ -55,7 +59,7 @@
 	(assert (ACTION (id BLINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule BLINKYseeksProtection
-	(BLINKY (strong false)) (BLINKY (seekProtection true))
+	(BLINKY (strong false)) (BLINKY (GhostToNearestActiveGhostDistance ?d)) (test (<= ?d 25))) )
 	=>
 	(assert (ACTION (id BLINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 

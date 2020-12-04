@@ -2,33 +2,37 @@
 (deftemplate BLINKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL))
-)
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+	)
 		
 (deftemplate INKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL))
-)
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+	)
 
 (deftemplate PINKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 )
 
 (deftemplate SUE
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
-	(slot canProtectAlly (type SYMBOL))	
+	(slot nearestGhostToPacmanDistance (type FLOAT))	
+	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
-	(slot seekProtection (type SYMBOL))
+	(slot GhostToNearestActiveGhostDistance (type FLOAT))
 )
 
 (deftemplate CHECKMATE 
@@ -46,7 +50,7 @@
 	(assert (ACTION (id SUEcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule SUEprotects
-	(SUE (strong true)) (SUE (canProtectAlly true))
+	(SUE (strong true)) (SUE (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (SUE (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
 	=> 
 	(assert (ACTION (id SUEprotects) (info "puedo proteger aliado --> protejo") )))	
 
@@ -61,7 +65,7 @@
 	(assert (ACTION (id SUEchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule SUEseeksProtection
-	(SUE (strong false)) (SUE (seekProtection true))
+	(SUE (strong false)) (SUE (GhostToNearestActiveGhostDistance ?d)) (test (<= ?d 25))) )
 	=>
 	(assert (ACTION (id SUEseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 

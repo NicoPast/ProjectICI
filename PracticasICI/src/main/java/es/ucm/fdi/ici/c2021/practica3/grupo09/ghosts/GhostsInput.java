@@ -65,8 +65,8 @@ public class GhostsInput extends Input {
 	private int MAX_DISTANCE_TO_WEAK_GHOST = 25;
 
 	// --------------------------------bools weak-----------------------------------------
-
-	private boolean GhostCanSeekProtection(GHOST ghost) {
+	private double GhostToNearestActiveGhostDistance;
+	private double GhostCanSeekProtection(GHOST ghost) {
 		if (!this.isGhostStrong(ghost) && !activeGhosts.isEmpty()) {
 			interseccion inter = this.mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
 
@@ -98,22 +98,25 @@ public class GhostsInput extends Input {
 				}
 				// si hay algun fantasma activo lo suficientemente cerca, hay que perseguirlo
 				// para que si viene el pacman el fantasma lo mate
-				return nearest < CONST_LIMIT_DISTANCE_SEEK_PROTECTION;
-
+				//return nearest < CONST_LIMIT_DISTANCE_SEEK_PROTECTION;
+				return nearest;
 			}
 			// si no hay interseccion estoy en un pasillo y se sigue con el movimiento
 			// actual.
 			else
-				return false;
+				return -1;
 		} else
-			return false;
+			return -1;
 	}
 
 	private boolean isPacManCloserToAnyPowerPill;
 	
-	EnumMap<GHOST,Boolean> canSeekProtection;
+	EnumMap<GHOST,Double> canSeekProtection;
 
 	// --------------------------------bools strong----------------------------------------
+	
+		
+	
 	private boolean isGhostStrong(GHOST ghost) {
 		return !game.isGhostEdible(ghost) && 
 			!(isPacManCloserToAnyPowerPill && cppad_PacMan.distance < PacmanPPillTreshold && this.distanceToPacMan.get(ghost) < GhostsClosePacmanTreshold);
@@ -182,40 +185,46 @@ public class GhostsInput extends Input {
 		//Si soy el más cercano a la powerpill más cercana a mi, la aseguro
 		return true;
 	}
-
-	private boolean GhostCanProtectAlly(GHOST ghost) {
-		if (isGhostStrong(ghost) && this.isPacManCloserToAnyPowerPill) {
-			if (game.doesGhostRequireAction(ghost) && !game.isGhostEdible(ghost)) {
-								// si no hay fantasmas comestibles no hay que proteger nada
-				if (edibleGhosts.isEmpty())
-					return false;
-				int[] ediblePos = new int[edibleGhosts.size()];
-				// rellenamos un array con las posiciones los fantasmas comestibles
-				for (int i = 0; i < edibleGhosts.size(); i++) {
-					ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
-				}
-				// vemos cual es la distancia al fantasma edible mas cercano del pacman para su
-				// ultimo movimiento
-				NODEANDDISTANCE nearestNodeAndDistance = nearestGhostDistance(game.getPacmanCurrentNodeIndex(),
-						ediblePos, game.getPacmanLastMoveMade());
-				double nearest = nearestNodeAndDistance.d;
-				// No hace falta comprobar si yo estoy mas cerca de el que el pacman
-				// porque el otro fantasma tratara de acercarse a mi pero conviene comprobar
-				// que estoy lo suficientemente cerca
-
-				return nearest < CONST_PACMAN_MIN_DISTANCE_CAN_PROTECT && game.getDistance(game.getGhostCurrentNodeIndex(ghost),
-						nearestNodeAndDistance.n, DM.EUCLID) < MAX_DISTANCE_TO_WEAK_GHOST;
-
-			} else
-				return false;
+	
+	private class protectAlliesParameters{
+		double nearestGhostToPacmanDistance;
+		double GhostToNearestEdibleGhostDistance;
+		public protectAlliesParameters(double pacmanDistance,double edibleDistace) {
+			nearestGhostToPacmanDistance = pacmanDistance;
+			GhostToNearestEdibleGhostDistance = edibleDistace;
 		}
-		else return false;
+	}
+	private protectAlliesParameters GhostCanProtectAlly(GHOST ghost) {
+		if (isGhostStrong(ghost) && game.doesGhostRequireAction(ghost) && !edibleGhosts.isEmpty()) {
+			
+			// si no hay fantasmas comestibles no hay que proteger nada
+			int[] ediblePos = new int[edibleGhosts.size()];
+			// rellenamos un array con las posiciones los fantasmas comestibles
+			for (int i = 0; i < edibleGhosts.size(); i++) {
+				ediblePos[i] = game.getGhostCurrentNodeIndex(edibleGhosts.elementAt(i));
+			}
+			// vemos cual es la distancia al fantasma edible mas cercano del pacman para su
+			// ultimo movimiento
+			NODEANDDISTANCE nearestNodeAndDistance = nearestGhostDistance(game.getPacmanCurrentNodeIndex(),
+					ediblePos, game.getPacmanLastMoveMade());
+			double nearest = nearestNodeAndDistance.d;
+			// No hace falta comprobar si yo estoy mas cerca de el que el pacman
+			// porque el otro fantasma tratara de acercarse a mi pero conviene comprobar
+			// que estoy lo suficientemente cerca
+			return new protectAlliesParameters(nearest,game.getDistance(game.getGhostCurrentNodeIndex(ghost),
+						nearestNodeAndDistance.n, DM.EUCLID));
+//				return nearest < CONST_PACMAN_MIN_DISTANCE_CAN_PROTECT && game.getDistance(game.getGhostCurrentNodeIndex(ghost),
+//						nearestNodeAndDistance.n, DM.EUCLID) < MAX_DISTANCE_TO_WEAK_GHOST;	
+		}
+		else return new protectAlliesParameters(-1,-1);
+//		else return false;
 	}
 
 	private boolean isCheckMate;
 
-	private EnumMap<GHOST, Boolean> strong, canProtect, canSecurePPill;
-
+	private EnumMap<GHOST, Boolean>strong,canSecurePPill;
+	
+	private EnumMap<GHOST, protectAlliesParameters>  canProtect;
 	
 	// -------------------------------------------------------------------------------------
 	private Vector<GHOST> activeGhosts;
@@ -268,11 +277,11 @@ public class GhostsInput extends Input {
 			if(this.strong.get(ghost)) {
 				this.canSecurePPill.put(ghost, canSecurePPill(ghost));
 				this.canProtect.put(ghost, GhostCanProtectAlly(ghost));
-				this.canSeekProtection.put(ghost, false);
+				this.canSeekProtection.put(ghost, -1.0);
 			}
 			else {
 				this.canSecurePPill.put(ghost, false);
-				this.canProtect.put(ghost, false);
+				this.canProtect.put(ghost, new protectAlliesParameters(-1.0,-1.0));
 				this.canSeekProtection.put(ghost, GhostCanSeekProtection(ghost));
 			}
 		}
@@ -396,9 +405,9 @@ public class GhostsInput extends Input {
 		Vector<String> facts = new Vector<String>();
 
 		for(GHOST ghost : GHOST.values()){
-			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (canProtectAlly %s) (seekProtection %s))", 
+			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (nearestGhostToPacmanDistance %d) (GhostToNearestEdibleGhostDistance %d) (GhostToNearestActiveGhostDistance %d))", 
 				ghost.toString(), this.strong.get(ghost), this.canSecurePPill.get(ghost), 
-				this.canProtect.get(ghost), this.canSeekProtection.get(ghost)));
+				this.canProtect.get(ghost).nearestGhostToPacmanDistance,this.canProtect.get(ghost).GhostToNearestEdibleGhostDistance, this.canSeekProtection.get(ghost)));
 		}
 
 		facts.add(String.format("(CHECKMATE (isCheckMate %s))", this.isCheckMate));
