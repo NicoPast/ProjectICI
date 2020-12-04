@@ -394,34 +394,12 @@ public class GhostsInput extends Input {
 	@Override
 	public Collection<String> getFacts() {
 		Vector<String> facts = new Vector<String>();
-		// facts.add(String.format("(INKY (edible %s))", this.INKYedible));
-		// facts.add(String.format("(PINKY (edible %s))", this.PINKYedible));
-		// facts.add(String.format("(SUE (edible %s))", this.SUEedible));
-		// facts.add(String.format("(MSPACMAN (mindistancePPill %d))",
-		// (int)this.minPacmanDistancePPill));
 
-		//Strongs
-		facts.add(String.format("(BLINKY (strong %s))", this.strong.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (strong %s))", this.strong.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (strong %s))", this.strong.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (strong %s))", this.strong.get(GHOST.SUE)));
-
-		//Can secure ppill
-		facts.add(String.format("(BLINKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (canSecurePPill %s))", this.canSecurePPill.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (canSecurePPill %s))", this.canSecurePPill.get(GHOST.SUE)));
-
-		//Can protect ally
-		facts.add(String.format("(BLINKY (canProtectAlly %s))", this.canProtect.get(GHOST.BLINKY)));
-		facts.add(String.format("(PINKY (canProtectAlly %s))", this.canProtect.get(GHOST.PINKY)));
-		facts.add(String.format("(INKY (canProtectAlly %s))", this.canProtect.get(GHOST.INKY)));
-		facts.add(String.format("(SUE (canProtectAlly %s))", this.canProtect.get(GHOST.SUE)));
-		
-		facts.add(String.format("(BLINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.BLINKY)));
-		facts.add(String.format("(INKY (seekProtection %s))", this.canSeekProtection.get(GHOST.INKY)));
-		facts.add(String.format("(PINKY (seekProtection %s))", this.canSeekProtection.get(GHOST.PINKY)));
-		facts.add(String.format("(SUE (seekProtection %s))", this.canSeekProtection.get(GHOST.SUE)));
+		for(GHOST ghost : GHOST.values()){
+			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (canProtectAlly %s) (seekProtection %s))", 
+				ghost.toString(), this.strong.get(ghost), this.canSecurePPill.get(ghost), 
+				this.canProtect.get(ghost), this.canSeekProtection.get(ghost)));
+		}
 
 		facts.add(String.format("(CHECKMATE (isCheckMate %s))", this.isCheckMate));
 
