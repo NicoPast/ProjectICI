@@ -53,7 +53,7 @@ public class GhostsInput extends Input {
 
 	private EnumMap<GHOST, Double> distanceToPacMan;
 
-	//private interseccion proximaInterseccionPacMan;
+	private interseccion proximaInterseccionPacMan;
 
 	private int ppillsLeft;
 
@@ -245,33 +245,36 @@ public class GhostsInput extends Input {
 
 		getActiveGhosts_();
 		getEdibleGhosts_();
-
-		// En caso de haber jaqueMate, la solucion se guarda en mapaInfo
-		isCheckMate = calculateCheckMate();
-
+		
 		initCppads();
 
-		// proximaInterseccionPacMan = null;
-		// if (mapa.getCheckLastModeMade())
-		// 	proximaInterseccionPacMan = mapa.getInterseccionActual();
-		// else if (mapa.getInterseccionActual() != null
-		// 		&& mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()) != null)
-		// 	proximaInterseccionPacMan = mapa
-		// 			.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
-
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
+			
+		proximaInterseccionPacMan = null;
+		if (mapa.getCheckLastModeMade())
+			proximaInterseccionPacMan = mapa.getInterseccionActual();
+		else if (mapa.getInterseccionActual() != null && mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()) != null)
+			proximaInterseccionPacMan = mapa.getInterseccion(mapa.getInterseccionActual().destinos.get(mapa.getUltimoMovReal()));
+		
+		// En caso de haber jaqueMate, la solucion se guarda en mapaInfo
+		isCheckMate = calculateCheckMate();
 
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
 
 		getDistancesToPacMan();
 
-		for(GHOST ghost : GHOST.values())
-		{			
+		for(GHOST ghost : GHOST.values()) {			
 			this.strong.put(ghost, isGhostStrong(ghost));
-			this.canSecurePPill.put(ghost, canSecurePPill(ghost));
-			this.canProtect.put(ghost, GhostCanProtectAlly(ghost));
-
-			this.canSeekProtection.put(ghost, GhostCanSeekProtection(ghost));
+			if(this.strong.get(ghost)) {
+				this.canSecurePPill.put(ghost, canSecurePPill(ghost));
+				this.canProtect.put(ghost, GhostCanProtectAlly(ghost));
+				this.canSeekProtection.put(ghost, false);
+			}
+			else {
+				this.canSecurePPill.put(ghost, false);
+				this.canProtect.put(ghost, false);
+				this.canSeekProtection.put(ghost, GhostCanSeekProtection(ghost));
+			}
 		}
 	}
 
@@ -335,10 +338,7 @@ public class GhostsInput extends Input {
 	private void rellenarProxDestinosPacMan(Set<interseccion_plus> inters, Vector<Integer> nodosFijos) {
 		interseccion intActual = mapa.getInterseccionActual();
 		if (inters.isEmpty()) {
-			if (mapa.getCheckLastModeMade())
-				inters.add(new interseccion_plus(intActual, intActual));
-			else
-				inters.add(new interseccion_plus(mapa.getInterseccion(intActual.destinos.get(mapa.getUltimoMovReal())), intActual));
+			inters.add(new interseccion_plus(proximaInterseccionPacMan, intActual));
 		} else {
 			Set<interseccion_plus> aux = new HashSet<interseccion_plus>(inters);
 			inters.clear();
@@ -358,12 +358,10 @@ public class GhostsInput extends Input {
 	}
 
 	private void initCppads() {
-		this.cppad_PacMan = getClosestPowerPillAndDistance(game.getPacmanCurrentNodeIndex(),
-				game.getPacmanLastMoveMade());
+		this.cppad_PacMan = getClosestPowerPillAndDistance(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 		cppad_Ghosts = new EnumMap<>(GHOST.class);
 		for (GHOST g : GHOST.values()) {
-			cppad_Ghosts.put(g,
-					getClosestPowerPillAndDistance(game.getGhostCurrentNodeIndex(g), game.getGhostLastMoveMade(g)));
+			cppad_Ghosts.put(g, getClosestPowerPillAndDistance(game.getGhostCurrentNodeIndex(g), game.getGhostLastMoveMade(g)));
 		}
 	}
 
