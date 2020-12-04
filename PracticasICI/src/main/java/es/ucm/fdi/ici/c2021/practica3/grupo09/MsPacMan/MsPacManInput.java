@@ -8,8 +8,6 @@ import pacman.game.Constants.GHOST;
 import pacman.game.Game;
 
 public class MsPacManInput extends Input {
-	
-	int numEadableGhost = 0;
 
 	public MsPacManInput(Game game) {
 		super(game);
@@ -17,19 +15,25 @@ public class MsPacManInput extends Input {
 
 	@Override
 	public void parseInput() {
-		numEadableGhost = 0;
-		for(GHOST g : GHOST.values()) {
-			if(game.isGhostEdible(g)) numEadableGhost++;
-		}
+		
 	}
 	
+	private int getNumEadableGhost() {
+		int numEadableGhost = 0;
+		for(GHOST g : GHOST.values()) {
+			if(game.isGhostEdible(g)) {
+				numEadableGhost++;
+			}
+		}
+		
+		return numEadableGhost;
+	}
 	
 	@Override
 	public Collection<String> getFacts() {
 		Vector<String> facts = new Vector<String>();
-		facts.add(String.format("(MSPACMAN (numGhostAlive %s))", numEadableGhost));
-		facts.add(String.format("(MSPACMAN (numPowerPills %s))", game.getNumberOfActivePowerPills()));
-		
+		facts.add(String.format("(MSPACMAN (numPP %d)(numGhostAlive %d) )",  game.getNumberOfActivePowerPills(), 
+				getNumEadableGhost()));
 		return facts;
 	}
 }

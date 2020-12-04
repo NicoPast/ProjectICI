@@ -11,7 +11,8 @@ public class EatPPprueba implements Action {
 	
 	
 	@Override
-	public MOVE execute(Game game) {        
+	public MOVE execute(Game game) {    
+		System.out.println("PPPPPPPPPPPPPPPPPPPPPPPIIIIIIIIIIIIIIIIIIIIIILLLLLLLLLLLLLLLLL");    
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
 				getPowerPillCercana(game), game.getPacmanLastMoveMade(), DM.PATH);
 	}

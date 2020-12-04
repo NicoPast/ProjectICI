@@ -9,6 +9,7 @@ import es.ucm.fdi.ici.c2021.practica3.grupo09.demorules.ghosts.GhostsInput;
 import es.ucm.fdi.ici.rules.Action;
 import es.ucm.fdi.ici.rules.Input;
 import es.ucm.fdi.ici.rules.RuleEngine;
+import es.ucm.fdi.ici.rules.observers.ConsoleRuleEngineObserver;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -16,7 +17,6 @@ import pacman.game.Game;
 
 public class MsPacManRules  extends PacmanController {
 	
-	private static final String RULES_PATH = "es/ucm/fdi/ici/practica3/grupo9/MsPacMan";
 	
 	HashMap<String,Action> map;
 	
@@ -25,13 +25,17 @@ public class MsPacManRules  extends PacmanController {
 	public MsPacManRules() {
 		map = new HashMap<String,Action>();
 		
-		Action eatpp = new EatPPprueba();
 		Action eatghost = new EatGhostprueba();
+		Action eatpp = new EatPPprueba();
 		
 		map.put("EatPP", eatpp);
 		map.put("EatGhost", eatghost);
 		
 		msPacManRuleEngine = new RuleEngine("MsPacManEngine","es/ucm/fdi/ici/c2021/practica3/grupo09/MsPacMan/mspacmanrules.clp", map);
+	
+	
+		ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver("MsPacMan", true);
+		msPacManRuleEngine.addObserver(observer);
 	}
 
 	@Override

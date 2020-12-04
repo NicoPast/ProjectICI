@@ -1,16 +1,19 @@
-(deftemplate MSPACMAN 
-    (slot numGhostAlive (type NUMBER))
-    (slot numPowerPills (type NUMBER)))
+(deftemplate MSPACMAN
+	(slot numGhostAlive (type INTEGER))
+	(slot numPP (type INTEGER)))
 
 (deftemplate ACTION
 	(slot id) (slot info (default ""))) 
 	
-(defrule MsPacManEatGhost
+	
+(defrule EatPP
+	(MSPACMAN (numPP ?d)) (test (> ?d 0)) 
+	=>  
+	(assert (ACTION (id EatPP))))
+	
+(defrule EatGhost
 	(MSPACMAN (numGhostAlive ?d)) (test (> ?d 0)) 
 	=>  
-	(assert (ACTION (id EatGhost) (info "PruebaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))))
+	(assert (ACTION (id EatGhost))))
 	
-(defrule MsPacManEatGhost
-	(MSPACMAN (numPowerPills ?d)) (test (> ?d 0)) 
-	=>  
-	(assert (ACTION (id EatPP) (info "PruebaBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"))))
+	

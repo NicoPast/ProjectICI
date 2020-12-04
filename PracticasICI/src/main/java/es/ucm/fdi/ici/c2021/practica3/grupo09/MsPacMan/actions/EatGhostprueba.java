@@ -13,6 +13,7 @@ public class EatGhostprueba implements Action {
 	
 	@Override
 	public MOVE execute(Game game) {  
+		System.out.println("EEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTT");
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
 				game.getGhostCurrentNodeIndex(fantasmaComibleCerca(game)),
 				game.getPacmanLastMoveMade(), DM.PATH);
