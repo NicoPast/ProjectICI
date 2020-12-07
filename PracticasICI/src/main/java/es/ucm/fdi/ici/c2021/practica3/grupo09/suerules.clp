@@ -50,12 +50,13 @@
 	(assert (ACTION (id SUEcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule SUEprotects
-	(SUE (strong true)) (SUE (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (SUE (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
+	(SUE (strong true)) (SUE (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25)) (SUE (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25)) 
 	=> 
-	(assert (ACTION (id SUEprotects) (info "puedo proteger aliado --> protejo") )))	
+	(assert (ACTION (id SUEprotects) (info "puedo proteger aliado --> protejo") ))
+)	
 
 (defrule SUEsecure
-	(SUE (strong true)) (SUE (canSecurePPill true))
+	(SUE (strong true)) (SUE (canSecurePPill true)))
 	=> 
 	(assert (ACTION (id SUEsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 

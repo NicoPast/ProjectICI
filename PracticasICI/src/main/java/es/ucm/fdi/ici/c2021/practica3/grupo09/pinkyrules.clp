@@ -50,12 +50,13 @@
 	(assert (ACTION (id PINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule PINKYprotects
-	(PINKY (strong true)) (PINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (PINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
+	(PINKY (strong true)) (PINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25)) (PINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25)) 
 	=> 
-	(assert (ACTION (id PINKYprotects) (info "puedo proteger aliado --> protejo") )))	
+	(assert (ACTION (id PINKYprotects) (info "puedo proteger aliado --> protejo") ))
+)	
 
 (defrule PINKYsecure
-	(PINKY (strong true)) (PINKY (canSecurePPill true))
+	(PINKY (strong true)) (PINKY (canSecurePPill true)))
 	=> 
 	(assert (ACTION (id PINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 

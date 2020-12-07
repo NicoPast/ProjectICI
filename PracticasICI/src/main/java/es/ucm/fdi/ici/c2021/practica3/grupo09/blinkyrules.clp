@@ -6,6 +6,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 		
 (deftemplate INKY
 	(slot strong (type SYMBOL))	
@@ -14,7 +15,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
-
+)
 (deftemplate PINKY
 	(slot strong (type SYMBOL))	
 	(slot canSecurePPill (type SYMBOL))	
@@ -22,6 +23,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 
 (deftemplate SUE
 	(slot strong (type SYMBOL))	
@@ -30,7 +32,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
-
+)
 (deftemplate CHECKMATE 
     (slot isCheckMate  (type SYMBOL)))
     
@@ -44,12 +46,13 @@
 	(assert (ACTION (id BLINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule BLINKYprotects
-	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (BLINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
+	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25)) (BLINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))
 	=> 
-	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") )))	
+	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") ))
+)	
 
 (defrule BLINKYsecure
-	(BLINKY (strong true)) (BLINKY (canSecurePPill true))
+	(BLINKY (strong true)) (BLINKY (canSecurePPill true)))
 	=> 
 	(assert (ACTION (id BLINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
