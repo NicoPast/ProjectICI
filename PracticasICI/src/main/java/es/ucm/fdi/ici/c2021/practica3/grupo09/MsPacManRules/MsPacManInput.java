@@ -16,7 +16,8 @@ public class MsPacManInput extends Input {
 
 	public MsPacManInput(Game game, MapaInfo map) {
 		super(game);
-		mapInfo = map; 
+		this.mapInfo = map;
+		mapInfo.update(game);
 	}
 
 	@Override

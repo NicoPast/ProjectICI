@@ -22,14 +22,24 @@ public class MsPacMan  extends PacmanController {
 	private MapaInfo mapInfo = null;
 	RuleEngine msPacManRuleEngine;
 	
+	ChaseMsPacManAction chaseAction;
+	ChillAction chillAction;
+	EatPowePillAction eatPowerPillAction;
+	RunAwayMsPacManAction runAwayAction;
+	
 	public MsPacMan() {
 		map = new HashMap<String,Action>();
     	mapInfo = new MapaInfo();
 		
-		Action eatghost = new ChaseMsPacManAction(mapInfo);
-		Action chill = new ChillAction(mapInfo);
-		Action eatPP = new EatPowePillAction(mapInfo);
-		Action runaway = new RunAwayMsPacManAction(mapInfo);
+    	chaseAction = new ChaseMsPacManAction(mapInfo);
+    	chillAction = new ChillAction(mapInfo);
+    	eatPowerPillAction = new EatPowePillAction(mapInfo);
+    	runAwayAction =  new RunAwayMsPacManAction(mapInfo);
+    	
+		Action eatghost = chaseAction;
+		Action chill = chillAction;
+		Action eatPP = eatPowerPillAction;
+		Action runaway = runAwayAction;
 		
 		map.put("EatGhost", eatghost);
 		map.put("Chill", chill);
@@ -40,14 +50,12 @@ public class MsPacMan  extends PacmanController {
 		msPacManRuleEngine = new RuleEngine("MsPacManEngine","es/ucm/fdi/ici/c2021/practica3/grupo09/MsPacManRules/mspacmanrules.clp", map);
 	
 	
-		ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver("MsPacMan", true);
-		msPacManRuleEngine.addObserver(observer);
+		//ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver("MsPacMan", true);
+		//msPacManRuleEngine.addObserver(observer);
 	}
 
 	@Override
-	public MOVE getMove(Game game, long timeDue) {
-		mapInfo.update(game);
-		
+	public MOVE getMove(Game game, long timeDue) {		
 		//Process input
 		Input input = new MsPacManInput(game, mapInfo);
 		//load facts
@@ -56,8 +64,18 @@ public class MsPacMan  extends PacmanController {
 		msPacManRuleEngine.assertFacts(input.getFacts());
 				
 				
-		return msPacManRuleEngine.run(game);
-				
+		return msPacManRuleEngine.run(game);				
 	}
+
+	@Override
+	public  void postCompute() {
+		mapInfo = null;
+    	mapInfo = new MapaInfo();
+    	
+    	chillAction.setMap(mapInfo);
+    	chaseAction.setMap(mapInfo);
+    	eatPowerPillAction.setMap(mapInfo);
+    	runAwayAction.setMap(mapInfo);		
+    }
 
 }
