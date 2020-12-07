@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacMan.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions;
 
 import es.ucm.fdi.ici.rules.Action;
 import jess.Fact;
@@ -13,7 +13,6 @@ public class EatGhostprueba implements Action {
 	
 	@Override
 	public MOVE execute(Game game) {  
-		System.out.println("EEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTT");
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
 				game.getGhostCurrentNodeIndex(fantasmaComibleCerca(game)),
 				game.getPacmanLastMoveMade(), DM.PATH);

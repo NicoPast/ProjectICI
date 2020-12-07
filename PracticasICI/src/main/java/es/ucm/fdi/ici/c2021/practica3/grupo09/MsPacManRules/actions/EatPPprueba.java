@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacMan.actions;
+package es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions;
 
 import es.ucm.fdi.ici.rules.Action;
 import jess.Fact;
@@ -11,8 +11,7 @@ public class EatPPprueba implements Action {
 	
 	
 	@Override
-	public MOVE execute(Game game) {    
-		System.out.println("PPPPPPPPPPPPPPPPPPPPPPPIIIIIIIIIIIIIIIIIIIIIILLLLLLLLLLLLLLLLL");    
+	public MOVE execute(Game game) {     
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
 				getPowerPillCercana(game), game.getPacmanLastMoveMade(), DM.PATH);
 	}
