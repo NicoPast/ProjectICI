@@ -405,9 +405,9 @@ public class GhostsInput extends Input {
 		Vector<String> facts = new Vector<String>();
 
 		for(GHOST ghost : GHOST.values()){
-			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (nearestGhostToPacmanDistance %f) (GhostToNearestEdibleGhostDistance %f) (GhostToNearestActiveGhostDistance %f))", 
+			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (nearestGhostToPacmanDistance %d) (GhostToNearestEdibleGhostDistance %d) (GhostToNearestActiveGhostDistance %d))", 
 				ghost.toString(), this.strong.get(ghost), this.canSecurePPill.get(ghost), 
-				this.canProtect.get(ghost).nearestGhostToPacmanDistance,this.canProtect.get(ghost).GhostToNearestEdibleGhostDistance, this.canSeekProtection.get(ghost)));
+				(int)this.canProtect.get(ghost).nearestGhostToPacmanDistance, (int)this.canProtect.get(ghost).GhostToNearestEdibleGhostDistance, this.canSeekProtection.get(ghost).intValue()));
 		}
 
 		facts.add(String.format("(CHECKMATE (isCheckMate %s))", this.isCheckMate));
