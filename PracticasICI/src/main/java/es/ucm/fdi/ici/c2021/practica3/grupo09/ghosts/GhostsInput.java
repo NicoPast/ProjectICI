@@ -23,9 +23,9 @@ public class GhostsInput extends Input {
 
 	public class NODEANDDISTANCE {
 		public int n;
-		public double d;
+		public float d;
 
-		public NODEANDDISTANCE(int no, double di) {
+		public NODEANDDISTANCE(int no, float di) {
 			n = no;
 			d = di;
 		}
@@ -65,8 +65,8 @@ public class GhostsInput extends Input {
 	private int MAX_DISTANCE_TO_WEAK_GHOST = 25;
 
 	// --------------------------------bools weak-----------------------------------------
-	private double GhostToNearestActiveGhostDistance;
-	private double GhostCanSeekProtection(GHOST ghost) {
+	private float GhostToNearestActiveGhostDistance;
+	private float GhostCanSeekProtection(GHOST ghost) {
 		if (!this.isGhostStrong(ghost) && !activeGhosts.isEmpty()) {
 			interseccion inter = this.mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
 
@@ -84,13 +84,13 @@ public class GhostsInput extends Input {
 				}
 
 				MOVE prohibido = this.GetMoveToPacman(ghost);
-				double nearest = 0;
+				float nearest = 0;
 				// elegimos el fantasma mas cercano buscando en todas direcciones excepto
 				// en la prohibida
 				for (MOVE move : inter.destinos.keySet()) {
 					if (move == prohibido)
 						continue;
-					double aux = this.nearestGhostDistance(game.getGhostCurrentNodeIndex(ghost), posGhosts, move).d;
+					float aux = this.nearestGhostDistance(game.getGhostCurrentNodeIndex(ghost), posGhosts, move).d;
 					if (aux < nearest) {
 						nearest = aux;
 
@@ -111,7 +111,7 @@ public class GhostsInput extends Input {
 
 	private boolean isPacManCloserToAnyPowerPill;
 	
-	EnumMap<GHOST,Double> canSeekProtection;
+	EnumMap<GHOST,Float> canSeekProtection;
 
 	// --------------------------------bools strong----------------------------------------
 	
@@ -277,11 +277,11 @@ public class GhostsInput extends Input {
 			if(this.strong.get(ghost)) {
 				this.canSecurePPill.put(ghost, canSecurePPill(ghost));
 				this.canProtect.put(ghost, GhostCanProtectAlly(ghost));
-				this.canSeekProtection.put(ghost, -1.0);
+				this.canSeekProtection.put(ghost, (float)-1);
 			}
 			else {
 				this.canSecurePPill.put(ghost, false);
-				this.canProtect.put(ghost, new protectAlliesParameters(-1.0,-1.0));
+				this.canProtect.put(ghost, new protectAlliesParameters(-1,-1));
 				this.canSeekProtection.put(ghost, GhostCanSeekProtection(ghost));
 			}
 		}
@@ -294,9 +294,9 @@ public class GhostsInput extends Input {
 
 	private NODEANDDISTANCE nearestGhostDistance(int myPos, int[] pos, MOVE m) {
 		int nearestP = -1;
-		double nearestDist = Double.MAX_VALUE;
+		float nearestDist = Float.MAX_VALUE;
 		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, DM.PATH);
+			float aux = (float)game.getDistance(myPos, p, m, DM.PATH);
 			if (aux < nearestDist) {
 				nearestDist = aux;
 				nearestP = p;
@@ -405,7 +405,7 @@ public class GhostsInput extends Input {
 		Vector<String> facts = new Vector<String>();
 
 		for(GHOST ghost : GHOST.values()){
-			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (nearestGhostToPacmanDistance %d) (GhostToNearestEdibleGhostDistance %d) (GhostToNearestActiveGhostDistance %d))", 
+			facts.add(String.format("(%s (strong %s) (canSecurePPill %s) (nearestGhostToPacmanDistance %f) (GhostToNearestEdibleGhostDistance %f) (GhostToNearestActiveGhostDistance %f))", 
 				ghost.toString(), this.strong.get(ghost), this.canSecurePPill.get(ghost), 
 				this.canProtect.get(ghost).nearestGhostToPacmanDistance,this.canProtect.get(ghost).GhostToNearestEdibleGhostDistance, this.canSeekProtection.get(ghost)));
 		}

@@ -50,12 +50,13 @@
 	(assert (ACTION (id INKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule INKYprotects
-	(INKY (strong true)) (INKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (INKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
+	(INKY (strong true)) (INKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25)) (INKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25)) 
 	=> 
-	(assert (ACTION (id INKYprotects) (info "puedo proteger aliado --> protejo") )))	
+	(assert (ACTION (id INKYprotects) (info "puedo proteger aliado --> protejo") ))
+)	
 
 (defrule INKYsecure
-	(INKY (strong true)) (INKY (canSecurePPill true))
+	(INKY (strong true)) (INKY (canSecurePPill true)))
 	=> 
 	(assert (ACTION (id INKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 

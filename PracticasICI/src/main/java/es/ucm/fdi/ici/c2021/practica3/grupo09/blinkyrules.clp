@@ -48,12 +48,13 @@
 	(assert (ACTION (id BLINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule BLINKYprotects
-	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25))) (BLINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))) )
+	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d)) (test (<= ?d 25)) (BLINKY (GhostToNearestEdibleGhostDistance ?d)) (test (<= ?d 25))
 	=> 
-	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") )))	
+	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") ))
+)	
 
 (defrule BLINKYsecure
-	(BLINKY (strong true)) (BLINKY (canSecurePPill true))
+	(BLINKY (strong true)) (BLINKY (canSecurePPill true)))
 	=> 
 	(assert (ACTION (id BLINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
