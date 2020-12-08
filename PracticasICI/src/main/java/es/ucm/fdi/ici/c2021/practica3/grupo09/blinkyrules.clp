@@ -6,6 +6,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 		
 (deftemplate INKY
 	(slot strong (type SYMBOL))	
@@ -14,6 +15,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 
 (deftemplate PINKY
 	(slot strong (type SYMBOL))	
@@ -22,6 +24,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 
 (deftemplate SUE
 	(slot strong (type SYMBOL))	
@@ -30,6 +33,7 @@
 	(slot GhostToNearestEdibleGhostDistance (type FLOAT))
 
 	(slot GhostToNearestActiveGhostDistance (type FLOAT))
+)
 
 (deftemplate CHECKMATE 
     (slot isCheckMate  (type SYMBOL)))
