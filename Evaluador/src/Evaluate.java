@@ -1,4 +1,3 @@
-import es.ucm.fdi.ici.PacManEvaluator;
 import es.ucm.fdi.ici.PacManParallelEvaluator;
 import es.ucm.fdi.ici.Scores;
 
