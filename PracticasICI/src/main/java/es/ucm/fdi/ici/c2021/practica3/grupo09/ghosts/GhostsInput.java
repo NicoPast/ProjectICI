@@ -60,12 +60,7 @@ public class GhostsInput extends Input {
 	// --------------------------------constants--------------------------------------------
 	private int PacmanPPillTreshold = 25;
 	private int GhostsClosePacmanTreshold = 25;
-	private int CONST_LIMIT_DISTANCE_SEEK_PROTECTION = 25;
-	private int CONST_PACMAN_MIN_DISTANCE_CAN_PROTECT = 25;
-	private int MAX_DISTANCE_TO_WEAK_GHOST = 25;
 
-	// --------------------------------bools weak-----------------------------------------
-	private float GhostToNearestActiveGhostDistance;
 	private float GhostCanSeekProtection(GHOST ghost) {
 		if (!this.isGhostStrong(ghost) && !activeGhosts.isEmpty()) {
 			interseccion inter = this.mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
@@ -241,7 +236,7 @@ public class GhostsInput extends Input {
 
 		//WEAK
 		this.canSeekProtection=new EnumMap<>(GHOST.class);
-		
+			
 		parseInput();
 	}
 

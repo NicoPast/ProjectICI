@@ -48,7 +48,7 @@
 	(assert (ACTION (id BLINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule BLINKYprotects
-	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d) (GhostToNearestEdibleGhostDistance ?g)) (test (and (<= ?d 25)(<= ?g 25)) ) 
+	(BLINKY (strong true)) (BLINKY (nearestGhostToPacmanDistance ?d) (GhostToNearestEdibleGhostDistance ?g)) (test (and (<= ?d 25)(<= ?g 25)(> ?g 0)) ) 
 	=> 
 	(assert (ACTION (id BLINKYprotects) (info "puedo proteger aliado --> protejo") )))	
 

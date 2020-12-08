@@ -1,5 +1,7 @@
 package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
+import java.lang.reflect.Array;
+
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
@@ -18,10 +20,10 @@ public class ExecutorTest {
 		PacmanController pacMan = new MsPacMan();
 		//PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
-		System.out.println(
-		executor.runGame(pacMan, ghosts, 30)
-		);
 		
+		System.out.println(
+			executor.runGame(pacMan, ghosts, 30)
+		);	
 	}
 }
 

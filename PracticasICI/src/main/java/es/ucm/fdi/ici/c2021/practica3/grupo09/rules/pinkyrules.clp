@@ -49,7 +49,7 @@
 	(assert (ACTION (id PINKYcheckmate) (info "checkmate --> checkmate") )))	
 
 (defrule PINKYprotects
-	(PINKY (strong true)) (PINKY (nearestGhostToPacmanDistance ?d) (GhostToNearestEdibleGhostDistance ?g)) (test (and (<= ?d 25)(<= ?g 25)) ) 
+	(PINKY (strong true)) (PINKY (nearestGhostToPacmanDistance ?d) (GhostToNearestEdibleGhostDistance ?g)) (test (and (<= ?d 25)(<= ?g 25)(> ?g 0)) ) 
 	=> 
 	(assert (ACTION (id PINKYprotects) (info "puedo proteger aliado --> protejo") )))	
 
