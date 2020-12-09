@@ -110,8 +110,6 @@ public class GhostsInput extends Input {
 
 	// --------------------------------bools strong----------------------------------------
 	
-		
-	
 	private boolean isGhostStrong(GHOST ghost) {
 		return !game.isGhostEdible(ghost) && 
 			!(isPacManCloserToAnyPowerPill && cppad_PacMan.distance < PacmanPPillTreshold && this.distanceToPacMan.get(ghost) < GhostsClosePacmanTreshold);
@@ -126,6 +124,8 @@ public class GhostsInput extends Input {
 		if (activeGhosts.isEmpty())
 			return false;
 
+		Vector<GHOST> activeGhosts_ = new Vector<>(activeGhosts);
+
 		Vector<Integer> nodosFijos = new Vector<Integer>();
 
 		interseccion_plus[] aux = new interseccion_plus[6];
@@ -135,18 +135,18 @@ public class GhostsInput extends Input {
 			visitadas.toArray(aux);
 
 		int i = 0;
-		while (activeGhosts.size() > 0 && visitadas.size() > 0 && activeGhosts.size() - visitadas.size() >= 0
+		while (activeGhosts_.size() > 0 && visitadas.size() > 0 && activeGhosts_.size() - visitadas.size() >= 0
 				&& i < visitadas.size()) {
-			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, activeGhosts);
+			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, activeGhosts_);
 			if (gyd.distance <= 1) {
 				mapa.movesCheckMate.put(gyd.ghost, game.getPacmanCurrentNodeIndex());
-				activeGhosts.remove(gyd.ghost);
+				activeGhosts_.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			} else if (gyd.distance <= game.getDistance(game.getPacmanCurrentNodeIndex(),
 					aux[i].intersection.identificador, game.getPacmanLastMoveMade(), DM.PATH)) {
 				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
-				activeGhosts.remove(gyd.ghost);
+				activeGhosts_.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			} else {
@@ -251,6 +251,7 @@ public class GhostsInput extends Input {
 		getEdibleGhosts_();
 		
 		initCppads();
+		getDistancesToPacMan();
 
 		isPacManCloserToAnyPowerPill = isPacManCloserToPowerPill(99999);
 			
@@ -265,7 +266,6 @@ public class GhostsInput extends Input {
 
 		this.ppillsLeft = game.getNumberOfActivePowerPills();
 
-		getDistancesToPacMan();
 
 		for(GHOST ghost : GHOST.values()) {			
 			this.strong.put(ghost, isGhostStrong(ghost));
