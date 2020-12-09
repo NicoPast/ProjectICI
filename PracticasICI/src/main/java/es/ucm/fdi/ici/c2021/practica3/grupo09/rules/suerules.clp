@@ -59,7 +59,7 @@
 	(assert (ACTION (id SUEsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
 (defrule SUEchase
-	(SUE (strong true))
+	(SUE (strong true)) (SUE (canSecurePPill false))
 	=> 
 	(assert (ACTION (id SUEchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 

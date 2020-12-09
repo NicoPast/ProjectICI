@@ -59,7 +59,7 @@
 	(assert (ACTION (id PINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
 (defrule PINKYchase
-	(PINKY (strong true))
+	(PINKY (strong true)) (PINKY (canSecurePPill false))
 	=> 
 	(assert (ACTION (id PINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 

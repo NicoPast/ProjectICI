@@ -1,7 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
-import java.lang.reflect.Array;
-
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;

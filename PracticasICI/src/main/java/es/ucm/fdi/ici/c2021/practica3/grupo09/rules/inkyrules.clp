@@ -59,7 +59,7 @@
 	(assert (ACTION (id INKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
 (defrule INKYchase
-	(INKY (strong true))
+	(INKY (strong true)) (INKY (canSecurePPill false))
 	=> 
 	(assert (ACTION (id INKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 

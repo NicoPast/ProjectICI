@@ -58,7 +58,7 @@
 	(assert (ACTION (id BLINKYsecure) (info "puedo asegurar ppill --> la aseguro") )))	
 
 (defrule BLINKYchase
-	(BLINKY (strong true))
+	(BLINKY (strong true)) (BLINKY (canSecurePPill false))
 	=> 
 	(assert (ACTION (id BLINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
