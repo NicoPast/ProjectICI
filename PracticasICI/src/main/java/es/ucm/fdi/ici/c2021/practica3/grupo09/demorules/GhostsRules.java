@@ -17,7 +17,7 @@ import pacman.game.Game;
 
 public class GhostsRules  extends GhostController  {
 
-	private static final String RULES_PATH = "es/ucm/fdi/ici/practica3/demorules/";
+	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica3/grupo09/demorules/";
 	
 	HashMap<String,Action> map;
 	
@@ -59,8 +59,8 @@ public class GhostsRules  extends GhostController  {
 		}
 		
 		//add observer only to BLINKY
-		ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver(GHOST.BLINKY.name(), true);
-		ghostRuleEngines.get(GHOST.BLINKY).addObserver(observer);
+		//ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver(GHOST.BLINKY.name(), true);
+		//ghostRuleEngines.get(GHOST.BLINKY).addObserver(observer);
 		
 	}
 

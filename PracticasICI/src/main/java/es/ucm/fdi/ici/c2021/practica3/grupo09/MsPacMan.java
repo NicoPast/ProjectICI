@@ -1,119 +1,81 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09;
+package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.MsPacManInput;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.ChillAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatGhostDangerAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.EatPowerPillAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.actions.RunAwayAction;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComHuirTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.ComPerTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirComTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.HuirTranTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.PerTranTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranComTransition;
-import es.ucm.fdi.ici.c2021.practica2.grupo09.mspacman.transitions.TranPerTransition;
-import es.ucm.fdi.ici.fsm.CompoundState;
-import es.ucm.fdi.ici.fsm.FSM;
-import es.ucm.fdi.ici.fsm.Input;
-import es.ucm.fdi.ici.fsm.SimpleState;
-import es.ucm.fdi.ici.fsm.Transition;
+import java.util.HashMap;
+
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.MsPacManInput;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.ChaseMsPacManAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.ChillAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.EatPowePillAction;
+import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.RunAwayMsPacManAction;
+import es.ucm.fdi.ici.rules.Action;
+import es.ucm.fdi.ici.rules.Input;
+import es.ucm.fdi.ici.rules.RuleEngine;
+import es.ucm.fdi.ici.rules.observers.ConsoleRuleEngineObserver;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
-/*
- * The Class NearestPillPacMan.
- */
-public class MsPacMan extends PacmanController {
-
-	FSM fsm;
-	MapaInfo mapInfo = null;
+public class MsPacMan  extends PacmanController {
 	
+	
+	HashMap<String,Action> map;
+	private MapaInfo mapInfo = null;
+	RuleEngine msPacManRuleEngine;
+	
+	ChaseMsPacManAction chaseAction;
 	ChillAction chillAction;
-	EatGhostDangerAction eatGhostDangerAction;
-	EatPowerPillAction eatPowerPillAction;
-	RunAwayAction runAwayAction;
-
+	EatPowePillAction eatPowerPillAction;
+	RunAwayMsPacManAction runAwayAction;
+	
 	public MsPacMan() {
-    	fsm = new FSM("MsPacMan");
+		map = new HashMap<String,Action>();
     	mapInfo = new MapaInfo();
-    	
-    	
-    	//GraphFSMObserver observer = new GraphFSMObserver(fsm.toString());
-    	//fsm.addObserver(observer);
-    	
+		
+    	chaseAction = new ChaseMsPacManAction(mapInfo);
     	chillAction = new ChillAction(mapInfo);
-    	SimpleState chillState = new SimpleState("chillState", chillAction);
-    	eatGhostDangerAction = new EatGhostDangerAction(mapInfo);
-    	SimpleState chaseState = new SimpleState("chaseState", eatGhostDangerAction);
+    	eatPowerPillAction = new EatPowePillAction(mapInfo);
+    	runAwayAction =  new RunAwayMsPacManAction(mapInfo);
     	
-    	Transition tranCom = new TranComTransition();
-    	Transition tranPer = new TranPerTransition();
-    	Transition perTran = new PerTranTransition();
-    	Transition huirTran = new HuirTranTransition();
-    	Transition comPerTran = new ComPerTransition();
-    	
-    	//Creacion de maquina de estados para usar en el CompoundState
-    	FSM cfsm1 = new FSM("Danger");
-    	//GraphFSMObserver c1observer = new GraphFSMObserver(cfsm1.toString());
-    	//cfsm1.addObserver(c1observer);
-    	
-    	eatPowerPillAction = new EatPowerPillAction(mapInfo);
-    	runAwayAction = new RunAwayAction(mapInfo);
-    	SimpleState eatPowerPillState = new SimpleState("eatPowerPillState", eatPowerPillAction);
-    	SimpleState runAwayState = new SimpleState("runAwayState", runAwayAction);
-    	Transition comHuirTran = new ComHuirTransition();
-    	Transition huirComerTran = new HuirComTransition();
-    	cfsm1.add(eatPowerPillState, comHuirTran, runAwayState);
-    	cfsm1.add(runAwayState, huirComerTran, eatPowerPillState);
-    	cfsm1.ready(eatPowerPillState);
-    	
-    	CompoundState peligroCompoundState = new CompoundState("danger", cfsm1);
-    	
-    	
-    	fsm.add(chillState, tranCom, peligroCompoundState);
-    	
-    	//cambiar
-    	fsm.add(chillState, tranPer, chaseState);
-    	fsm.add(chaseState, perTran, chillState);
-    	fsm.add(peligroCompoundState,comPerTran , chaseState);    	
-    	fsm.add(peligroCompoundState, huirTran, chillState);
-    	
-    	
-    	fsm.ready(chillState);
-    	
-    	/*JFrame frame = new JFrame();
-    	JPanel main = new JPanel();
-    	main.setLayout(new BorderLayout());
-    	main.add(observer.getAsPanel(true, null), BorderLayout.CENTER);
-    	main.add(c1observer.getAsPanel(true, null), BorderLayout.SOUTH);
-    	frame.getContentPane().add(main);
-    	frame.pack();
-    	frame.setVisible(true);*/
+		Action eatghost = chaseAction;
+		Action chill = chillAction;
+		Action eatPP = eatPowerPillAction;
+		Action runaway = runAwayAction;
+		
+		map.put("EatGhost", eatghost);
+		map.put("Chill", chill);
+		map.put("EatPowerPill", eatPP);
+		map.put("RunAway", runaway);
+		
+		
+		msPacManRuleEngine = new RuleEngine("MsPacManEngine","es/ucm/fdi/ici/c2021/practica3/grupo09/MsPacManRules/mspacmanrules.clp", map);
+	
+	
+		//ConsoleRuleEngineObserver observer = new ConsoleRuleEngineObserver("MsPacMan", true);
+		//msPacManRuleEngine.addObserver(observer);
 	}
-	
-	
-	public void preCompute(String opponent) {
+
+	@Override
+	public MOVE getMove(Game game, long timeDue) {		
+		//Process input
+		Input input = new MsPacManInput(game, mapInfo);
+		//load facts
+		//reset the rule engines
+		msPacManRuleEngine.reset();
+		msPacManRuleEngine.assertFacts(input.getFacts());
+				
+				
+		return msPacManRuleEngine.run(game);				
+	}
+
+	@Override
+	public  void postCompute() {
 		mapInfo = null;
     	mapInfo = new MapaInfo();
     	
     	chillAction.setMap(mapInfo);
-    	eatGhostDangerAction.setMap(mapInfo);
+    	chaseAction.setMap(mapInfo);
     	eatPowerPillAction.setMap(mapInfo);
-    	runAwayAction.setMap(mapInfo);
-    	
-    	
-    	fsm.reset();
+    	runAwayAction.setMap(mapInfo);		
     }
-	
-	
-	
-    /* (non-Javadoc)
-     * @see pacman.controllers.Controller#getMove(pacman.game.Game, long)
-     */
-    @Override
-    public MOVE getMove(Game game, long timeDue) {
-    	Input in = new MsPacManInput(game, mapInfo); 
-    	return fsm.run(in);
-    } 
+
 }

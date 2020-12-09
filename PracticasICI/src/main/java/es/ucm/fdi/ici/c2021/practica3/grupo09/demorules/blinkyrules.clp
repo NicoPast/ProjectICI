@@ -22,12 +22,12 @@
 (defrule BLINKYrunsAwayMSPACMANclosePPill
 	(MSPACMAN (mindistancePPill ?d)) (test (<= ?d 30)) 
 	=>  
-	(assert (ACTION (id BLINKYrunsAway) (info "MSPacMan cerca PPill"))) )
+	(assert (ACTION (id BLINKYrunsAway) (info "MSPacMan cerca PPill"))))
 
 (defrule BLINKYrunsAway
 	(BLINKY (edible true)) 
 	=>  
-	(assert (ACTION (id BLINKYrunsAway) (info "Comestible --> huir") )))
+	(assert (ACTION (id BLINKYrunsAway) (info "Comestible --> huir"))))
 	
 (defrule BLINKYchases
 	(BLINKY (edible false)) 

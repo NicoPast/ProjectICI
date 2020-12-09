@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica2.grupo09;
+package es.ucm.fdi.ici.c2021.practica3.grupo09;
 /**
  * PacManEvaluator
  * Clase para evaluar las entregas de MsPacMan
