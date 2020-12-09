@@ -35,7 +35,8 @@ public class ChaseMsPacManAction implements Action{
 
 		//si hay un fantasma no comible en el camino o esta muy lejos
 		if(ghostInWay(moveToGhost, game) || game.getDistance(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(proxGhost),
-				game.getPacmanLastMoveMade(), DM.PATH) > distanciaMaximaPerseguir) {
+				game.getPacmanLastMoveMade(), DM.PATH) > distanciaMaximaPerseguir || 
+				mapInfo.lairDanger(game, interseccionActual.destinos.get(moveToGhost), moveToGhost)) {
 			//usar get best move
 			return mapInfo.getBestMove(game);
 		}

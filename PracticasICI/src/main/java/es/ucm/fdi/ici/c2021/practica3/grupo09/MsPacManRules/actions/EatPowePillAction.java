@@ -38,7 +38,8 @@ public class EatPowePillAction implements Action{
 					double distanciaFantasma = game.getDistance(interseccionActual.destinos.get(m), 
 							game.getGhostCurrentNodeIndex(g), DM.PATH);
 					
-					if(distanciaFantasma <= interseccionActual.distancias.get(m) + 2) {//por este camino me pillan						
+					if(distanciaFantasma <= interseccionActual.distancias.get(m) + 2 || 
+							mapInfo.lairDanger(game, interseccionActual.destinos.get(m), m)) {//por este camino me pillan						
 						fantasmaDetectado = true;
 						break;
 					}

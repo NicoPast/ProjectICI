@@ -212,8 +212,7 @@ public class MapaInfo {
 		for (MOVE m : MOVE.values()) { 
 			//mira si m no es de donde vienes, si no es neutral y si existe camino
 			
-			if (m != movimientoDeLlegada && m != MOVE.NEUTRAL && interseccionActual.distancias.get(m) != null) {
-				
+			if (m != movimientoDeLlegada && m != MOVE.NEUTRAL && interseccionActual.distancias.get(m) != null) {				
 				boolean hasGhost = false;
 				GHOST eadableGhost = null;
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
@@ -224,7 +223,8 @@ public class MapaInfo {
 							(game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
 									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2 
 									&& game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),DM.PATH)
-									 <= interseccionActual.distancias.get(m) + 2)))
+									 <= interseccionActual.distancias.get(m) + 2)) ||
+							lairDanger(game,interseccionActual.destinos.get(m),m))
 					{ // no pillar el camino						
 						
 						if(!game.isGhostEdible(g)){
@@ -241,7 +241,7 @@ public class MapaInfo {
 				}
 								
 				
-				if(!hasGhost) {
+				if(!hasGhost) { //miramos si vamos a ir por el camino del spawn
 					if(eadableGhost != null)
 						fantasmasComibles.add(eadableGhost);
 					else if(interseccionActual.powerPill.get(m) > 0)
@@ -377,5 +377,34 @@ public class MapaInfo {
 		movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
 		checkLastMoveMade = false;
     }
-	
+    
+    //mira si vas a ir por el origen y si en ese instante te puede aparecer un fantasma
+    public boolean lairDanger(Game game, int destino, MOVE direccion) { //destino = prox interseccion//direccion=movimiento tomado
+    	
+    	
+    	int pacManNodeIndex = game.getPacmanCurrentNodeIndex();
+    	//primero, mirar si el camino es el del inicio
+    	if(game.getNextMoveTowardsTarget(pacManNodeIndex, game.getGhostInitialNodeIndex(),
+    			game.getPacmanLastMoveMade(), DM.PATH) != direccion) return false; //no pasamos por el inicio
+
+    	//podriamos estar en ese camino, mirar distancias
+    	
+    	//distancia hasta el lair
+    	double distAC = game.getDistance(pacManNodeIndex, game.getGhostInitialNodeIndex(), 
+    			game.getPacmanLastMoveMade(), DM.PATH);
+    	//distancia hasta el proximo nodo
+    	double distAB = game.getDistance(pacManNodeIndex, destino,game.getPacmanLastMoveMade(), DM.PATH);
+    	
+    	if(distAC < distAB) { //pasamos por el inicio
+    		//miramos si nos puede aparecer un fantasma
+    		for(GHOST g:GHOST.values()) {
+    			int lairTime = game.getGhostLairTime(g);
+    			//System.out.println(lairTime);
+    			if(lairTime >0) { //hay alguien dentro que nos podria comer
+    				return true;
+    			}
+    		}
+    	}    	
+    	return false;
+    }	
 }
