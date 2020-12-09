@@ -221,8 +221,10 @@ public class MapaInfo {
 					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
 							game.getGhostLastMoveMade(g),DM.PATH);
 					if (distancia > 0 && (distancia <= interseccionActual.distancias.get(m) + 2 ||
-							game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
-									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2))
+							(game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
+									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2 
+									&& game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),DM.PATH)
+									 <= interseccionActual.distancias.get(m) + 2)))
 					{ // no pillar el camino						
 						
 						if(!game.isGhostEdible(g)){
