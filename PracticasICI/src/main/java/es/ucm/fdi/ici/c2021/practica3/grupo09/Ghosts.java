@@ -23,7 +23,7 @@ public class Ghosts extends GhostController {
 
 	MapaInfoGhost mapInfo;
 
-	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica3/grupo09/rules";
+	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica3/grupo09/ghosts/rules";
 	
 	HashMap<String,Action> map;
 	
