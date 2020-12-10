@@ -34,7 +34,7 @@ public class MapaInfoGhost {
 			distancias = dir;
 			destinos = dest;
 			pills = pi;
-			powePill = ppi;
+			powerPill = ppi;
 		}
 
 		public int identificador; // node index
@@ -42,25 +42,26 @@ public class MapaInfoGhost {
 		public EnumMap<MOVE, Integer> destinos; // identificador del nodo en esa direccion
 		public EnumMap<MOVE, Integer> pills; // pills en ese camino (entre nodo y nodo, las pills que hay en las
 												// intersecciones no cuentan)
-		public EnumMap<MOVE, Integer> powePill; // powerPills en ese camino
+		public EnumMap<MOVE, Integer> powerPill; // powerPills en ese camino
 	}
 
-	public void update(Game game) {
-		if (game.getCurrentMaze().name != mapaActual) {
+	public void update(Game game){    	
+        if(game.getCurrentMaze().name != mapaActual){
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
 			mapaHecho = false;
-
 		}
+        
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
 			destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
 			movesCheckMate = new EnumMap<GHOST, Integer>(GHOST.class);
-			mapaHecho = true;
+            mapaHecho = true;
 		}
 
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
+		
 		if (aux == null) { // si es null, no estas en una interseccion (AKA, estas en un pasillo)
 			if (ultimoNodo != -1 && proximoNodo != -1)
 				updateMapa(game); // solo hay que actualizarlo durante las rectas
@@ -68,21 +69,22 @@ public class MapaInfoGhost {
 				MOVE m = game.getPacmanLastMoveMade();
 				checkLastMoveMade = false;
 				ultimoMovimientoReal = m;
-				if (interseccionActual != null) {
+				if(interseccionActual != null) {
 					ultimoNodo = interseccionActual.identificador;
-					if (interseccionActual.destinos.get(m) != null) {
+					if(interseccionActual.destinos.get(m) != null) {
 						proximoNodo = interseccionActual.destinos.get(m);
-						movimientoDeLlegada = proxMovimientoLlegada(m);
+						movimientoDeLlegada = proxMovimientoLlegada(m);						
 					}
 				}
 			}
-		} else {
+		}
+		else {
 			interseccionActual = aux;
 			checkLastMoveMade = true;
 		}
-	}
+    }
 
-	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
+    private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
 		int pills = 0;
 		int powerPills = 0;
@@ -136,7 +138,7 @@ public class MapaInfoGhost {
 			}
 		}
 	}
-
+	
 	private interseccion interseccion_rec(int ini, int fin, int iden) {
 		if (fin - ini > 1) { // sigue habiendo varios nodos en el rango de b�squeda
 			int mid = (fin - ini) / 2 + ini;
@@ -153,29 +155,36 @@ public class MapaInfoGhost {
 	public interseccion getInterseccion(int iden) { // usa divide y venceras para encontrar la interseccion
 		return interseccion_rec(0, mapa.size(), iden);
 	}
-
+	
 	private void updateMapa(Game game) {
-
 		if (game.wasPillEaten()) {
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
-			if (interSalida != null) {
-				int pills = interSalida.pills.get(ultimoMovimientoReal);
-				interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
-				interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+			if(interSalida != null) {
+					int pills = interSalida.pills.get(ultimoMovimientoReal);
+					if(pills > 0) {
+						interSalida.pills.replace(ultimoMovimientoReal, pills, pills - 1);
+						interLlegada.pills.replace(movimientoDeLlegada, pills, pills - 1);
+					}				
 			}
-		} 
+		}
+		else if (game.wasPowerPillEaten()) {
+			interseccion interSalida = getInterseccion(ultimoNodo);
+			interseccion interLlegada = getInterseccion(proximoNodo);
+			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria de 1 a 0,
+			interSalida.powerPill.replace(ultimoMovimientoReal, pills, pills - 1); // pero si alguein nos quiere romper el programa poniendo mas de
+			interLlegada.powerPill.replace(movimientoDeLlegada, pills, pills - 1); // una powerpill entre dos intersecciones le podemos callar la boca
+		}
 	}
 
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {
 		interseccion interLlegada = getInterseccion(proximoNodo);
-		if (interLlegada != null)
-			for (MOVE m : MOVE.values()) {
-				if (interLlegada.distancias.get(m) != null
-						&& interLlegada.destinos.get(m) == interseccionActual.identificador
-						&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
-					return m;
-			}
+		for (MOVE m : MOVE.values()) {
+			if (interLlegada.distancias.get(m) != null
+					&& interLlegada.destinos.get(m) == interseccionActual.identificador
+					&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
+				return m;
+		}
 		return MOVE.NEUTRAL; // nunca deberia llegar
 	}
 

@@ -10,7 +10,6 @@ import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.RunAwayMsPac
 import es.ucm.fdi.ici.rules.Action;
 import es.ucm.fdi.ici.rules.Input;
 import es.ucm.fdi.ici.rules.RuleEngine;
-import es.ucm.fdi.ici.rules.observers.ConsoleRuleEngineObserver;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;

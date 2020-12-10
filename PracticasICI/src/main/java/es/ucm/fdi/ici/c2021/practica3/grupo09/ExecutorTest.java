@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
-import es.ucm.fdi.ici.c2021.practica3.grupo09.demorules.GhostsRules;
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
@@ -17,11 +16,11 @@ public class ExecutorTest {
 		
 		
 		PacmanController pacMan = new MsPacMan();
-		GhostController ghosts = new GhostsRules();
-		System.out.println(
-				executor.runGame(pacMan, ghosts, 5)
-		);
+		GhostController ghosts = new Ghosts();
 		
+		System.out.println(
+			executor.runGame(pacMan, ghosts, 30)
+		);	
 	}
 }
 
