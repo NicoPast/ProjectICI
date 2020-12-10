@@ -1,6 +1,5 @@
 package es.ucm.fdi.ici.c2021.practica3.grupo09;
 
-import es.ucm.fdi.ici.c2021.practica3.grupo09.demorules.GhostsRules;
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;

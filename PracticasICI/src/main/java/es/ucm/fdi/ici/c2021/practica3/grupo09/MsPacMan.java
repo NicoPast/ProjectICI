@@ -10,82 +10,9 @@ import es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions.RunAwayMsPac
 import es.ucm.fdi.ici.rules.Action;
 import es.ucm.fdi.ici.rules.Input;
 import es.ucm.fdi.ici.rules.RuleEngine;
-import es.ucm.fdi.ici.rules.observers.ConsoleRuleEngineObserver;
 import pacman.controllers.PacmanController;
-import pacman.game.Constants.DM;
-import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.game.internal.Node;
-
-class interseccion {
-	public interseccion(int iden, EnumMap<MOVE, Integer> dir, EnumMap<MOVE, Integer> dest, EnumMap<MOVE, Integer> pi,
-			EnumMap<MOVE, Integer> ppi) {
-		identificador = iden;
-		distancias = dir;
-		destinos = dest;
-		pills = pi;
-		powerPill = ppi;
-	}
-
-	public int identificador; // node index
-	public EnumMap<MOVE, Integer> distancias; // distancias
-	public EnumMap<MOVE, Integer> destinos; // identificador del nodo en esa direccion
-	public EnumMap<MOVE, Integer> pills; // pills en ese camino (entre nodo y nodo, las pills que hay en las
-											// intersecciones no cuentan)
-	public EnumMap<MOVE, Integer> powerPill; // powerPills en ese camino
-}
-
-
-
-public final class MsPacMan extends PacmanController {
-	private List<interseccion> mapa = new ArrayList<interseccion>();
-	boolean mapaHecho = false;
-	int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
-	MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
-	MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
-	interseccion interseccionActual;
-	String mapaActual = "a";
-
-	DM metrica = DM.MANHATTAN;
-	double distanciaPeligro = 40;
-	double distanciaPerseguir = 140;
-
-
-	// provisional
-
-	private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
-		MOVE direccion = dir;
-		int pills = 0;
-		int powerPills = 0;
-
-		Node proximoNodo = graph[nodoActual.neighbourhood.get(direccion)];
-		int coste = 1;
-
-		while ((proximoNodo.numNeighbouringNodes <= 2)) {
-			if (proximoNodo.neighbourhood.get(direccion) == null) { // en que otra direccion nos podemos mover
-				for (MOVE m : MOVE.values()) { // ya tenemos la nueva direccion
-					if (m != direccion.opposite() && proximoNodo.neighbourhood.get(m) != null) {
-						direccion = m;
-						break;
-					}
-				}
-			}
-			if (proximoNodo.pillIndex != -1)
-				pills++;
-			else if (proximoNodo.powerPillIndex != -1)
-				powerPills++;
-			proximoNodo = graph[proximoNodo.neighbourhood.get(direccion)];
-			coste++;
-		}
-		return new int[] { coste, proximoNodo.nodeIndex, pills, powerPills };
-	}
-
-	private void crearMapa(Game game) {
-		Node[] graph = game.getCurrentMaze().graph;
-		
-		for (Node nodo : graph) { // recorre todos los nodos del mapa
-			if (nodo.numNeighbouringNodes > 2) { // quita muro y pasillos
 
 public class MsPacMan  extends PacmanController {
 	
