@@ -12,7 +12,7 @@ import pacman.game.Game;
 public class ChaseAction implements Action {
 
 	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
-	DM CONSTANT_MEASURE_DIRECTION = DM.MANHATTAN;
+	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
 
 	private MapaInfoGhost mapa;
 	GHOST ghostType;
@@ -32,7 +32,7 @@ public class ChaseAction implements Action {
 		if (game.doesGhostRequireAction(ghostType)) { //if it requires an action	
 			int myPos = game.getGhostCurrentNodeIndex(ghostType);
 			MOVE mylastMove = game.getGhostLastMoveMade(ghostType);
-			int destino = 0;
+			int destino = 0, destinoFinal = -1;
 			float valorMasAlto = -10, valor = 0;
 
 			interseccion proximaInterseccionPacman, interseccionActual = mapa.getInterseccionActual();
@@ -46,9 +46,11 @@ public class ChaseAction implements Action {
 					continue;
 				//Si estoy en esa interseccion, voy hacia el pacman
 				if(myPos == proximaInterseccionPacman.destinos.get(m)){
-					destino = proximaInterseccionPacman.identificador;
+					destinoFinal = proximaInterseccionPacman.identificador;
 					break;
 				}
+
+				destino = proximaInterseccionPacman.destinos.get(m);
 
 				//Valor = pills del camino / (distancia a la siguiente interseccion + distancia ghost a la interseccion)
 				double distanceG = game.getDistance(myPos, proximaInterseccionPacman.identificador, mylastMove, CONSTANT_MEASURE_DISTANCE);
@@ -66,13 +68,13 @@ public class ChaseAction implements Action {
 				}
 				if (valor > valorMasAlto) {
 					valorMasAlto = valor;
-					destino = proximaInterseccionPacman.destinos.get(m);
+					destinoFinal = destino;
 				}
 			}
 
-			mapa.destinosGhosts.put(ghostType, mapa.getInterseccion(destino));
+			mapa.destinosGhosts.put(ghostType, mapa.getInterseccion(destinoFinal));
 
-			return game.getNextMoveTowardsTarget(myPos, destino, mylastMove, CONSTANT_MEASURE_DIRECTION);
+			return game.getNextMoveTowardsTarget(myPos, destinoFinal, mylastMove, CONSTANT_MEASURE_DIRECTION);
         }
 		else 
 			return MOVE.NEUTRAL;

@@ -63,7 +63,7 @@
 	(assert (ACTION (id BLINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule BLINKYseeksProtection
-	(BLINKY (strong false)) (BLINKY (GhostToNearestActiveGhostDistance ?d)) (test (<= ?d 25))
+	(BLINKY (strong false)) (BLINKY (GhostToNearestActiveGhostDistance ?d)) (test (and (> ?d 0)(<= ?d 25)))
 	=>
 	(assert (ACTION (id BLINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 

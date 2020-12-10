@@ -16,7 +16,6 @@ public class ExecutorTest {
 		
 		
 		PacmanController pacMan = new MsPacMan();
-		//PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
 		
 		System.out.println(

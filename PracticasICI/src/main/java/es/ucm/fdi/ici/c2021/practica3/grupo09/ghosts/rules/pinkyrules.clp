@@ -64,7 +64,7 @@
 	(assert (ACTION (id PINKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule PINKYseeksProtection
-	(PINKY (strong false)) (PINKY (GhostToNearestActiveGhostDistance ?d)) (test (<= ?d 25))
+	(PINKY (strong false)) (PINKY (GhostToNearestActiveGhostDistance ?d)) (test (and (> ?d 0)(<= ?d 25)))
 	=>
 	(assert (ACTION (id PINKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 

@@ -64,7 +64,7 @@
 	(assert (ACTION (id INKYchase) (info "no puedo hacer nada fancy --> le persigo") )))	
 
 (defrule INKYseeksProtection
-	(INKY (strong false)) (INKY (GhostToNearestActiveGhostDistance ?d)) (test (<= ?d 25))
+	(INKY (strong false)) (INKY (GhostToNearestActiveGhostDistance ?d)) (test (and (> ?d 0)(<= ?d 25)))
 	=>
 	(assert (ACTION (id INKYseeksProtection) (info "soy debil y alguien puede protegerme --> me acerco a el") )))
 
