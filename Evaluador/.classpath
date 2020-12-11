@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/ici-c2021-practica2.jar"/>
 	<classpathentry kind="lib" path="lib/PacManEngineFSM.jar"/>
 	<classpathentry kind="lib" path="lib/PacManEngineFSMGraphObserver.jar"/>
+	<classpathentry kind="lib" path="lib/PacManEngineFuzzy.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
