@@ -5,7 +5,6 @@ import java.util.Vector;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fuzzy.Action;
-import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -20,11 +19,7 @@ public class RunAwayAction implements Action {
 		this.ghost = ghost;
 		mymapa = map;
 	}
-
-	public void parseFact(Fact actionFact){
-		
-	}
-
+	
 	private Vector<GHOST> edibleGhosts(Game game) {
 		Vector<GHOST> edibleGhosts = new Vector<GHOST>();
 		for (GHOST ghost : GHOST.values()) {

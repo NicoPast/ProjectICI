@@ -5,7 +5,6 @@ import java.util.Vector;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fuzzy.Action;
-import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -19,10 +18,6 @@ public class GoToActiveGhostAction implements Action {
 	public GoToActiveGhostAction(GHOST ghost, MapaInfoGhost map) {
 		this.ghost = ghost;
 		this.mymap = map;
-	}
-
-	public void parseFact(Fact actionFact){
-		
 	}
 
 	private Vector<GHOST> activeGhosts(Game game) {

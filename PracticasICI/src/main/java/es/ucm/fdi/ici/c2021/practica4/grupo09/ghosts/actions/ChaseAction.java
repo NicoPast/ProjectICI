@@ -3,7 +3,6 @@ package es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfoGhost.interseccion;
 import es.ucm.fdi.ici.fuzzy.Action;
-import jess.Fact;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -20,10 +19,6 @@ public class ChaseAction implements Action {
 	public ChaseAction( GHOST ghost, MapaInfoGhost mapa_ ) {
 		this.ghostType = ghost;
 		this.mapa= mapa_;
-	}
-
-	public void parseFact(Fact actionFact) {
-		
 	}
 
 	// Se dirige a la interseccion donde es mas probable que se dirija el PacMan y que yo este más cerca
