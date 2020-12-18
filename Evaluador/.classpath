@@ -9,8 +9,8 @@
 	<classpathentry kind="lib" path="lib/ici.c1920.practica1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PracticasICI"/>
 	<classpathentry kind="lib" path="lib/ici.c2021.practica1.jar"/>
-	<classpathentry kind="lib" path="lib/ici-c2021-practica2.jar"/>
-	<classpathentry kind="lib" path="lib/PacManEngineFSM.jar"/>
-	<classpathentry kind="lib" path="lib/PacManEngineFSMGraphObserver.jar"/>
+	<classpathentry kind="lib" path="/PracticasICI/lib/ici-c2021-practica2.jar"/>
+	<classpathentry kind="lib" path="/PracticasICI/lib/PacManEngineFSM.jar"/>
+	<classpathentry kind="lib" path="/PracticasICI/lib/PacManEngineFSMGraphObserver.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
