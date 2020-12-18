@@ -20,9 +20,6 @@ public class MapaInfoGhost {
 	private boolean mapaHecho = false;
 	private String mapaActual = "a";
 
-	public EnumMap<GHOST, interseccion> destinosGhosts;
-	public EnumMap<GHOST, Integer> movesCheckMate;
-
 	public MapaInfoGhost() {
 
 	}
@@ -50,37 +47,10 @@ public class MapaInfoGhost {
 			mapaActual = game.getCurrentMaze().name;
 			mapa.clear();
 			mapaHecho = false;
-		}
-        
+		}    
 		if (!mapaHecho) { // solo entra aqui en el primer ciclo
 			crearMapa(game);
-			destinosGhosts = new EnumMap<GHOST, interseccion>(GHOST.class);
-			movesCheckMate = new EnumMap<GHOST, Integer>(GHOST.class);
             mapaHecho = true;
-		}
-
-		// Primero actualizo el mapa usando la posicion del pacman
-		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
-		
-		if (aux == null) { // si es null, no estas en una interseccion (AKA, estas en un pasillo)
-			if (ultimoNodo != -1 && proximoNodo != -1)
-				updateMapa(game); // solo hay que actualizarlo durante las rectas
-			if (checkLastMoveMade) {
-				MOVE m = game.getPacmanLastMoveMade();
-				checkLastMoveMade = false;
-				ultimoMovimientoReal = m;
-				if(interseccionActual != null) {
-					ultimoNodo = interseccionActual.identificador;
-					if(interseccionActual.destinos.get(m) != null) {
-						proximoNodo = interseccionActual.destinos.get(m);
-						movimientoDeLlegada = proxMovimientoLlegada(m);						
-					}
-				}
-			}
-		}
-		else {
-			interseccionActual = aux;
-			checkLastMoveMade = true;
 		}
     }
 

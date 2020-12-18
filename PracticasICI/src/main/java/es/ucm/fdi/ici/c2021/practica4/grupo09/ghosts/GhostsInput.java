@@ -247,9 +247,6 @@ public class GhostsInput implements Input {
 
 	@Override
 	public void parseInput(Game game) {
-		if (mapa == null) // Hecho asi porque parseInput se llama en super(game) pero necesitamos el mapa
-			return;
-
 		this.game = game;
 
 		mapa.update(game);
