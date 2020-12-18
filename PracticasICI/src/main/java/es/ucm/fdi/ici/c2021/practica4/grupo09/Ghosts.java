@@ -14,7 +14,7 @@ public class Ghosts extends POGhostController {
 	GhostsInput input;
 
 	FuzzyEngine fuzzyEngine;
-
+	
 	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica4/grupo09/ghosts/rules";
 	
 	public Ghosts() {
@@ -27,6 +27,7 @@ public class Ghosts extends POGhostController {
 
 	@Override
 	public MOVE getMove(GHOST ghost, Game game, long timeDue) {	
+				
 		input.parseInput(game);
 		return fuzzyEngine.run(input.getFuzzyValues(),game);
 	}
