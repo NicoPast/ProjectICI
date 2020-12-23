@@ -7,7 +7,7 @@ import es.ucm.fdi.ici.fuzzy.ActionSelector;
 import es.ucm.fdi.ici.c2021.practica4.demofuzzy.actions.GoToPPillAction;
 import es.ucm.fdi.ici.c2021.practica4.demofuzzy.actions.RunAwayAction;
 
-public class MsPacManActionSelector implements ActionSelector {
+public class GhostsActionSelector implements ActionSelector {
 
 	private final Double RUN_AWAY_LIMIT = 20.0;
 
