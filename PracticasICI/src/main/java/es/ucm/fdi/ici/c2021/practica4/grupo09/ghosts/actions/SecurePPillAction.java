@@ -46,7 +46,7 @@ public class SecurePPillAction implements Action {
 					bestMove = move;
 				}
 			}
-			mapa.destinosGhosts.put(ghost, mapa.getInterseccion(inter.destinos.get(bestMove)));
+//			mapa.destinosGhosts.put(ghost, mapa.getInterseccion(inter.destinos.get(bestMove)));
 		}
 		return bestMove;
 	}

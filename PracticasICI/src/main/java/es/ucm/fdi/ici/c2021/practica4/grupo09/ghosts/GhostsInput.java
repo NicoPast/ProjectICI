@@ -145,13 +145,13 @@ public class GhostsInput implements Input {
 				&& i < visitadas.size()) {
 			GHOSTANDDISTANCE gyd = closestGhostToIntersection(game, aux[i].intersection.identificador, activeGhosts_);
 			if (gyd.distance <= 1) {
-				mapa.movesCheckMate.put(gyd.ghost, game.getPacmanCurrentNodeIndex());
+//				mapa.movesCheckMate.put(gyd.ghost, game.getPacmanCurrentNodeIndex());
 				activeGhosts_.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
 			} else if (gyd.distance <= game.getDistance(game.getPacmanCurrentNodeIndex(),
 					aux[i].intersection.identificador, game.getPacmanLastMoveMade(), DM.PATH)) {
-				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
+//				mapa.movesCheckMate.put(gyd.ghost, aux[i].intersection.identificador);
 				activeGhosts_.remove(gyd.ghost);
 				nodosFijos.add(game.getGhostCurrentNodeIndex(gyd.ghost));
 				i++;
@@ -169,22 +169,22 @@ public class GhostsInput implements Input {
 			return false;
 		}
 
-		ClosestPowerPillAndDistance my_cpad = cppad_Ghosts.get(ghost);
-		double dist_pacman = game.getDistance(game.getPacmanCurrentNodeIndex(), my_cpad.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
-
-		if(dist_pacman < my_cpad.distance) //Si el pacman llega antes que yo a mi powerpill, no puedo asegurarla
-			return false;
-
-		for(ClosestPowerPillAndDistance cpad : cppad_Ghosts.values()){
-			if(cpad.distance == my_cpad.distance && cpad.powerpill == my_cpad.powerpill) //No me valoro a mi mismo
-				continue;
-			//Si alguien está más cerca de la powerpill, que la asegure el otro, no yo
-			if(cpad.powerpill == my_cpad.powerpill && cpad.distance < my_cpad.distance){ 
+//		ClosestPowerPillAndDistance my_cpad = cppad_Ghosts.get(ghost);
+//		double dist_pacman = game.getDistance(game.getPacmanCurrentNodeIndex(), my_cpad.powerpill, game.getPacmanLastMoveMade(), DM.PATH);
+//
+//		if(dist_pacman < my_cpad.distance) //Si el pacman llega antes que yo a mi powerpill, no puedo asegurarla
+//			return false;
+//
+//		for(ClosestPowerPillAndDistance cpad : cppad_Ghosts.values()){
+//			if(cpad.distance == my_cpad.distance && cpad.powerpill == my_cpad.powerpill) //No me valoro a mi mismo
+//				continue;
+//			//Si alguien está más cerca de la powerpill, que la asegure el otro, no yo
+//			if(cpad.powerpill == my_cpad.powerpill && cpad.distance < my_cpad.distance){ 
 				return false;	
-			}
-		}
+//			}
+//		}
 		//Si soy el más cercano a la powerpill más cercana a mi, la aseguro
-		return true;
+//		return true;
 	}
 	
 	private class protectAlliesParameters{

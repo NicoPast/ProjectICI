@@ -31,6 +31,7 @@ public abstract class POGhostController extends GhostController {
     	} catch(Exception e)
     	{
     		System.err.println("Warning. Error precomputing ghosts global movements in PO mode.");
+    		
     	}
     	
     	EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
