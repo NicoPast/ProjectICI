@@ -16,7 +16,6 @@ public class GhostsActionSelector implements ActionSelector {
 	@Override
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		Double runAway = fuzzyOutput.get("runAway");
-		EnumMap<GHOST,Float>edibleGhosts=new EnumMap<GHOST,Float>(GHOST.class);
 		
 		if(runAway> this.RUN_AWAY_LIMIT)
 			return new RunAwayAction(null, null);
