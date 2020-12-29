@@ -22,7 +22,7 @@ public class Ghosts extends POGhostController {
 		mapInfo = new MapaInfoGhost();
 		input = new GhostsInput(mapInfo);
 
-		actionSelector = new GhostActionSelector();
+		actionSelector = new GhostActionSelector(input, mapInfo);
 		fuzzyEngine = new FuzzyEngine("Ghost", RULES_PATH + "ghosts.fcl", "FuzzyGhosts", actionSelector);
 	}
 

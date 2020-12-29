@@ -16,18 +16,18 @@ public class PositionAproximator {
     int myPos;
     MOVE myLastMove;
 
-    float CONSTANT_MULTIPLIER = 50;
+    double CONSTANT_MULTIPLIER = 50;
     DM MOVE_CONSTANT = DM.EUCLID;
 
     EnumMap<MOVE, Integer> movimientos;
 
-    public PositionAproximator(MapaInfoGhost mapa, Game game, int myPos, MOVE myLastMove, interseccion entityPos, MOVE entityLastMoveToPos, float fuzzyAccuracy){
+    public PositionAproximator(MapaInfoGhost mapa, Game game, int myPos, MOVE myLastMove, interseccion entityPos, MOVE entityLastMoveToPos, double fuzzyAccuracy){
         this.mapa = mapa;
         this.game = game;
         this.myPos = myPos;
         this.myLastMove = myLastMove;
 
-        float distance = (fuzzyAccuracy <= 0) ? CONSTANT_MULTIPLIER : CONSTANT_MULTIPLIER * (1 - fuzzyAccuracy);
+        double distance = (fuzzyAccuracy <= 0) ? CONSTANT_MULTIPLIER : CONSTANT_MULTIPLIER * (1 - fuzzyAccuracy);
 
         movimientos = new EnumMap<>(MOVE.class);
 
@@ -46,7 +46,7 @@ public class PositionAproximator {
         return best;
     }
 
-    private void recursion(float distanceLeft, interseccion actualPos, MOVE movellegada){
+    private void recursion(double distanceLeft, interseccion actualPos, MOVE movellegada){
         for(MOVE m : actualPos.distancias.keySet()){
             int distanciaHaciaInterseccion = actualPos.distancias.get(m);
             int destino = actualPos.destinos.get(m);
@@ -63,7 +63,7 @@ public class PositionAproximator {
         }
     }
 
-    private MOVE getMoveLlegada(interseccion destino, int inicio, float distance){  
+    private MOVE getMoveLlegada(interseccion destino, int inicio, double distance){  
         for(MOVE m : destino.distancias.keySet()){
             if(destino.distancias.get(m) == distance && destino.destinos.get(m) == inicio)
                 return m.opposite();

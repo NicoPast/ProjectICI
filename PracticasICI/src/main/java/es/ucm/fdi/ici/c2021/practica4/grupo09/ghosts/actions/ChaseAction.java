@@ -16,9 +16,9 @@ public class ChaseAction implements Action {
 	MapaInfoGhost mapa;
 	interseccion pacManPos;
 	MOVE pacmanKnownLastMoveMade;
-	float fuzzyAccuracy;
+	double fuzzyAccuracy;
 	
-	public ChaseAction(GHOST ghost, MapaInfoGhost map_, interseccion pacManPos, MOVE pacmanKnownLastMoveMade, float fuzzyAccuracy) {
+	public ChaseAction(GHOST ghost, MapaInfoGhost map_, interseccion pacManPos, MOVE pacmanKnownLastMoveMade, double fuzzyAccuracy) {
 		this.ghostType = ghost;
 		this.mapa = map_;
 		this.pacManPos = pacManPos;
