@@ -23,7 +23,29 @@ public class GhostsInput implements Input {
 	}
 
 	private GHOST ghost;
+	public class UsefulData{
+		public Vector<interseccion> GhostsPositions;
+		public Vector<Double>GhostsPositionsAccuracy;
+		
+		public Vector<Double>GhostIsEdibleAccuracy;
 
+		public interseccion proximaInterseccionPacMan;
+		public double proximaInterseccionPacManAccuracy;
+		
+		UsefulData(Vector<interseccion>Ghosts,Vector<Double>GhostFuzzy,Vector<Double>EdibleAccuracy,interseccion Pacman, double PacmanAccuracy)
+		{
+			GhostsPositions=Ghosts;
+			GhostsPositionsAccuracy=GhostFuzzy;
+			GhostIsEdibleAccuracy=EdibleAccuracy;
+			proximaInterseccionPacMan=Pacman;
+			proximaInterseccionPacManAccuracy=PacmanAccuracy;
+		}
+	}
+	
+	public UsefulData getData(){return new UsefulData(this.GhostsPositions,this.GhostsPositionsAccuracy,this.GhostIsEdibleAccuracy,this.proximaInterseccionPacMan,
+			this.proximaInterseccionPacManAccuracy);}
+	
+	
 	private MapaInfoGhost mapa;
 
 	
@@ -47,7 +69,12 @@ public class GhostsInput implements Input {
 	public void parseInput(Game game) {
 		
 		mapa.update(game);
-
+		for	(int i=0;i<4;i++)
+		{
+//			this.GhostsPositions.elementAt(i)
+		}
+			
+		
 		
 	}
 
