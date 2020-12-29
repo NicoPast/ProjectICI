@@ -70,7 +70,25 @@ public class GhostsInput implements Input {
 	public void setGhost(GHOST g) {ghost=g;}
 	public GhostsInput(MapaInfoGhost mapaInfo) {
 		this.mapa = mapaInfo;
+		this.GhostsPositions=new Vector<interseccion>(4);
+		this.GhostsPositionsAccuracy=new Vector<Double>(4);
+		this.GhostsLastMoveMade=new Vector<MOVE>(4);
+		this.GhostIsEdibleAccuracy=new Vector<Double>(4);
+		this.proximaInterseccionPacMan = new interseccion(-1, new EnumMap<MOVE, Integer>(MOVE.class), new EnumMap<MOVE, Integer>(MOVE.class),
+				new EnumMap<MOVE, Integer>(MOVE.class), new EnumMap<MOVE, Integer>(MOVE.class));
+		this.proximaInterseccionPacManAccuracy=0.0;
+		this.PacmanLastMoveMade=MOVE.NEUTRAL;
+		//las inicializamos a valores desconocidos
+		for(int i=0; i<4;i++) {
+			this.GhostsPositions.set(i,new interseccion(-1, new EnumMap<MOVE, Integer>(MOVE.class), new EnumMap<MOVE, Integer>(MOVE.class),
+					new EnumMap<MOVE, Integer>(MOVE.class), new EnumMap<MOVE, Integer>(MOVE.class)));
+			
+			this.GhostsPositionsAccuracy.set(i, 0.0);
+			this.GhostsLastMoveMade.set(i, MOVE.NEUTRAL);
+			this.GhostIsEdibleAccuracy.set(i, 0.0);
+		}
 	}
+	
 
 	@Override
 	public void parseInput(Game game) {
@@ -78,10 +96,9 @@ public class GhostsInput implements Input {
 		mapa.update(game);
 		for	(int i=0;i<4;i++)
 		{
-			interseccion aux=new interseccion(-1,)
-			if(game.getGhostCurrentNodeIndex(GHOST.values()[i])>-1)
-			this.mapa.getInterseccion()
-			this.GhostsPositions.elementAt(i) = 
+			int fantasmaNode=game.getGhostCurrentNodeIndex(GHOST.values()[i]);
+			if(fantasmaNode>-1)
+				this.GhostsPositions.set(i,mapa.getInterseccion(fantasmaNode));
 		}
 			
 		
