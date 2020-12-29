@@ -12,23 +12,25 @@ public class Ghosts extends POGhostController {
 
 	MapaInfoGhost mapInfo;
 	GhostsInput input;
+	GhostActionSelector actionSelector;
 
 	FuzzyEngine fuzzyEngine;
 	
-	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica4/grupo09/ghosts/rules";
+	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica4/grupo09/ghosts/";
 	
 	public Ghosts() {
 		mapInfo = new MapaInfoGhost();
 		input = new GhostsInput(mapInfo);
 
-		ActionSelector actionSelector = new GhostActionSelector();
-		fuzzyEngine = new FuzzyEngine("Ghost", RULES_PATH + "mspacman.fcl", "FuzzyMsPacMan", actionSelector);
+		actionSelector = new GhostActionSelector();
+		fuzzyEngine = new FuzzyEngine("Ghost", RULES_PATH + "ghosts.fcl", "FuzzyGhosts", actionSelector);
 	}
 
 	@Override
-	public MOVE getMove(GHOST ghost, Game game, long timeDue) {	
-				
+	public MOVE getMove(GHOST ghost, Game game, long timeDue) {
+		input.setGhost(ghost);
 		input.parseInput(game);
+		actionSelector.setGhost(ghost);
 		return fuzzyEngine.run(input.getFuzzyValues(),game);
 	}
 }
