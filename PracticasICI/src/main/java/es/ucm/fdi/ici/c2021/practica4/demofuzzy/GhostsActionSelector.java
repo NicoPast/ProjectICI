@@ -1,11 +1,13 @@
 package es.ucm.fdi.ici.c2021.practica4.demofuzzy;
 
 import java.util.HashMap;
+import java.util.EnumMap;
+import java.lang.Float;
 
+import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.RunAwayAction;
 import es.ucm.fdi.ici.fuzzy.Action;
 import es.ucm.fdi.ici.fuzzy.ActionSelector;
-import es.ucm.fdi.ici.c2021.practica4.demofuzzy.actions.GoToPPillAction;
-import es.ucm.fdi.ici.c2021.practica4.demofuzzy.actions.RunAwayAction;
+import pacman.game.Constants.GHOST;
 
 public class GhostsActionSelector implements ActionSelector {
 
@@ -14,8 +16,10 @@ public class GhostsActionSelector implements ActionSelector {
 	@Override
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		Double runAway = fuzzyOutput.get("runAway");
+		EnumMap<GHOST,Float>edibleGhosts=new EnumMap<GHOST,Float>(GHOST.class);
+		
 		if(runAway> this.RUN_AWAY_LIMIT)
-			return new RunAwayAction();
+			return new RunAwayAction(null, null);
 		else
 			return new GoToPPillAction();
 	}
