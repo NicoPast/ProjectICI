@@ -26,24 +26,29 @@ public class GhostsInput implements Input {
 	public class UsefulData{
 		public Vector<interseccion> GhostsPositions;
 		public Vector<Double>GhostsPositionsAccuracy;
+		public Vector<MOVE>GhostsLastMoveMade;
 		
 		public Vector<Double>GhostIsEdibleAccuracy;
 
 		public interseccion proximaInterseccionPacMan;
 		public double proximaInterseccionPacManAccuracy;
+		public MOVE PacmanLastMoveMade;
 		
-		UsefulData(Vector<interseccion>Ghosts,Vector<Double>GhostFuzzy,Vector<Double>EdibleAccuracy,interseccion Pacman, double PacmanAccuracy)
+		UsefulData(Vector<interseccion>Ghosts,Vector<Double>GhostFuzzy,Vector<Double>EdibleAccuracy,interseccion Pacman, double PacmanAccuracy,
+				Vector<MOVE>GhostsMoves, MOVE PacmanMove)
 		{
 			GhostsPositions=Ghosts;
 			GhostsPositionsAccuracy=GhostFuzzy;
 			GhostIsEdibleAccuracy=EdibleAccuracy;
 			proximaInterseccionPacMan=Pacman;
 			proximaInterseccionPacManAccuracy=PacmanAccuracy;
+			GhostsLastMoveMade=GhostsMoves;
+			PacmanLastMoveMade=PacmanMove;
 		}
 	}
 	
 	public UsefulData getData(){return new UsefulData(this.GhostsPositions,this.GhostsPositionsAccuracy,this.GhostIsEdibleAccuracy,this.proximaInterseccionPacMan,
-			this.proximaInterseccionPacManAccuracy);}
+			this.proximaInterseccionPacManAccuracy,this.GhostsLastMoveMade,this.PacmanLastMoveMade);}
 	
 	
 	private MapaInfoGhost mapa;
@@ -51,12 +56,14 @@ public class GhostsInput implements Input {
 	
 	private Vector<interseccion> GhostsPositions;
 	private Vector<Double>GhostsPositionsAccuracy;
+	private Vector<MOVE>GhostsLastMoveMade;
+	
 	
 	private Vector<Double>GhostIsEdibleAccuracy;
 
 	private interseccion proximaInterseccionPacMan;
 	private double proximaInterseccionPacManAccuracy;
-	
+	private MOVE PacmanLastMoveMade;
 	
 	
 	
@@ -71,7 +78,10 @@ public class GhostsInput implements Input {
 		mapa.update(game);
 		for	(int i=0;i<4;i++)
 		{
-//			this.GhostsPositions.elementAt(i)
+			interseccion aux=new interseccion(-1,)
+			if(game.getGhostCurrentNodeIndex(GHOST.values()[i])>-1)
+			this.mapa.getInterseccion()
+			this.GhostsPositions.elementAt(i) = 
 		}
 			
 		
