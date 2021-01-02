@@ -5,6 +5,7 @@ import java.util.HashMap;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.GhostsInput;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.GhostsInput.UsefulData;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.ChaseAction;
+import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.FindPacMan;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.GoToActiveGhostAction;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.RunAwayAction;
 import es.ucm.fdi.ici.fuzzy.Action;
@@ -47,8 +48,8 @@ public class GhostActionSelector implements ActionSelector {
 		else { //Not Edible
 			if(chase > CHASE)
 				return new ChaseAction(ghost, map, data.proximaInterseccionPacMan, data.PacmanLastMoveMade, data.proximaInterseccionPacManAccuracy);
-			// else 
-			// 	return new FindPacMan();
+			else 
+			 	return new FindPacMan(ghost, map);
 		}
 		return null;
 	}
