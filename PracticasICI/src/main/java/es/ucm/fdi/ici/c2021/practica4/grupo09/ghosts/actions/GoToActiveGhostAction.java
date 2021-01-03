@@ -69,7 +69,7 @@ public class GoToActiveGhostAction implements Action {
 				continue;
 			////Si la seguridad de que el fantasma que buscamos es edible es baja es que no es edible muy probablemente, ya 
 			//que esta variable fuzzy bajará muy rápidamente(el tiempo durante el que se está edible es corto)
-			if (LastGhostsKnownPositions.elementAt(i).identificador > -1
+			if (LastGhostsKnownPositions.elementAt(i)!=null
 					&& ActiveGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT
 					&& this.EdibleAccurracy.elementAt(i) < EDIBLE_ACCURACY_LIMIT) { 
 				double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost),
