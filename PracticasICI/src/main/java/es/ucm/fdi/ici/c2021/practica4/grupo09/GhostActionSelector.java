@@ -7,6 +7,7 @@ import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.GhostsInput.UsefulData;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.ChaseAction;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.FindPacMan;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.GoToActiveGhostAction;
+import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.ProtectAlliesAction;
 import es.ucm.fdi.ici.c2021.practica4.grupo09.ghosts.actions.RunAwayAction;
 import es.ucm.fdi.ici.fuzzy.Action;
 import es.ucm.fdi.ici.fuzzy.ActionSelector;
@@ -14,8 +15,9 @@ import pacman.game.Constants.GHOST;
 
 public class GhostActionSelector implements ActionSelector {
 
-	private final float CHASE = 0.4f;
-	private final float SEEKHELP = 0.7f;
+	private final float FIND = 10;
+	private final float PROTECT = 20;
+	private final float SEEKHELP = 10;
 
 	private GhostsInput input;
 	MapaInfoGhost map;
@@ -34,7 +36,7 @@ public class GhostActionSelector implements ActionSelector {
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		UsefulData data = input.getData();
 
-		Double chase = fuzzyOutput.get("chase");
+		Double active = fuzzyOutput.get("active");
 		Double seekHelp = fuzzyOutput.get("seekHelp");
 
 		//todo falta protect allies
@@ -46,10 +48,12 @@ public class GhostActionSelector implements ActionSelector {
 				return new RunAwayAction(ghost, map);		
 		}
 		else { //Not Edible
-			if(chase > CHASE)
-				return new ChaseAction(ghost, map, data.proximaInterseccionPacMan, data.PacmanLastMoveMade, data.proximaInterseccionPacManAccuracy);
+			if(active < FIND)
+				return new FindPacMan(ghost, map);
+			else if(active > PROTECT)
+				return new ProtectAlliesAction(ghost, map, Edibles, edibles, LastPos, PacmanPos, PacmanAccur, lastMoves);
 			else 
-			 	return new FindPacMan(ghost, map);
+				return new ChaseAction(ghost, map, data.proximaInterseccionPacMan, data.PacmanLastMoveMade, data.proximaInterseccionPacManAccuracy);
 		}
 		return null;
 	}
