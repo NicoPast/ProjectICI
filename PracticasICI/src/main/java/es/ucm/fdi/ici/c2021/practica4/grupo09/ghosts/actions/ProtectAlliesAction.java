@@ -24,7 +24,6 @@ public class ProtectAlliesAction implements Action {
 	Vector<Double> EdibleAccurracy;
 	Vector<interseccion> LastGhostsKnownPositions;
 
-	float PACMAN_POS_ACCURACY_LIMIT = .5f;
 	float POS_ACCURACY_LIMIT = .7f;
 	float EDIBLE_ACCURACY_LIMIT = .5f;
 
@@ -76,7 +75,7 @@ public class ProtectAlliesAction implements Action {
 
 	@Override
 	public MOVE execute(Game game) {
-		if (game.doesGhostRequireAction(ghost) && PacmanPosAccuracy >= PACMAN_POS_ACCURACY_LIMIT) {
+		if (game.doesGhostRequireAction(ghost)) {
 			// vemos cu�l es la distancia al fantasma edible m�s cercano a mi en todas
 			// direcciones
 			MOVE prohibido = game.getGhostLastMoveMade(ghost);

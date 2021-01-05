@@ -59,7 +59,7 @@ public class RunAwayAction implements Action {
 
 			if (LastGhostsKnownPositions.elementAt(i) != null
 					&& EdibleGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT) {
-				double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, DM.PATH);
+				double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), this.LastGhostsKnownPositions.elementAt(i).identificador, m, DM.PATH);
 				if (aux > furthest) {
 					furthest = aux;
 				}
