@@ -55,12 +55,10 @@ public class ChaseAction implements Action{
 		}
 		
 		if(target != -1) {
-			System.out.println("Aproximando...");
 			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.ghostLastPos[target],
 					DM.PATH);
 		}
 		
-		System.out.println("No hay objetivo");
 		return MOVE.NEUTRAL;
     }
            

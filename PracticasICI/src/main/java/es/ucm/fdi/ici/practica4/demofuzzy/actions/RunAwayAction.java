@@ -22,7 +22,11 @@ public class RunAwayAction implements Action {
 		System.out.println("Running");
 		int powerPillCercana = mapInfo.getClosestPP(game);
 		
-		if(powerPillCercana == -1) return MOVE.NEUTRAL; //"best move"
+		if(powerPillCercana == -1) {
+			// best move
+			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.getClosestPill(game),
+					DM.PATH);
+		}
 		
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), powerPillCercana,
 				game.getPacmanLastMoveMade(), DM.PATH);

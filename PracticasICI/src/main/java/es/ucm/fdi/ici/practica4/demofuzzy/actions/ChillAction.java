@@ -42,7 +42,7 @@ public class ChillAction implements Action{
 			int closestPill = mapInfo.getClosestPillAnchura(game);
 			if(closestPill  != -1) 
 				proxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPill,
-						game.getPacmanLastMoveMade(), DM.PATH);
+						DM.PATH);
 		}
 		
 		if(proxMov == MOVE.NEUTRAL)

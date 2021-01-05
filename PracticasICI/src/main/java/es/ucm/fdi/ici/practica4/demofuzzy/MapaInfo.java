@@ -454,6 +454,7 @@ public class MapaInfo {
     		interseccion i = cola.remove();
     		for(MOVE m : i.destinos.keySet()) {
     			if(i.pills.get(m) > 0) {
+    				System.out.println("pills: " + i.pills.get(m));
     				dest = i.identificador;
     				break;
     			}
