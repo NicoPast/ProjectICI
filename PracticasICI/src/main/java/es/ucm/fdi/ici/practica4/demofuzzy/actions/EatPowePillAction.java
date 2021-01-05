@@ -25,7 +25,9 @@ public class EatPowePillAction implements Action {
 	public MOVE execute(Game game) {
 		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
 		
-		int powerPillCercana = getPowerPillCercana(game);
+		int powerPillCercana = mapInfo.getClosestPP(game);
+		
+		if(powerPillCercana == -1); //"best move"
 		
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		

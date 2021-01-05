@@ -13,6 +13,7 @@ import pacman.game.internal.Node;
 public class MapaInfo {
 
     private List<interseccion> mapa = new ArrayList<interseccion>();
+    private Vector<Integer> posPowerPills = new Vector<Integer>();
 	private int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
 	private MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
 	private MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
@@ -107,8 +108,12 @@ public class MapaInfo {
 			}
 			if (proximoNodo.pillIndex != -1)
 				pills++;
-			else if (proximoNodo.powerPillIndex != -1)
+			else if (proximoNodo.powerPillIndex != -1) {
 				powerPills++;
+				if(!posPowerPills.contains(proximoNodo.nodeIndex))
+					posPowerPills.add(proximoNodo.nodeIndex);
+			}
+				
 			proximoNodo = graph[proximoNodo.neighbourhood.get(direccion)];
 			coste++;
 		}
@@ -174,6 +179,7 @@ public class MapaInfo {
 
 		}
 		else if (game.wasPowerPillEaten()) {
+			posPowerPills.removeElement(game.getPacmanCurrentNodeIndex());
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
 			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria de 1 a 0,
@@ -406,4 +412,18 @@ public class MapaInfo {
     	}    	
     	return false;
     }	
+    
+    public Integer getClosestPP(Game game) {
+    	int pp = -1;
+    	double dist = Double.MAX_VALUE;
+    	for(int index: posPowerPills) {
+    		double aux = game.getDistance(game.getPacmanCurrentNodeIndex(), index,
+    				game.getPacmanLastMoveMade(), DM.PATH);
+    		if (aux < dist) {
+    			dist = aux;
+    			pp = index;
+    		}
+    	}
+    	return pp;
+    }
 }

@@ -22,8 +22,8 @@ public class MsPacManFuzzy extends PacmanController{
 		
 		input = new MsPacManInput();
 		 
-		//ConsoleFuzzyEngineObserver observer = new ConsoleFuzzyEngineObserver("MsPacMan","MsPacManRules");
 		fuzzyEngine = new FuzzyEngine("MsPacMan",RULES_PATH+"mspacman.fcl","FuzzyMsPacMan",actionSelector);
+		//ConsoleFuzzyEngineObserver observer = new ConsoleFuzzyEngineObserver("MsPacMan","MsPacManRules");
 		//fuzzyEngine.addObserver(observer);
 		
 	}

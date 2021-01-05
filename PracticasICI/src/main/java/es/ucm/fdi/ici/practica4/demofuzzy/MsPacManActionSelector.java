@@ -5,6 +5,7 @@ import java.util.HashMap;
 import es.ucm.fdi.ici.fuzzy.Action;
 import es.ucm.fdi.ici.fuzzy.ActionSelector;
 import es.ucm.fdi.ici.practica4.demofuzzy.actions.ChillAction;
+import es.ucm.fdi.ici.practica4.demofuzzy.actions.RunAwayAction;
 
 public class MsPacManActionSelector implements ActionSelector {
 
@@ -20,12 +21,14 @@ public class MsPacManActionSelector implements ActionSelector {
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		Double runAway = fuzzyOutput.get("runAway");
 		System.out.println(runAway);
-		return new ChillAction(mapInfo);
 		
-		/*if(runAway > this.RUN_AWAY_LIMIT)
+		
+		if(runAway > this.RUN_AWAY_LIMIT)
 			return new RunAwayAction(mapInfo);
+		//else if(map) return new EatPowePillAction(mapInfo);;
 		else
-			return new EatPowePillAction(mapInfo);*/
+			return new ChillAction(mapInfo);
+			//return new EatPowePillAction(mapInfo);
 	}
 	
 	public void SetMap(MapaInfo map) {

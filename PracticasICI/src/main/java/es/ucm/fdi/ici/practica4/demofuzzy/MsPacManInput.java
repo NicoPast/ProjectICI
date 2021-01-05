@@ -20,10 +20,15 @@ public class MsPacManInput implements Input {
 			int index = g.ordinal();
 			int pos = game.getGhostCurrentNodeIndex(g);
 			if(pos != -1) {
-				distance[index] = game.getDistance(game.getPacmanCurrentNodeIndex(), pos, DM.PATH);
-				confidence[index] = 100;
+				if(game.isGhostEdible(g)) {
+					
+				}
+				else {
+					distance[index] = game.getDistance(game.getPacmanCurrentNodeIndex(), pos, DM.PATH);
+					confidence[index] = 100;
+				}				
 			} else if (confidence[index] > 0)
-				confidence[index]-=.1;
+				confidence[index]-=0.9;
 		}
 	}
 
