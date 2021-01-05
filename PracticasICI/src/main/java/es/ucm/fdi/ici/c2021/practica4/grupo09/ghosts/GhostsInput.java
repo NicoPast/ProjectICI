@@ -16,12 +16,6 @@ import pacman.game.Game;
 
 public class GhostsInput implements Input {
 
-	public HashMap<String, Double> getFuzzyValues() {
-		HashMap<String, Double> vars = new HashMap<String, Double>();
-
-		return vars;
-	}
-
 	private GHOST ghost;
 
 	public class UsefulData {
@@ -77,20 +71,20 @@ public class GhostsInput implements Input {
 		this.PosPacMan = null;
 		this.PosPacManAccuracy = 0.0f;
 		this.PacmanLastMoveMade = MOVE.NEUTRAL;
+
 		// las inicializamos a valores desconocidos
 		for (int i = 0; i < 4; i++) {
-			this.GhostsPositions.set(i, null);
+			this.GhostsPositions.add(null);
 
-			this.GhostsPositionsAccuracy.set(i, 0.0);
-			this.GhostsLastMoveMade.set(i, MOVE.NEUTRAL);
-			this.GhostIsEdibleAccuracy.set(i, 0.0);
+			this.GhostsPositionsAccuracy.add(0.0);
+			this.GhostsLastMoveMade.add(MOVE.NEUTRAL);
+			this.GhostIsEdibleAccuracy.add(0.0);
 		}
+
+		this.distances = new EnumMap<>(GHOST.class);
 	}
 
-	@Override
-	public void parseInput(Game game) {
-
-		mapa.update(game);
+	private void getGhostsData(Game game){
 		for (int i = 0; i < 4; i++) {
 			int fantasmaNode = game.getGhostCurrentNodeIndex(GHOST.values()[i]);
 			if (fantasmaNode > -1) {
@@ -105,6 +99,9 @@ public class GhostsInput implements Input {
 			} else
 				GhostIsEdibleAccuracy.set(i, GhostIsEdibleAccuracy.elementAt(i) - .2);
 		}
+	}
+
+	private void getPacManData(Game game){
 		int PacmanP = game.getPacmanCurrentNodeIndex();
 		if (PacmanP > -1) {
 			if (mapa.getInterseccion(PacmanP) != null) {
@@ -129,7 +126,53 @@ public class GhostsInput implements Input {
 			}
 		} else
 			this.PosPacManAccuracy -= .1f;
+	}
 
+	@Override
+	public void parseInput(Game game) {
+		mapa.update(game);
+		
+		getGhostsData(game);
+
+		getPacManData(game);
+		
+		getFuzzyData(game);
+	}
+
+	private void getFuzzyData(Game game){
+		for(GHOST g: GHOST.values()) {
+			//Distances
+			if(this.GhostsPositions.elementAt(g.ordinal()) != null)
+				distances.put(g, game.getDistance(game.getGhostCurrentNodeIndex(ghost), this.GhostsPositions.elementAt(g.ordinal()).identificador, 
+								 game.getGhostLastMoveMade(ghost), DM.PATH));
+			else 
+				distances.put(g, 250.0);
+		}
+
+		if(this.PosPacMan != null){
+			this.distanceToPacMan = game.getDistance(game.getGhostCurrentNodeIndex(ghost), this.PosPacMan.identificador, 
+														game.getGhostLastMoveMade(ghost), DM.PATH);
+		}
+		else 
+			this.distanceToPacMan = 250.0;
+	}
+
+
+	EnumMap<GHOST, Double> distances;
+	double distanceToPacMan;
+
+	public HashMap<String, Double> getFuzzyValues() {
+		HashMap<String, Double> vars = new HashMap<String, Double>();
+
+		for(GHOST g: GHOST.values()) {
+			vars.put(g.name()+"distance", this.distances.get(g));
+			vars.put(g.name()+"confidence", this.GhostsPositionsAccuracy.elementAt(g.ordinal()));
+			vars.put(g.name()+"edible", this.GhostIsEdibleAccuracy.elementAt(g.ordinal()));
+		}
+		vars.put("PACMANdistance", this.distanceToPacMan);
+		vars.put("PACMANconfidence", (double)this.PosPacManAccuracy);
+
+		return vars;
 	}
 
 }

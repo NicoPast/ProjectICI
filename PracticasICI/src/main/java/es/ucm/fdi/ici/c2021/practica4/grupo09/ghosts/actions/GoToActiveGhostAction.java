@@ -28,14 +28,16 @@ public class GoToActiveGhostAction implements Action {
 	float EDIBLE_ACCURACY_LIMIT = .3f;
 
 	public GoToActiveGhostAction(GHOST ghost, MapaInfoGhost map, Vector<Double> Actives, Vector<Double> edibles,
-			Vector<interseccion> LastPos, int PacmanPos, float PacmanAccur, Vector<MOVE> lastMoves) {
+			Vector<interseccion> LastPos, interseccion PacmanPos, float PacmanAccur, Vector<MOVE> lastMoves) {
 		this.ghost = ghost;
 		this.mymap = map;
 		this.ActiveGhostsPosAccuracies = Actives;
 		this.EdibleAccurracy = edibles;
 		this.GhostsLastMoveKnown = lastMoves;
 		this.LastGhostsKnownPositions = LastPos;
-		this.PacmanLastPosKnown = PacmanPos;
+		if(PacmanPos != null)
+			this.PacmanLastPosKnown = PacmanPos.identificador;
+		
 		this.PacmanPosAccuracy = PacmanAccur;
 
 	}

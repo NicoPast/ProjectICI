@@ -16,14 +16,14 @@ public class Ghosts extends POGhostController {
 
 	FuzzyEngine fuzzyEngine;
 	
-	private static final String RULES_PATH = "es/ucm/fdi/ici/c2021/practica4/grupo09/ghosts/";
+	private static final String RULES_PATH = "bin/";
 	
 	public Ghosts() {
 		mapInfo = new MapaInfoGhost();
 		input = new GhostsInput(mapInfo);
 
 		actionSelector = new GhostActionSelector(input, mapInfo);
-		fuzzyEngine = new FuzzyEngine("Ghost", RULES_PATH + "ghosts.fcl", "FuzzyGhosts", actionSelector);
+		fuzzyEngine = new FuzzyEngine("Ghosts", RULES_PATH + "ghosts.fcl", "FuzzyGhosts", actionSelector);
 	}
 
 	@Override
