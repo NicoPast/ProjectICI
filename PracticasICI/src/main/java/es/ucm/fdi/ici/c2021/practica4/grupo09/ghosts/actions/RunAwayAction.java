@@ -16,6 +16,7 @@ public class RunAwayAction implements Action {
 	MapaInfoGhost mymapa;
 	Vector<Double> EdibleGhostsPosAccuracies;
 	Vector<interseccion> LastGhostsKnownPositions;
+	
 	int PacmanLastPosKnown;
 	float PacmanPosAccuracy;
 	float PACMAN_POS_ACCURACY_LIMIT = .5f;
@@ -46,6 +47,15 @@ public class RunAwayAction implements Action {
 		for (int i = 0; i < 4; i++) {
 			if (GHOST.values()[i] == ghost)
 				continue;
+			
+			if (LastGhostsKnownPositions.elementAt(i)!=null
+					&& EdibleGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT
+					) { 
+			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), this.LastGhostsKnownPositions.elementAt(i).identificador, m, DM.PATH);
+			if (aux > furthest) {
+				furthest = aux;
+							}
+		}
 
 			if (LastGhostsKnownPositions.elementAt(i) != null
 					&& EdibleGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT) {
