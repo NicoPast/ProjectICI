@@ -11,7 +11,7 @@ import es.ucm.fdi.ici.practica4.demofuzzy.actions.RunAwayAction;
 public class MsPacManActionSelector implements ActionSelector {
 
 	private final Double RUN_AWAY_LIMIT = 20.0;
-	private final Double CHASE_LIMIT = 100.0;
+	private final Double CHASE_LIMIT = 90.0;
 	MapaInfo mapInfo;
 	
 	public MsPacManActionSelector(MapaInfo map) {

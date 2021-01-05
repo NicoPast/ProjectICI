@@ -5,6 +5,7 @@ import es.ucm.fdi.ici.fuzzy.Action;
 import es.ucm.fdi.ici.practica4.demofuzzy.MapaInfo;
 import es.ucm.fdi.ici.practica4.demofuzzy.MapaInfo.interseccion;
 import pacman.game.Game;
+import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
 
 public class ChillAction implements Action{
@@ -33,6 +34,14 @@ public class ChillAction implements Action{
 					proxMov = m;
 				}
 			}
+		}
+		
+		if(proxMov == MOVE.NEUTRAL) //ya no quedan mas pills
+		{
+			int closestPill = mapInfo.getClosestPill(game);
+			if(closestPill  != -1) 
+				proxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPill,
+						game.getPacmanLastMoveMade(), DM.PATH);
 		}
 		
 		return proxMov;
