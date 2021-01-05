@@ -12,23 +12,31 @@ public class MsPacManInput implements Input {
 	double[] distance = {50,50,50,50};
 	double[] confidence = {100,100,100,100};
 	double[] eadableConfidence = {0,0,0,0};
+	double posibleEadable = 0;
 	
 	
 	@Override
 	public void parseInput(Game game) {
+		
+		if(game.wasPowerPillEaten()) posibleEadable = 100;
+		else if(posibleEadable > 0) posibleEadable -= 0.5;
+		
 		for(GHOST g: GHOST.values()) {
 			int index = g.ordinal();
 			int pos = game.getGhostCurrentNodeIndex(g);
 			if(pos != -1) {
 				if(game.isGhostEdible(g)) {
-					
+					eadableConfidence[index] = 100;
 				}
 				else {
 					distance[index] = game.getDistance(game.getPacmanCurrentNodeIndex(), pos, DM.PATH);
 					confidence[index] = 100;
 				}				
-			} else if (confidence[index] > 0)
-				confidence[index]-=0.9;
+			} 
+			else{
+				if (confidence[index] > 0) confidence[index]-=0.9;
+				if (eadableConfidence[index] > 0)eadableConfidence[index] -= 0.5;
+			}						
 		}
 	}
 
@@ -38,8 +46,9 @@ public class MsPacManInput implements Input {
 		for(GHOST g: GHOST.values()) {
 			vars.put(g.name()+"distance",   distance[g.ordinal()]);
 			vars.put(g.name()+"confidence", confidence[g.ordinal()]);		
-			//vars.put(g.name()+"", value)
+			vars.put(g.name()+"edible", eadableConfidence[g.ordinal()]);
 		}
+		vars.put("PosibleEdible", posibleEadable);
 		return vars;
 	}
 

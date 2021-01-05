@@ -20,7 +20,8 @@ public class MsPacManActionSelector implements ActionSelector {
 	@Override
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		Double runAway = fuzzyOutput.get("runAway");
-		System.out.println(runAway);
+		Double edible = fuzzyOutput.get("eadable");
+		System.out.println(edible);
 		
 		
 		if(runAway > this.RUN_AWAY_LIMIT)
