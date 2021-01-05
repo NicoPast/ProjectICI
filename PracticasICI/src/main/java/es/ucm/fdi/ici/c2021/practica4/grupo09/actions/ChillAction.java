@@ -1,9 +1,9 @@
-package es.ucm.fdi.ici.practica4.demofuzzy.actions;
+package es.ucm.fdi.ici.c2021.practica4.grupo09.actions;
 
 
+import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fuzzy.Action;
-import es.ucm.fdi.ici.practica4.demofuzzy.MapaInfo;
-import es.ucm.fdi.ici.practica4.demofuzzy.MapaInfo.interseccion;
 import pacman.game.Game;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
