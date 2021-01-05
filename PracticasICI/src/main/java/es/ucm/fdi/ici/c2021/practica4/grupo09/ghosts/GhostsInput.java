@@ -64,10 +64,10 @@ public class GhostsInput implements Input {
 
 	public GhostsInput(MapaInfoGhost mapaInfo) {
 		this.mapa = mapaInfo;
-		this.GhostsPositions = new Vector<interseccion>(4);
-		this.GhostsPositionsAccuracy = new Vector<Double>(4);
-		this.GhostsLastMoveMade = new Vector<MOVE>(4);
-		this.GhostIsEdibleAccuracy = new Vector<Double>(4);
+		this.GhostsPositions = new Vector<interseccion>();
+		this.GhostsPositionsAccuracy = new Vector<Double>();
+		this.GhostsLastMoveMade = new Vector<MOVE>();
+		this.GhostIsEdibleAccuracy = new Vector<Double>();
 		this.PosPacMan = null;
 		this.PosPacManAccuracy = 0.0f;
 		this.PacmanLastMoveMade = MOVE.NEUTRAL;
@@ -88,9 +88,12 @@ public class GhostsInput implements Input {
 		for (int i = 0; i < 4; i++) {
 			int fantasmaNode = game.getGhostCurrentNodeIndex(GHOST.values()[i]);
 			if (fantasmaNode > -1) {
-				GhostsPositions.set(i, mapa.getInterseccion(fantasmaNode));
-				GhostsPositionsAccuracy.set(i, 1.0);
-				this.GhostsLastMoveMade.set(i, game.getGhostLastMoveMade(GHOST.values()[i]));
+				if(mapa.getInterseccion(fantasmaNode)!=null) {
+					
+					GhostsPositions.set(i, mapa.getInterseccion(fantasmaNode));
+					GhostsPositionsAccuracy.set(i, 1.0);
+					this.GhostsLastMoveMade.set(i, game.getGhostLastMoveMade(GHOST.values()[i]));
+				}
 			} else
 				GhostsPositionsAccuracy.set(i, GhostsPositionsAccuracy.elementAt(i) - .1);
 			Boolean edi = game.isGhostEdible(GHOST.values()[i]);
@@ -105,16 +108,21 @@ public class GhostsInput implements Input {
 		int PacmanP = game.getPacmanCurrentNodeIndex();
 		if (PacmanP > -1) {
 			if (mapa.getInterseccion(PacmanP) != null) {
-				this.PosPacMan = mapa.getInterseccion(mapa.getInterseccion(PacmanP).destinos.get(this.PacmanLastMoveMade));
-				this.PosPacManAccuracy = 1.0f + (mapa.getInterseccion(PacmanP).distancias.get(this.PacmanLastMoveMade) / 50.0f);
+				interseccion aux=mapa.getInterseccion(PacmanP);
+				this.PosPacMan = mapa.getInterseccion(aux.destinos.get(game.getPacmanLastMoveMade()));
+				this.PosPacManAccuracy = 1.0f + (mapa.getInterseccion(PacmanP).distancias.get(game.getPacmanLastMoveMade()) / 50.0f);
 				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 			} else {
+				
 				MOVE best = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), PacmanP, game.getGhostLastMoveMade(ghost), DM.EUCLID);
 				double distanceToPacman = game.getDistance(game.getGhostCurrentNodeIndex(ghost), PacmanP, DM.PATH);
+				//si myInterseccion sale null es que estoy en un pasillo así que cojo la última del vector
 				interseccion myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
+				if(myInterseccion ==null)
+					myInterseccion =GhostsPositions.elementAt(ghost.ordinal());
 				float distanceToIntersection = myInterseccion.distancias.get(best);
 
-				while (distanceToPacman > myInterseccion.distancias.get(best)) {
+				while (myInterseccion.distancias.containsKey(best) && distanceToPacman > myInterseccion.distancias.get(best)) {
 					distanceToIntersection = myInterseccion.distancias.get(best);
 					distanceToPacman -= distanceToIntersection;
 					myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best));

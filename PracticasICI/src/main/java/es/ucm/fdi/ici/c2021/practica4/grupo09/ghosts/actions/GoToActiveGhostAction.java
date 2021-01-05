@@ -20,7 +20,7 @@ public class GoToActiveGhostAction implements Action {
 	Vector<MOVE> GhostsLastMoveKnown;
 	Vector<Double> EdibleAccurracy;
 	Vector<interseccion> LastGhostsKnownPositions;
-	int PacmanLastPosKnown;
+	interseccion PacmanLastPosKnown;
 	float PacmanPosAccuracy;
 
 	float PACMAN_POS_ACCURACY_LIMIT = .7f;
@@ -35,8 +35,7 @@ public class GoToActiveGhostAction implements Action {
 		this.EdibleAccurracy = edibles;
 		this.GhostsLastMoveKnown = lastMoves;
 		this.LastGhostsKnownPositions = LastPos;
-		if(PacmanPos != null)
-			this.PacmanLastPosKnown = PacmanPos.identificador;
+		this.PacmanLastPosKnown = PacmanPos;
 		
 		this.PacmanPosAccuracy = PacmanAccur;
 
@@ -96,8 +95,8 @@ public class GoToActiveGhostAction implements Action {
 			int selectedGhostIndex = 0;
 			int myPos = game.getGhostCurrentNodeIndex(ghost);
 			MOVE mylastMove = game.getGhostLastMoveMade(ghost);
-			if (PacmanLastPosKnown > -1)
-				prohibido = game.getApproximateNextMoveTowardsTarget(myPos, PacmanLastPosKnown, mylastMove, DM.EUCLID);
+			if (PacmanLastPosKnown !=null)
+				prohibido = game.getApproximateNextMoveTowardsTarget(myPos, PacmanLastPosKnown.identificador, mylastMove, DM.EUCLID);
 			// elegimos el fantasma m�s cercano buscando en todas direcciones excepto
 			// en la prohibida
 			for (MOVE move : inter.destinos.keySet()) {

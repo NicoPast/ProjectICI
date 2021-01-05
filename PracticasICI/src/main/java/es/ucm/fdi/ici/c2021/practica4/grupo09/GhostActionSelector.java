@@ -43,11 +43,11 @@ public class GhostActionSelector implements ActionSelector {
 			if(seekHelp > SEEKHELP)
 				return new GoToActiveGhostAction(ghost, map,
 					data.GhostsPositionsAccuracy, data.GhostIsEdibleAccuracy, 
-					data.GhostsPositions, data.proximaInterseccionPacMan.identificador, 
+					data.GhostsPositions, data.proximaInterseccionPacMan, 
 					data.proximaInterseccionPacManAccuracy, data.GhostsLastMoveMade);
 			else
 				return new RunAwayAction(ghost, map, data.GhostsPositionsAccuracy, 
-					data.GhostsPositions, data.proximaInterseccionPacMan.identificador, 
+					data.GhostsPositions, data.proximaInterseccionPacMan, 
 					data.proximaInterseccionPacManAccuracy);
 		}
 		else { //Not Edible

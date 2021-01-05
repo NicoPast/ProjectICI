@@ -17,13 +17,13 @@ public class RunAwayAction implements Action {
 	Vector<Double> EdibleGhostsPosAccuracies;
 	Vector<interseccion> LastGhostsKnownPositions;
 	
-	int PacmanLastPosKnown;
+	interseccion PacmanLastPosKnown;
 	float PacmanPosAccuracy;
 	float PACMAN_POS_ACCURACY_LIMIT = .5f;
 	float POS_ACCURACY_LIMIT = .7f;
 
 	public RunAwayAction(GHOST ghost, MapaInfoGhost map, Vector<Double> Edibles, Vector<interseccion> LastPos,
-			int PacmanPos, float PacmanAccur) {
+			interseccion PacmanPos, float PacmanAccur) {
 		this.ghost = ghost;
 		mymapa = map;
 		this.EdibleGhostsPosAccuracies = Edibles;
@@ -65,12 +65,12 @@ public class RunAwayAction implements Action {
 		if (game.doesGhostRequireAction(ghost)) {
 
 			MOVE prohibido = MOVE.NEUTRAL;
-			if (PacmanPosAccuracy > PACMAN_POS_ACCURACY_LIMIT) {
+			if (PacmanPosAccuracy > PACMAN_POS_ACCURACY_LIMIT && this.PacmanLastPosKnown!=null) {
 
 				prohibido = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost),
-						PacmanLastPosKnown, game.getGhostLastMoveMade(ghost), DM.EUCLID);
+						PacmanLastPosKnown.identificador, game.getGhostLastMoveMade(ghost), DM.EUCLID);
 				bestMove = game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghost),
-						PacmanLastPosKnown, game.getGhostLastMoveMade(ghost), DM.EUCLID);
+						PacmanLastPosKnown.identificador, game.getGhostLastMoveMade(ghost), DM.EUCLID);
 			}
 			interseccion inter = mymapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
 			if (inter != null) {
