@@ -32,11 +32,11 @@ public class GhostsInput implements Input {
 		public Vector<Double> GhostIsEdibleAccuracy;
 
 		public interseccion proximaInterseccionPacMan;
-		public double proximaInterseccionPacManAccuracy;
+		public float proximaInterseccionPacManAccuracy;
 		public MOVE PacmanLastMoveMade;
 
 		UsefulData(Vector<interseccion> Ghosts, Vector<Double> GhostFuzzy, Vector<Double> EdibleAccuracy,
-				interseccion Pacman, double PacmanAccuracy, Vector<MOVE> GhostsMoves, MOVE PacmanMove) {
+				interseccion Pacman, float PacmanAccuracy, Vector<MOVE> GhostsMoves, MOVE PacmanMove) {
 			GhostsPositions = Ghosts;
 			GhostsPositionsAccuracy = GhostFuzzy;
 			GhostIsEdibleAccuracy = EdibleAccuracy;
@@ -61,7 +61,7 @@ public class GhostsInput implements Input {
 	private Vector<Double> GhostIsEdibleAccuracy;
 
 	private interseccion PosPacMan;
-	private double PosPacManAccuracy;
+	private float PosPacManAccuracy;
 	private MOVE PacmanLastMoveMade;
 
 	public void setGhost(GHOST g) {
@@ -75,7 +75,7 @@ public class GhostsInput implements Input {
 		this.GhostsLastMoveMade = new Vector<MOVE>(4);
 		this.GhostIsEdibleAccuracy = new Vector<Double>(4);
 		this.PosPacMan = null;
-		this.PosPacManAccuracy = 0.0;
+		this.PosPacManAccuracy = 0.0f;
 		this.PacmanLastMoveMade = MOVE.NEUTRAL;
 		// las inicializamos a valores desconocidos
 		for (int i = 0; i < 4; i++) {
@@ -108,30 +108,27 @@ public class GhostsInput implements Input {
 		int PacmanP = game.getPacmanCurrentNodeIndex();
 		if (PacmanP > -1) {
 			if (mapa.getInterseccion(PacmanP) != null) {
-				this.PosPacMan = mapa
-						.getInterseccion(mapa.getInterseccion(PacmanP).destinos.get(this.PacmanLastMoveMade));
-				this.PosPacManAccuracy = 1.0
-						+ (mapa.getInterseccion(PacmanP).distancias.get(this.PacmanLastMoveMade) / 50);
+				this.PosPacMan = mapa.getInterseccion(mapa.getInterseccion(PacmanP).destinos.get(this.PacmanLastMoveMade));
+				this.PosPacManAccuracy = 1.0f + (mapa.getInterseccion(PacmanP).distancias.get(this.PacmanLastMoveMade) / 50.0f);
 				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 			} else {
-				MOVE best = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), PacmanP,
-						game.getGhostLastMoveMade(ghost), DM.EUCLID);
+				MOVE best = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), PacmanP, game.getGhostLastMoveMade(ghost), DM.EUCLID);
 				double distanceToPacman = game.getDistance(game.getGhostCurrentNodeIndex(ghost), PacmanP, DM.PATH);
-				double distanceToIntersection = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost)).distancias
-						.get(best);
-				interseccion myInterseccion = mapa.getInterseccion(PacmanP);
-				while (distanceToPacman < distanceToIntersection) {
+				interseccion myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
+				float distanceToIntersection = myInterseccion.distancias.get(best);
+
+				while (distanceToPacman > myInterseccion.distancias.get(best)) {
+					distanceToIntersection = myInterseccion.distancias.get(best);
 					distanceToPacman -= distanceToIntersection;
-					distanceToIntersection += myInterseccion.distancias.get(best);
 					myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best));
 				}
-				this.PosPacMan = myInterseccion;
-				this.PosPacManAccuracy = 1.0 + distanceToIntersection / 50;
-				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 
+				this.PosPacMan = myInterseccion;
+				this.PosPacManAccuracy = 1.0f + distanceToIntersection / 50.0f;
+				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 			}
 		} else
-			this.PosPacManAccuracy -= .1;
+			this.PosPacManAccuracy -= .1f;
 
 	}
 

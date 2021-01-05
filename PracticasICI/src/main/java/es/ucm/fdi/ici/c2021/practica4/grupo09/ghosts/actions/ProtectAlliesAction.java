@@ -12,23 +12,23 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 public class ProtectAlliesAction implements Action {
-	// La idea es de la última posición del resto de fantasmas (siempre que estemos
-	// relativamente seguros de que están edibles) coger la más cercana
-	// al pacman (siempre que sea lo suficientemente fiable tanto la posición del
+	// La idea es de la ï¿½ltima posiciï¿½n del resto de fantasmas (siempre que estemos
+	// relativamente seguros de que estï¿½n edibles) coger la mï¿½s cercana
+	// al pacman (siempre que sea lo suficientemente fiable tanto la posiciï¿½n del
 	// pacman como la de los fantasmas)
-	// y aproximar la posición del compañero que voy a proteger
+	// y aproximar la posiciï¿½n del compaï¿½ero que voy a proteger
 	private MapaInfoGhost mymap;
 	GHOST ghost;
-	Vector<Float> EdibleGhostsPosAccuracies;
+	Vector<Double> EdibleGhostsPosAccuracies;
 	Vector<MOVE> GhostsLastMoveKnown;
-	Vector<Float> EdibleAccurracy;
+	Vector<Double> EdibleAccurracy;
 	Vector<interseccion> LastGhostsKnownPositions;
 
 	float PACMAN_POS_ACCURACY_LIMIT = .5f;
 	float POS_ACCURACY_LIMIT = .7f;
 	float EDIBLE_ACCURACY_LIMIT = .5f;
 
-	public ProtectAlliesAction(GHOST ghost, MapaInfoGhost map, Vector<Float> Edibles, Vector<Float> edibles,
+	public ProtectAlliesAction(GHOST ghost, MapaInfoGhost map, Vector<Double> Edibles, Vector<Double> edibles,
 			Vector<interseccion> LastPos, Vector<MOVE> lastMoves) {
 		this.ghost = ghost;
 		this.mymap = map;
@@ -57,8 +57,8 @@ public class ProtectAlliesAction implements Action {
 				continue;
 			//// Si la seguridad de que el fantasma que buscamos es edible es baja es que no
 			//// es edible muy probablemente, ya
-			// que esta variable fuzzy bajará muy rápidamente(el tiempo durante el que se
-			//// está edible es corto)
+			// que esta variable fuzzy bajarï¿½ muy rï¿½pidamente(el tiempo durante el que se
+			//// estï¿½ edible es corto)
 			if (LastGhostsKnownPositions.elementAt(i) != null
 					&& EdibleGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT
 					&& EdibleAccurracy.elementAt(i) > EDIBLE_ACCURACY_LIMIT) {
@@ -86,11 +86,11 @@ public class ProtectAlliesAction implements Action {
 					continue;
 				nearest = nearestGhostDistance(game, game.getGhostCurrentNodeIndex(ghost), m);
 			}
-			// Si la búsqueda ha sido infructuosa
+			// Si la bï¿½squeda ha sido infructuosa
 			if (nearest == -1)
 				return MOVE.NEUTRAL;
 			// si hemos encontrado un fantasma en apuros con suficiente seguridad
-			// aproximamus su posición
+			// aproximamus su posiciï¿½n
 			PositionAproximator aprox = new PositionAproximator(mymap, game, game.getGhostCurrentNodeIndex(ghost),
 					game.getGhostLastMoveMade(ghost), LastGhostsKnownPositions.elementAt(nearest),
 					GhostsLastMoveKnown.elementAt(nearest), EdibleGhostsPosAccuracies.elementAt(nearest));

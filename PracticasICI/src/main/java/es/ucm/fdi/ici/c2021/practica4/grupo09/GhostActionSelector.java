@@ -39,22 +39,24 @@ public class GhostActionSelector implements ActionSelector {
 		Double active = fuzzyOutput.get("active");
 		Double seekHelp = fuzzyOutput.get("seekHelp");
 
-		//todo falta protect allies
-
 		if(data.GhostIsEdibleAccuracy.elementAt(ghost.ordinal()) >= 1) { //Edible
 			if(seekHelp > SEEKHELP)
-				return new GoToActiveGhostAction(ghost, map, Actives, edibles, LastPos, PacmanPos, PacmanAccur, lastMoves);
+				return new GoToActiveGhostAction(ghost, map,
+					data.GhostsPositionsAccuracy, data.GhostIsEdibleAccuracy, 
+					data.GhostsPositions, data.proximaInterseccionPacMan.identificador, 
+					data.proximaInterseccionPacManAccuracy, data.GhostsLastMoveMade);
 			else
-				return new RunAwayAction(ghost, map);		
+				return new RunAwayAction(ghost, map, data.GhostsPositionsAccuracy, 
+					data.GhostsPositions, data.proximaInterseccionPacMan.identificador, 
+					data.proximaInterseccionPacManAccuracy);
 		}
 		else { //Not Edible
 			if(active < FIND)
 				return new FindPacMan(ghost, map);
 			else if(active > PROTECT)
-				return new ProtectAlliesAction(ghost, map, Edibles, edibles, LastPos, PacmanPos, PacmanAccur, lastMoves);
+				return new ProtectAlliesAction(ghost, map, data.GhostsPositionsAccuracy, data.GhostIsEdibleAccuracy, data.GhostsPositions, data.GhostsLastMoveMade);
 			else 
 				return new ChaseAction(ghost, map, data.proximaInterseccionPacMan, data.PacmanLastMoveMade, data.proximaInterseccionPacManAccuracy);
 		}
-		return null;
 	}
 }

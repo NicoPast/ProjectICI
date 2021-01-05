@@ -12,13 +12,13 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 public class GoToActiveGhostAction implements Action {
-//La idea es de la última posición del resto de fantasmas (siempre que estemos relativamente seguros de que no están edibles) coger la más cercana
-//siempre que sea lo suficientemente fiable y aproximar la posición del compañero que me va a proteger
+//La idea es de la ï¿½ltima posiciï¿½n del resto de fantasmas (siempre que estemos relativamente seguros de que no estï¿½n edibles) coger la mï¿½s cercana
+//siempre que sea lo suficientemente fiable y aproximar la posiciï¿½n del compaï¿½ero que me va a proteger
 	private MapaInfoGhost mymap;
 	GHOST ghost;
-	Vector<Float> ActiveGhostsPosAccuracies;
+	Vector<Double> ActiveGhostsPosAccuracies;
 	Vector<MOVE> GhostsLastMoveKnown;
-	Vector<Float> EdibleAccurracy;
+	Vector<Double> EdibleAccurracy;
 	Vector<interseccion> LastGhostsKnownPositions;
 	int PacmanLastPosKnown;
 	float PacmanPosAccuracy;
@@ -27,7 +27,7 @@ public class GoToActiveGhostAction implements Action {
 	float POS_ACCURACY_LIMIT = .7f;
 	float EDIBLE_ACCURACY_LIMIT = .3f;
 
-	public GoToActiveGhostAction(GHOST ghost, MapaInfoGhost map, Vector<Float> Actives, Vector<Float> edibles,
+	public GoToActiveGhostAction(GHOST ghost, MapaInfoGhost map, Vector<Double> Actives, Vector<Double> edibles,
 			Vector<interseccion> LastPos, int PacmanPos, float PacmanAccur, Vector<MOVE> lastMoves) {
 		this.ghost = ghost;
 		this.mymap = map;
@@ -68,7 +68,7 @@ public class GoToActiveGhostAction implements Action {
 			if(GHOST.values()[i]==ghost)
 				continue;
 			////Si la seguridad de que el fantasma que buscamos es edible es baja es que no es edible muy probablemente, ya 
-			//que esta variable fuzzy bajará muy rápidamente(el tiempo durante el que se está edible es corto)
+			//que esta variable fuzzy bajarï¿½ muy rï¿½pidamente(el tiempo durante el que se estï¿½ edible es corto)
 			if (LastGhostsKnownPositions.elementAt(i)!=null
 					&& ActiveGhostsPosAccuracies.elementAt(i) >= POS_ACCURACY_LIMIT
 					&& this.EdibleAccurracy.elementAt(i) < EDIBLE_ACCURACY_LIMIT) { 
@@ -99,8 +99,8 @@ public class GoToActiveGhostAction implements Action {
 			// elegimos el fantasma mï¿½s cercano buscando en todas direcciones excepto
 			// en la prohibida
 			for (MOVE move : inter.destinos.keySet()) {
-				// si tenemos relativamente claro que el pacman está en esa dirección (la variable prohibido es suficientemente fiable) no
-				// buscamos en esa dirección 
+				// si tenemos relativamente claro que el pacman estï¿½ en esa direcciï¿½n (la variable prohibido es suficientemente fiable) no
+				// buscamos en esa direcciï¿½n 
 				if (prohibido != MOVE.NEUTRAL && move == prohibido
 						&& this.PacmanPosAccuracy >= PACMAN_POS_ACCURACY_LIMIT)
 					continue;
@@ -112,9 +112,9 @@ public class GoToActiveGhostAction implements Action {
 
 				}
 			}
-			// si la búsqueda ha dado alún resultado significativo aproximamos la posición.
+			// si la bï¿½squeda ha dado alï¿½n resultado significativo aproximamos la posiciï¿½n.
 			// Si no da igual el movimiento
-			// porque no tenemos información suficiente para decidir
+			// porque no tenemos informaciï¿½n suficiente para decidir
 			if (nearest < Double.MAX_VALUE) {
 				PositionAproximator aprox = new PositionAproximator(mymap, game, myPos, mylastMove,
 						this.LastGhostsKnownPositions.elementAt(selectedGhostIndex),
