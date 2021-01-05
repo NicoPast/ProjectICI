@@ -1,7 +1,9 @@
 package es.ucm.fdi.ici.practica4.demofuzzy;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Vector;
 
 import pacman.game.Constants.DM;
@@ -442,5 +444,32 @@ public class MapaInfo {
     		}
     	}
     	return pp;
+    }
+    
+    public Integer getClosestPillAnchura(Game game) {
+    	Queue<interseccion> cola = new LinkedList<interseccion>();
+    	cola.add(interseccionActual);
+    	int dest = -1;
+    	while(!cola.isEmpty() && dest == -1) {
+    		interseccion i = cola.remove();
+    		for(MOVE m : i.destinos.keySet()) {
+    			if(i.pills.get(m) > 0) {
+    				dest = i.identificador;
+    				break;
+    			}
+    			else 
+    				cola.add(findInterseccionIndex(i.destinos.get(m)));
+    		}
+    	}
+    	return dest;
+    }
+    
+    private interseccion findInterseccionIndex(int index) {
+    	for(interseccion i : mapa) {
+    		if(i.identificador == index)
+    			return i;
+    	}
+    	
+    	return null;
     }
 }
