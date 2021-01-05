@@ -9,6 +9,11 @@ VAR_INPUT				// Define input variables
 	PINKYconfidence : REAL;
 	INKYconfidence : REAL;
 	SUEconfidence : REAL;
+	BLINKYedible : REAL;
+	PINKYedible : REAL;
+	INKYedible : REAL;
+	SUEedible : REAL;
+	PosibleEdible : REAL;
 END_VAR
 
 VAR_OUTPUT				// Define output variable
@@ -73,16 +78,15 @@ DEFUZZIFY eadable
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
-
 FUZZIFY BLINKYedible			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM low := (0,0)(100, 0.25); 
 	TERM high := (25, 0)(100, 1);
 END_FUZZIFY
-FUZZIFY INKYedible			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+FUZZIFY PINKYedible			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM low := (0,0)(100, 0.25) ; 
 	TERM high := (25, 0)(100, 1);
 END_FUZZIFY
-FUZZIFY PINKYedible			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+FUZZIFY INKYedible			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM low := (0,0)(100, 0.25) ; 
 	TERM high := (25, 0)(100, 1);
 END_FUZZIFY

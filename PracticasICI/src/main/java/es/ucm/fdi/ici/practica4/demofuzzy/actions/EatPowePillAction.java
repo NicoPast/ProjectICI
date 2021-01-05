@@ -23,6 +23,8 @@ public class EatPowePillAction implements Action {
 	
 	@Override
 	public MOVE execute(Game game) {
+		
+		System.out.println("Eating");
 		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
 		
 		int powerPillCercana = mapInfo.getClosestPP(game);

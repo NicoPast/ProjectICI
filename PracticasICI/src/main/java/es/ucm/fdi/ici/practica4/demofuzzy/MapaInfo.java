@@ -27,7 +27,9 @@ public class MapaInfo {
 	public EnumMap<GHOST, interseccion> destinosGhosts;
 	public EnumMap<GHOST, MOVE> movesCheckMate;
 	
-	
+	public int[] ghostLastPos = {-1,-1,-1,-1};
+	public MOVE[] ghostLastMove = {MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL};
+	public boolean[] isGhostEdible = {false, false, false, false};
 
     public MapaInfo() {
 
@@ -67,6 +69,8 @@ public class MapaInfo {
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
 		
+		updateGhosts(game);
+		
 		if (aux == null) { // si es null, no estas en una interseccion (AKA, estas en un pasillo)
 			if (ultimoNodo != -1 && proximoNodo != -1)
 				updateMapa(game); // solo hay que actualizarlo durante las rectas
@@ -89,6 +93,19 @@ public class MapaInfo {
 		}
     }
 
+    private void updateGhosts(Game game) {
+    	
+    	for(GHOST g : GHOST.values()) {
+    		int index = g.ordinal();
+    		int pos = game.getGhostCurrentNodeIndex(g);
+    		if(pos != -1) {
+    			ghostLastPos[index] = pos;
+    			ghostLastMove[index] = game.getGhostLastMoveMade(g);
+    			isGhostEdible[index] = game.isGhostEdible(g);
+    		}
+    	}
+    }
+    
     private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
 		int pills = 0;

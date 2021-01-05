@@ -10,7 +10,7 @@ import pacman.game.Game;
 public class MsPacManInput implements Input {
 
 	double[] distance = {50,50,50,50};
-	double[] confidence = {100,100,100,100};
+	double[] confidence = {0,0,0,0};
 	double[] eadableConfidence = {0,0,0,0};
 	double posibleEadable = 0;
 	
@@ -21,6 +21,7 @@ public class MsPacManInput implements Input {
 		if(game.wasPowerPillEaten()) {
 			posibleEadable = 100;
 			
+			// por que se hace esto?
 			for(int i = 0; i<4;i++) { //no nos interesa
 				confidence[i] = 100;
 				distance[i] = 50; 
@@ -28,11 +29,25 @@ public class MsPacManInput implements Input {
 		}
 		else if(posibleEadable > 0) posibleEadable -= 0.5;
 		
+		if(game.wasPacManEaten()) {
+			for(int i = 0; i < 4; i++) {
+				distance[i] = 50;
+				confidence[i] = 0;
+				eadableConfidence[i] = 0;
+			}
+			posibleEadable = 0;
+		}
 		for(GHOST g: GHOST.values()) {
 			int index = g.ordinal();
 			int pos = game.getGhostCurrentNodeIndex(g);
-			if(pos != -1) {
+			if(game.wasGhostEaten(g)) {
+				distance[index] = 50;
+				confidence[index] = 100;
+				eadableConfidence[index] = 0;
+			}
+			else if(pos != -1) {
 				if(game.isGhostEdible(g)) {
+					// = posibleEadable no?
 					eadableConfidence[index] = 100;
 				}
 				else {
@@ -45,6 +60,7 @@ public class MsPacManInput implements Input {
 				if (eadableConfidence[index] > 0)eadableConfidence[index] -= 0.5;
 			}						
 		}
+		
 	}
 
 	@Override
