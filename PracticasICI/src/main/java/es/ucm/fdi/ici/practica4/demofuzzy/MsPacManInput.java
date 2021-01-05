@@ -11,7 +11,7 @@ public class MsPacManInput implements Input {
 
 	double[] distance = {50,50,50,50};
 	double[] confidence = {100,100,100,100};
-
+	double[] eadableConfidence = {0,0,0,0};
 	
 	
 	@Override
@@ -37,7 +37,8 @@ public class MsPacManInput implements Input {
 		HashMap<String,Double> vars = new HashMap<String,Double>();
 		for(GHOST g: GHOST.values()) {
 			vars.put(g.name()+"distance",   distance[g.ordinal()]);
-			vars.put(g.name()+"confidence", confidence[g.ordinal()]);			
+			vars.put(g.name()+"confidence", confidence[g.ordinal()]);		
+			//vars.put(g.name()+"", value)
 		}
 		return vars;
 	}
