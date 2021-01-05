@@ -23,6 +23,7 @@ public class MsPacManActionSelector implements ActionSelector {
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		Double runAway = fuzzyOutput.get("runAway");
 		Double edible = fuzzyOutput.get("eadable");
+		System.out.println(runAway);
 		System.out.println(edible);
 		
 		

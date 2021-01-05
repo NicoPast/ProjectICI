@@ -18,7 +18,14 @@ public class MsPacManInput implements Input {
 	@Override
 	public void parseInput(Game game) {
 		
-		if(game.wasPowerPillEaten()) posibleEadable = 100;
+		if(game.wasPowerPillEaten()) {
+			posibleEadable = 100;
+			
+			for(int i = 0; i<4;i++) { //no nos interesa
+				confidence[i] = 100;
+				distance[i] = 50; 
+			}
+		}
 		else if(posibleEadable > 0) posibleEadable -= 0.5;
 		
 		for(GHOST g: GHOST.values()) {
