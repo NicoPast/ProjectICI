@@ -144,8 +144,6 @@ public class GhostsInput implements Input {
 						distanceToIntersection = myInterseccion.distancias.get(best);
 					}
 					
-					if(game.getPacmanLastMoveMade() == best.opposite())
-						myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best.opposite()));
 					distanceToIntersection = (float)game.getDistance(PacmanP, myInterseccion.identificador, DM.PATH);
 					
 					this.PosPacMan = myInterseccion;
