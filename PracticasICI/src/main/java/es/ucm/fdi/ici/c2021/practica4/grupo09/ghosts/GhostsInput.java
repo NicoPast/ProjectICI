@@ -128,9 +128,11 @@ public class GhostsInput implements Input {
 
 				//si myInterseccion sale null es que estoy en un pasillo as� que cojo la �ltima del vector
 				interseccion myInterseccion = mapa.getInterseccion(this.myPos);
-				if(myInterseccion == null && GhostsPositions.elementAt(ghost.ordinal()) != null){
+				if(myInterseccion == null && GhostsPositions.elementAt(ghost.ordinal()) != null 
+						&&GhostsPositions.elementAt(ghost.ordinal()).destinos.containsKey(best)){
 
 					myInterseccion = GhostsPositions.elementAt(ghost.ordinal());
+					
 					
 					float distanceToIntersection = myInterseccion.distancias.get(best) - (float)game.getDistance(myPos, myInterseccion.identificador, DM.PATH);
 					
