@@ -129,25 +129,27 @@ public class GhostsInput implements Input {
 				//si myInterseccion sale null es que estoy en un pasillo as� que cojo la �ltima del vector
 				interseccion myInterseccion = mapa.getInterseccion(this.myPos);
 				if(myInterseccion == null && GhostsPositions.elementAt(ghost.ordinal()) != null 
-						&&GhostsPositions.elementAt(ghost.ordinal()).destinos.containsKey(best)){
+						&& GhostsPositions.elementAt(ghost.ordinal()).destinos.containsKey(best)){
 
 					myInterseccion = GhostsPositions.elementAt(ghost.ordinal());
 					
 					
 					float distanceToIntersection = myInterseccion.distancias.get(best) - (float)game.getDistance(myPos, myInterseccion.identificador, DM.PATH);
 					
-					while (myInterseccion.distancias.containsKey(best) && distanceToPacman > distanceToIntersection) {
+					while (myInterseccion.destinos.containsKey(best) && distanceToPacman > distanceToIntersection) {
 						myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best));
 						distanceToPacman -= distanceToIntersection;
+						if(myInterseccion.distancias.get(best) == null)
+							break;
 						distanceToIntersection = myInterseccion.distancias.get(best);
 					}
 					
 					if(game.getPacmanLastMoveMade() == best.opposite())
-					myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best.opposite()));
+						myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best.opposite()));
 					distanceToIntersection = (float)game.getDistance(PacmanP, myInterseccion.identificador, DM.PATH);
 					
 					this.PosPacMan = myInterseccion;
-					this.PosPacManAccuracy = 1.0f + distanceToIntersection / 50.0f;
+					this.PosPacManAccuracy = 1.0f ;
 					this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 				}
 				else {
@@ -155,7 +157,7 @@ public class GhostsInput implements Input {
 				}
 			}
 		} else{
-			this.PosPacManAccuracy -= .01f;
+			this.PosPacManAccuracy -= .1f;
 			if(this.PosPacManAccuracy < 0) this.PosPacManAccuracy = 0;
 		}
 	}
@@ -200,11 +202,11 @@ public class GhostsInput implements Input {
 
 		for(GHOST g: GHOST.values()) {
 			vars.put(g.name()+"distance", this.distances.get(g));
-			vars.put(g.name()+"confidence", this.GhostsPositionsAccuracy.elementAt(g.ordinal()));
-			vars.put(g.name()+"edible", this.GhostIsEdibleAccuracy.elementAt(g.ordinal()));
+			vars.put(g.name()+"confidence", this.GhostsPositionsAccuracy.elementAt(g.ordinal()) * 100);
+			vars.put(g.name()+"edible", this.GhostIsEdibleAccuracy.elementAt(g.ordinal()) * 100);
 		}
 		vars.put("PACMANdistance", this.distanceToPacMan);
-		vars.put("PACMANconfidence", (double)this.PosPacManAccuracy);
+		vars.put("PACMANconfidence", (double)this.PosPacManAccuracy * 100);
 
 		return vars;
 	}

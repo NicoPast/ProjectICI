@@ -52,7 +52,6 @@ public class GhostActionSelector implements ActionSelector {
 					data.proximaInterseccionPacManAccuracy);
 		}
 		else { //Not Edible
-			System.out.println(chase);
 			if(protect > PROTECT)
 				return new ProtectAlliesAction(ghost, map, data.GhostsPositionsAccuracy, data.GhostIsEdibleAccuracy, data.GhostsPositions, data.GhostsLastMoveMade);
 			if(chase < FIND)

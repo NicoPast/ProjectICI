@@ -47,13 +47,14 @@ public class PositionAproximator {
     }
 
     private void recursion(double distanceLeft, interseccion actualPos, MOVE movellegada){
-        for(MOVE m : actualPos.distancias.keySet()){
+        for(MOVE m : actualPos.destinos.keySet()){
             int distanciaHaciaInterseccion = actualPos.distancias.get(m);
             int destino = actualPos.destinos.get(m);
             if(distanciaHaciaInterseccion >= distanceLeft){ 
                 int finalista = destino;
                 MOVE movimiento = game.getApproximateNextMoveTowardsTarget(myPos, finalista, myLastMove, MOVE_CONSTANT);
-                movimientos.put(movimiento, movimientos.get(movimiento) + 1);
+                if(movimientos.containsKey(movimiento))
+                    movimientos.put(movimiento, movimientos.get(movimiento) + 1);
             }
             else {
                 recursion(distanceLeft - distanciaHaciaInterseccion, 
