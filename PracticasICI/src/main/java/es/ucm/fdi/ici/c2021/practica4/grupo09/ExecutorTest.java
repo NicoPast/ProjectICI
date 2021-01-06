@@ -12,6 +12,7 @@ public class ExecutorTest {
 		Executor executor = new Executor.Builder()
 		.setTickLimit(4000)
 		.setTimeLimit(40)
+		.setGhostPO(true)
 		.setVisual(true)
 		.setScaleFactor(3.0)
 		.build();

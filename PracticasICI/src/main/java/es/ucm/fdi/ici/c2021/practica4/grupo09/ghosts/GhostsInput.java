@@ -17,6 +17,7 @@ import pacman.game.Game;
 public class GhostsInput implements Input {
 
 	private GHOST ghost;
+	private int myPos;
 
 	public class UsefulData {
 		public Vector<interseccion> GhostsPositions;
@@ -88,17 +89,23 @@ public class GhostsInput implements Input {
 		for (int i = 0; i < 4; i++) {
 			int fantasmaNode = game.getGhostCurrentNodeIndex(GHOST.values()[i]);
 			if (fantasmaNode > -1) {
-				if(mapa.getInterseccion(fantasmaNode)!=null) {
-					
+				if(mapa.getInterseccion(fantasmaNode)!=null) {	
 					GhostsPositions.set(i, mapa.getInterseccion(fantasmaNode));
 					GhostsPositionsAccuracy.set(i, 1.0);
 					this.GhostsLastMoveMade.set(i, game.getGhostLastMoveMade(GHOST.values()[i]));
 				}
+				else {
+					//TODO: Buscar la siguiente
+				}
+
 			} else
 				GhostsPositionsAccuracy.set(i, GhostsPositionsAccuracy.elementAt(i) - .1);
 			Boolean edi = game.isGhostEdible(GHOST.values()[i]);
 			if (edi != null) {
-				GhostIsEdibleAccuracy.set(i, 1.0);
+				if(edi)
+					GhostIsEdibleAccuracy.set(i, 1.0);
+				else
+					GhostIsEdibleAccuracy.set(i, 0.0);
 			} else
 				GhostIsEdibleAccuracy.set(i, GhostIsEdibleAccuracy.elementAt(i) - .2);
 		}
@@ -116,7 +123,7 @@ public class GhostsInput implements Input {
 				
 				MOVE best = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), PacmanP, game.getGhostLastMoveMade(ghost), DM.EUCLID);
 				double distanceToPacman = game.getDistance(game.getGhostCurrentNodeIndex(ghost), PacmanP, DM.PATH);
-				//si myInterseccion sale null es que estoy en un pasillo así que cojo la última del vector
+				//si myInterseccion sale null es que estoy en un pasillo asï¿½ que cojo la ï¿½ltima del vector
 				interseccion myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
 				if(myInterseccion ==null)
 					myInterseccion =GhostsPositions.elementAt(ghost.ordinal());
@@ -140,6 +147,8 @@ public class GhostsInput implements Input {
 	public void parseInput(Game game) {
 		mapa.update(game);
 		
+		this.myPos = game.getGhostCurrentNodeIndex(ghost);
+
 		getGhostsData(game);
 
 		getPacManData(game);

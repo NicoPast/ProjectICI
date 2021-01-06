@@ -22,12 +22,14 @@ public class FindPacMan implements Action {
 	@Override
 	public MOVE execute(Game game) {
 		if (!game.doesGhostRequireAction(ghostType))  //if does not require an action	
-			return null;
+			return MOVE.NEUTRAL;
 		
 		int myPos = game.getGhostCurrentNodeIndex(ghostType);
 		MOVE mylastMove = game.getGhostLastMoveMade(ghostType);
 
         interseccion inter = mapa.getInterseccion(myPos);
+        if(inter == null)
+            return MOVE.NEUTRAL;
         
         //Distancia del camino mas corto
         double minDistance = Double.MAX_VALUE;

@@ -30,7 +30,7 @@ public class ChaseAction implements Action {
 	@Override
 	public MOVE execute(Game game) {
 		if (!game.doesGhostRequireAction(ghostType))  //if does not require an action	
-			return null;
+			return MOVE.NEUTRAL;;
 		
 		int myPos = game.getGhostCurrentNodeIndex(ghostType);
 		MOVE mylastMove = game.getGhostLastMoveMade(ghostType);
