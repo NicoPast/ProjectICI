@@ -21,7 +21,8 @@ VAR_INPUT				// Define input variables
 END_VAR
 
 VAR_OUTPUT				// Define output variable
-	active : REAL;
+	chase : REAL;
+	protect : REAL;
 	seekHelp : REAL;
 END_VAR
 
@@ -94,17 +95,23 @@ FUZZIFY SUEedible			// Fuzzify input variable 'service': {'poor', 'good' , 'exce
 	TERM high := (25, 0)(100, 1);
 END_FUZZIFY
 
-DEFUZZIFY active			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM find := (0,1) (5,1) (15,0);
-	TERM chase := gauss 15 5;
-	TERM protect := (15,0) (25,1) (30,1);
+DEFUZZIFY chase			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0,1) (20,1) (40,0);
+	TERM high := (20,0) (40,1) (100,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+DEFUZZIFY protect			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0,1) (5,1) (15,0);
+	TERM high := gauss 30 10;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
 DEFUZZIFY seekHelp			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := (0,1) (5,1) (15,0);
-	TERM high := (15,0) (25,1) (30,1);
+	TERM low := (0,1) (5,1) (20,0);
+	TERM high := gauss 50 10;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -115,38 +122,18 @@ RULEBLOCK GhostsRules
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'MAX' accumulation method (Other options PROBOR and SUM)
 
-	RULE 1 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND BLINKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN active IS protect;
-	RULE 2 : IF PINKYdistance IS near AND PINKYconfidence IS high AND PINKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN active IS protect;
-	RULE 3 : IF INKYdistance IS near AND INKYconfidence IS high AND INKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN active IS protect;
-	RULE 4 : IF SUEdistance IS near AND SUEconfidence IS high AND SUEedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN active IS protect;
+	RULE 1 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND BLINKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN protect IS high;
+	RULE 2 : IF PINKYdistance IS near AND PINKYconfidence IS high AND PINKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN protect IS high;
+	RULE 3 : IF INKYdistance IS near AND INKYconfidence IS high AND INKYedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN protect IS high;
+	RULE 4 : IF SUEdistance IS near AND SUEconfidence IS high AND SUEedible IS high AND PACMANdistance IS near AND PACMANconfidence IS high THEN protect IS high;
 
-	RULE 5 : IF PACMANdistance is near AND PACMANconfidence IS high THEN active IS chase;
-	RULE 6 : IF PACMANdistance is medium AND PACMANconfidence IS high THEN active IS chase;
-	RULE 7 : IF PACMANdistance is medium AND PACMANconfidence IS medium THEN active IS chase;
-	RULE 8 : IF PACMANdistance is far AND PACMANconfidence IS high THEN active IS chase;
-	RULE 9 : IF PACMANdistance is far AND PACMANconfidence IS medium THEN active IS chase;
-	RULE 10 : IF PACMANdistance is near AND PACMANconfidence IS medium THEN active IS find;
-	RULE 11 : IF PACMANconfidence IS low THEN active IS find;
+	RULE 5 : IF PACMANconfidence IS high THEN chase IS high;
+	RULE 6 : IF PACMANconfidence IS low THEN chase IS low;
 
-	RULE 12 : IF BLINKYdistance IS near AND BLINKYconfidence IS high AND BLINKYedible IS low THEN seekHelp IS high;
-	RULE 13 : IF BLINKYdistance IS medium AND BLINKYedible IS low THEN seekHelp IS high;
-	RULE 13 : IF BLINKYdistance IS medium AND BLINKYedible IS high THEN seekHelp IS low;
-	RULE 14 : IF BLINKYdistance IS far THEN seekHelp IS low;
-
-	RULE 15 : IF PINKYdistance IS near AND PINKYconfidence IS high AND PINKYedible IS low THEN seekHelp IS high;
-	RULE 16 : IF PINKYdistance IS medium AND PINKYedible IS low THEN seekHelp IS high;
-	RULE 17 : IF PINKYdistance IS medium AND PINKYedible IS high THEN seekHelp IS low;
-	RULE 18 : IF PINKYdistance IS far THEN seekHelp IS low;
-
-	RULE 19 : IF INKYdistance IS near AND INKYconfidence IS high AND INKYedible IS low THEN seekHelp IS high;
-	RULE 20 : IF INKYdistance IS medium AND INKYedible IS low THEN seekHelp IS high;
-	RULE 21 : IF INKYdistance IS medium AND INKYedible IS high THEN seekHelp IS low;
-	RULE 22 : IF INKYdistance IS far THEN seekHelp IS low;
-
-	RULE 23 : IF SUEdistance IS near AND SUEconfidence IS high AND SUEedible IS low THEN seekHelp IS high;
-	RULE 24 : IF SUEdistance IS medium AND SUEedible IS low THEN seekHelp IS high;
-	RULE 25 : IF SUEdistance IS medium AND SUEedible IS high THEN seekHelp IS low;
-	RULE 26 : IF SUEdistance IS far THEN seekHelp IS low;
+	RULE 7 : IF BLINKYconfidence IS high AND BLINKYedible IS low THEN seekHelp IS high;
+	RULE 8 : IF PINKYconfidence IS high AND PINKYedible IS low THEN seekHelp IS high;
+	RULE 9 : IF INKYconfidence IS high AND INKYedible IS low THEN seekHelp IS high;
+	RULE 10 : IF SUEconfidence IS high AND SUEedible IS low THEN seekHelp IS high;
 
 END_RULEBLOCK
 

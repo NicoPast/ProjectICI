@@ -15,7 +15,7 @@ import pacman.game.Constants.GHOST;
 
 public class GhostActionSelector implements ActionSelector {
 
-	private final float FIND = 10;
+	private final float FIND = 25;
 	private final float PROTECT = 20;
 	private final float SEEKHELP = 10;
 
@@ -36,7 +36,8 @@ public class GhostActionSelector implements ActionSelector {
 	public Action selectAction(HashMap<String, Double> fuzzyOutput) {
 		UsefulData data = input.getData();
 
-		Double active = fuzzyOutput.get("active");
+		Double chase = fuzzyOutput.get("chase");
+		Double protect = fuzzyOutput.get("protect");
 		Double seekHelp = fuzzyOutput.get("seekHelp");
 
 		if(data.GhostIsEdibleAccuracy.elementAt(ghost.ordinal()) >= 1) { //Edible
@@ -51,10 +52,11 @@ public class GhostActionSelector implements ActionSelector {
 					data.proximaInterseccionPacManAccuracy);
 		}
 		else { //Not Edible
-			if(active < FIND)
-				return new FindPacMan(ghost, map);
-			else if(active > PROTECT)
+			System.out.println(chase);
+			if(protect > PROTECT)
 				return new ProtectAlliesAction(ghost, map, data.GhostsPositionsAccuracy, data.GhostIsEdibleAccuracy, data.GhostsPositions, data.GhostsLastMoveMade);
+			if(chase < FIND)
+				return new FindPacMan(ghost, map);
 			else 
 				return new ChaseAction(ghost, map, data.proximaInterseccionPacMan, data.PacmanLastMoveMade, data.proximaInterseccionPacManAccuracy);
 		}

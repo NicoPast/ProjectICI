@@ -94,20 +94,22 @@ public class GhostsInput implements Input {
 					GhostsPositionsAccuracy.set(i, 1.0);
 					this.GhostsLastMoveMade.set(i, game.getGhostLastMoveMade(GHOST.values()[i]));
 				}
-				else {
-					//TODO: Buscar la siguiente
-				}
-
-			} else
-				GhostsPositionsAccuracy.set(i, GhostsPositionsAccuracy.elementAt(i) - .1);
+			} else{
+				double ac = GhostsPositionsAccuracy.elementAt(i) - .02;
+				if(ac < 0) ac = 0;
+				GhostsPositionsAccuracy.set(i, ac);
+			}
 			Boolean edi = game.isGhostEdible(GHOST.values()[i]);
 			if (edi != null) {
 				if(edi)
 					GhostIsEdibleAccuracy.set(i, 1.0);
 				else
 					GhostIsEdibleAccuracy.set(i, 0.0);
-			} else
-				GhostIsEdibleAccuracy.set(i, GhostIsEdibleAccuracy.elementAt(i) - .2);
+			} else{
+				double ac = GhostIsEdibleAccuracy.elementAt(i) - .02;
+				if(ac < 0) ac = 0;
+				GhostIsEdibleAccuracy.set(i, ac);
+			}
 		}
 	}
 
@@ -115,32 +117,45 @@ public class GhostsInput implements Input {
 		int PacmanP = game.getPacmanCurrentNodeIndex();
 		if (PacmanP > -1) {
 			if (mapa.getInterseccion(PacmanP) != null) {
-				interseccion aux=mapa.getInterseccion(PacmanP);
-				this.PosPacMan = mapa.getInterseccion(aux.destinos.get(game.getPacmanLastMoveMade()));
-				this.PosPacManAccuracy = 1.0f + (mapa.getInterseccion(PacmanP).distancias.get(game.getPacmanLastMoveMade()) / 50.0f);
+				interseccion aux = mapa.getInterseccion(PacmanP);
+				this.PosPacMan = aux;
+				this.PosPacManAccuracy = 1.0f;
 				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 			} else {
 				
-				MOVE best = game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(ghost), PacmanP, game.getGhostLastMoveMade(ghost), DM.EUCLID);
-				double distanceToPacman = game.getDistance(game.getGhostCurrentNodeIndex(ghost), PacmanP, DM.PATH);
+				MOVE best = game.getNextMoveTowardsTarget(this.myPos, PacmanP, DM.EUCLID);
+				double distanceToPacman = game.getDistance(this.myPos, PacmanP, DM.PATH);
+
 				//si myInterseccion sale null es que estoy en un pasillo as� que cojo la �ltima del vector
-				interseccion myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
-				if(myInterseccion ==null)
-					myInterseccion =GhostsPositions.elementAt(ghost.ordinal());
-				float distanceToIntersection = myInterseccion.distancias.get(best);
+				interseccion myInterseccion = mapa.getInterseccion(this.myPos);
+				if(myInterseccion == null && GhostsPositions.elementAt(ghost.ordinal()) != null){
 
-				while (myInterseccion.distancias.containsKey(best) && distanceToPacman > myInterseccion.distancias.get(best)) {
-					distanceToIntersection = myInterseccion.distancias.get(best);
-					distanceToPacman -= distanceToIntersection;
-					myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best));
+					myInterseccion = GhostsPositions.elementAt(ghost.ordinal());
+					
+					float distanceToIntersection = myInterseccion.distancias.get(best) - (float)game.getDistance(myPos, myInterseccion.identificador, DM.PATH);
+					
+					while (myInterseccion.distancias.containsKey(best) && distanceToPacman > distanceToIntersection) {
+						myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best));
+						distanceToPacman -= distanceToIntersection;
+						distanceToIntersection = myInterseccion.distancias.get(best);
+					}
+					
+					if(game.getPacmanLastMoveMade() == best.opposite())
+					myInterseccion = mapa.getInterseccion(myInterseccion.destinos.get(best.opposite()));
+					distanceToIntersection = (float)game.getDistance(PacmanP, myInterseccion.identificador, DM.PATH);
+					
+					this.PosPacMan = myInterseccion;
+					this.PosPacManAccuracy = 1.0f + distanceToIntersection / 50.0f;
+					this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
 				}
-
-				this.PosPacMan = myInterseccion;
-				this.PosPacManAccuracy = 1.0f + distanceToIntersection / 50.0f;
-				this.PacmanLastMoveMade = game.getPacmanLastMoveMade();
+				else {
+					
+				}
 			}
-		} else
-			this.PosPacManAccuracy -= .1f;
+		} else{
+			this.PosPacManAccuracy -= .01f;
+			if(this.PosPacManAccuracy < 0) this.PosPacManAccuracy = 0;
+		}
 	}
 
 	@Override

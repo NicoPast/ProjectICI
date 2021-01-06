@@ -30,7 +30,7 @@ public class ChaseAction implements Action {
 	@Override
 	public MOVE execute(Game game) {
 		if (!game.doesGhostRequireAction(ghostType))  //if does not require an action	
-			return MOVE.NEUTRAL;;
+			return MOVE.NEUTRAL;
 		
 		int myPos = game.getGhostCurrentNodeIndex(ghostType);
 		MOVE mylastMove = game.getGhostLastMoveMade(ghostType);
@@ -39,7 +39,10 @@ public class ChaseAction implements Action {
 		if(fuzzyAccuracy >= 1 && myPos == pacManPos.identificador && game.getPacmanCurrentNodeIndex() > 0)
 			return game.getApproximateNextMoveTowardsTarget(myPos, game.getPacmanCurrentNodeIndex(), mylastMove, DM.EUCLID);
 
-		PositionAproximator aproximator = new PositionAproximator(mapa, game, myPos, mylastMove, pacManPos, pacmanKnownLastMoveMade, fuzzyAccuracy);
-		return aproximator.getBestMoveTowardsEntityPos();	
+		if(pacManPos != null){
+			PositionAproximator aproximator = new PositionAproximator(mapa, game, myPos, mylastMove, pacManPos, pacmanKnownLastMoveMade, fuzzyAccuracy);
+			return aproximator.getBestMoveTowardsEntityPos();	
+		}
+		return MOVE.NEUTRAL;
 	}
 }

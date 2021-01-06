@@ -30,12 +30,12 @@ public class PositionAproximator {
         double distance = (fuzzyAccuracy <= 0) ? CONSTANT_MULTIPLIER : CONSTANT_MULTIPLIER * (1 - fuzzyAccuracy);
 
         movimientos = new EnumMap<>(MOVE.class);
-
-        recursion(distance, entityPos, entityLastMoveToPos);
+        if(distance > 0)
+            recursion(distance, entityPos, entityLastMoveToPos);
     }
 
     public MOVE getBestMoveTowardsEntityPos(){
-        MOVE best = null;
+        MOVE best = MOVE.NEUTRAL;
         int most = -1;
         for (MOVE m : movimientos.keySet()) {
             if(movimientos.get(m) > most){

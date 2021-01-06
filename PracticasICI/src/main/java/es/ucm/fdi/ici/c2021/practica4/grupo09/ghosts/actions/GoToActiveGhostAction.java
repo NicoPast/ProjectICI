@@ -86,13 +86,15 @@ public class GoToActiveGhostAction implements Action {
 
 	@Override
 	public MOVE execute(Game game) {
+		if (!game.doesGhostRequireAction(ghost))  //if does not require an action	
+			return MOVE.NEUTRAL;
 
 		MOVE best = MOVE.NEUTRAL;
 		interseccion inter = mymap.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
-		double nearest = 0;
+		double nearest = 100000;
 		if (inter != null) {
 			MOVE prohibido = MOVE.NEUTRAL;
-			int selectedGhostIndex = 0;
+			int selectedGhostIndex = -1;
 			int myPos = game.getGhostCurrentNodeIndex(ghost);
 			MOVE mylastMove = game.getGhostLastMoveMade(ghost);
 			if (PacmanLastPosKnown !=null)
@@ -102,11 +104,10 @@ public class GoToActiveGhostAction implements Action {
 			for (MOVE move : inter.destinos.keySet()) {
 				// si tenemos relativamente claro que el pacman est� en esa direcci�n (la variable prohibido es suficientemente fiable) no
 				// buscamos en esa direcci�n 
-				if (prohibido != MOVE.NEUTRAL && move == prohibido
-						&& this.PacmanPosAccuracy >= PACMAN_POS_ACCURACY_LIMIT)
+				if (prohibido != MOVE.NEUTRAL && move == prohibido && this.PacmanPosAccuracy >= PACMAN_POS_ACCURACY_LIMIT)
 					continue;
 				DistanceAndGhost aux = nearestGhostDistance(move, game);
-				if (aux.distance < nearest) {
+				if (aux.distance < nearest && aux.ghostIndex != ghost.ordinal()){
 					nearest = aux.distance;
 					best = move;
 					selectedGhostIndex = aux.ghostIndex;
@@ -116,7 +117,7 @@ public class GoToActiveGhostAction implements Action {
 			// si la b�squeda ha dado al�n resultado significativo aproximamos la posici�n.
 			// Si no da igual el movimiento
 			// porque no tenemos informaci�n suficiente para decidir
-			if (nearest < Double.MAX_VALUE) {
+			if (nearest < Double.MAX_VALUE && selectedGhostIndex > -1) {
 				PositionAproximator aprox = new PositionAproximator(mymap, game, myPos, mylastMove,
 						this.LastGhostsKnownPositions.elementAt(selectedGhostIndex),
 						GhostsLastMoveKnown.elementAt(selectedGhostIndex),
