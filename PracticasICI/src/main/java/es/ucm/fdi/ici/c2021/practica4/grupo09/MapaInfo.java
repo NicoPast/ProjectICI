@@ -1,8 +1,11 @@
 package es.ucm.fdi.ici.c2021.practica4.grupo09;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Vector;
 
@@ -32,7 +35,8 @@ public class MapaInfo {
 	public int[] ghostLastPos = {-1,-1,-1,-1};
 	public MOVE[] ghostLastMove = {MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL};
 	public boolean[] isGhostEdible = {false, false, false, false};
-
+	public Map<Integer, Integer> ignoresPP = new LinkedHashMap<Integer, Integer>();
+	
     public MapaInfo() {
 
     }
@@ -131,8 +135,9 @@ public class MapaInfo {
 				powerPills++;
 				if(!posPowerPills.contains(proximoNodo.nodeIndex))
 					posPowerPills.add(proximoNodo.nodeIndex);
+				if(!ignoresPP.containsKey(proximoNodo.nodeIndex))
+					ignoresPP.put(proximoNodo.nodeIndex, 3);				
 			}
-				
 			proximoNodo = graph[proximoNodo.neighbourhood.get(direccion)];
 			coste++;
 		}
@@ -224,9 +229,7 @@ public class MapaInfo {
 	public DM getMetrica() {return metrica;}
 	
 
-	public MOVE getBestMove(Game game) {		
-
-	
+	public MOVE getBestMove(Game game) {
 		Vector<MOVE> fantasmas = new Vector<MOVE>();
 		Vector<MOVE> powerPills = new Vector<MOVE>();
 		Vector<MOVE> noPills = new Vector<MOVE>();
@@ -241,6 +244,11 @@ public class MapaInfo {
 				GHOST eadableGhost = null;
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
 				for (GHOST g : GHOST.values()) {
+					int ghostIndex = g.ordinal();
+					if(ghostLastPos[ghostIndex] == -1) continue;
+					
+					//VAMOS POR AQUI
+					
 					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
 							game.getGhostLastMoveMade(g),DM.PATH);
 					if (distancia > 0 && (distancia <= interseccionActual.distancias.get(m) + 2 ||

@@ -27,7 +27,7 @@ public class ChillAction implements Action{
 		MOVE proxMov = MOVE.NEUTRAL;
 		int maxPills = 0;
 		for(MOVE m:MOVE.values()) {
-			if(interseccionActual.pills.get(m) != null) {
+			if(interseccionActual.pills.get(m) != null && considerPath(game, m, interseccionActual)) {
 				//si existen pills por ese camino
 				int aux = interseccionActual.pills.get(m);
 				if(aux > maxPills) {
@@ -37,6 +37,31 @@ public class ChillAction implements Action{
 			}
 		}
 		
+		if(proxMov == MOVE.NEUTRAL) proxMov = proxMovNotPills(game);
+		
+		if(proxMov == MOVE.NEUTRAL)
+			System.out.println("Neutral");
+		return proxMov;
+    }
+	
+	private Boolean considerPath(Game game, MOVE mov, interseccion interseccionActual) {
+		if(interseccionActual.powerPill.get(mov) > 0) {
+			int powerPill = mapInfo.getClosestPP(game);
+			if(mapInfo.ignoresPP.get(powerPill) > 0) {
+				int aux = mapInfo.ignoresPP.get(powerPill);
+				mapInfo.ignoresPP.remove(powerPill);
+				aux--;
+				mapInfo.ignoresPP.put(powerPill, aux);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+    
+	private MOVE proxMovNotPills(Game game) {
+		MOVE proxMov = MOVE.NEUTRAL;
+		
 		if(proxMov == MOVE.NEUTRAL) //ya no quedan mas pills
 		{
 			int closestPill = mapInfo.getClosestPillAnchura(game);
@@ -45,11 +70,10 @@ public class ChillAction implements Action{
 						DM.PATH);
 		}
 		
-		if(proxMov == MOVE.NEUTRAL)
-			System.out.println("Neutral");
 		return proxMov;
-    }
-           
+	}
+	
+	
 	public void setMap(MapaInfo map) {
 		mapInfo = map;
 	}

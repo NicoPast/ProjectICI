@@ -41,7 +41,7 @@ public class ChaseAction implements Action{
 			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostDest),
 					DM.PATH);
 		
-		//no hemos visto nada y tenemos que aproximar jeje
+		//no hemos visto nada y tenemos que aproximar
 		double minDist = Double.MAX_VALUE;
 		int target = -1;
 		for(int i = 0; i < 4; i++) {
@@ -55,8 +55,11 @@ public class ChaseAction implements Action{
 		}
 		
 		if(target != -1) {
-			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.ghostLastPos[target],
+			MOVE auxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.ghostLastPos[target],
 					DM.PATH);
+			
+			if(mapInfo.getInterseccionActual().powerPill.get(auxMov)>0); //best move
+			else return auxMov;
 		}
 		
 		return MOVE.NEUTRAL;
