@@ -451,7 +451,9 @@ public class MapaInfo {
     
     public Integer getClosestPillAnchura(Game game) {
     	Queue<interseccion> cola = new LinkedList<interseccion>();
+    	List<Integer> interseccionesVisitadas = new ArrayList<Integer>();
     	cola.add(interseccionActual);
+    	interseccionesVisitadas.add(interseccionActual.identificador);
     	int dest = -1;
     	while(!cola.isEmpty() && dest == -1) {
     		interseccion i = cola.remove();
@@ -461,8 +463,14 @@ public class MapaInfo {
     				dest = i.identificador;
     				break;
     			}
-    			else 
-    				cola.add(findInterseccionIndex(i.destinos.get(m)));
+    			else {
+    				interseccion interseccionAux = findInterseccionIndex(i.destinos.get(m));
+    				if(interseccionesVisitadas.contains(interseccionAux.identificador) == false) {
+    					cola.add(interseccionAux);
+    					interseccionesVisitadas.add(interseccionAux.identificador);
+    				}
+    			}
+    				
     		}
     	}
     	return dest;

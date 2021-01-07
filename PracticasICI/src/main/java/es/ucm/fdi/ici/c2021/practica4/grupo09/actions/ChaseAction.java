@@ -17,7 +17,7 @@ public class ChaseAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {		 
-		System.out.println("Chasing");
+		//System.out.println("Chasing");
 		
 		//miramos si hay algun fantasma al que estamos viendo 
 		GHOST ghostDest = GHOST.BLINKY;
@@ -80,7 +80,7 @@ public class ChaseAction implements Action{
 		// mira para todos los fantasmas, si avanzando por ese camino me pillan
 		for (GHOST g : GHOST.values()) {
 			int pos = game.getGhostCurrentNodeIndex(g);
-			if(pos != -1 && !game.isGhostEdible(g)) { //si vemos el fantasma y ademas no es comible
+			if(pos != -1 && !game.isGhostEdible(g) && interseccionActual.destinos.get(m) != null) { //si vemos el fantasma y ademas no es comible
 				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
 					DM.PATH);
 														//hay que poner un +2 para que se cuenten las posiciones de las intersecciones

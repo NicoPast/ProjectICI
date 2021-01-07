@@ -19,7 +19,7 @@ public class RunAwayAction implements Action {
 	
 	@Override
 	public MOVE execute(Game game) {		
-		System.out.println("Running");
+		//System.out.println("Running");
 		int powerPillCercana = mapInfo.getClosestPP(game);
 		
 		if(powerPillCercana == -1) {
