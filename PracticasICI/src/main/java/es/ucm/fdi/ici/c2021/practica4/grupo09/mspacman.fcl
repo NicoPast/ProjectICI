@@ -71,7 +71,7 @@ DEFUZZIFY runAway			// Defzzzify output variable 'tip' : {'cheap', 'average', 'g
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
-DEFUZZIFY eadable
+DEFUZZIFY edible
 	TERM low := (0, 1) (60, 0) ; 
 	TERM high := (50, 0) (150, 1) (200, 1);
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
@@ -119,14 +119,14 @@ RULEBLOCK MsPacManRules
 	RULE 11 : IF INKYdistance IS far THEN runAway IS calm;
 	RULE 12 : IF SUEdistance IS far THEN runAway IS calm;
 	
-	RULE 13 : IF BLINKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 14 : IF PINKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 15 : IF INKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 16 : IF SUEedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 17 : IF BLINKYedible IS low THEN eadable IS low;
-	RULE 18 : IF PINKYedible IS low THEN eadable IS low;
-	RULE 19 : IF INKYedible IS low THEN eadable IS low;
-	RULE 20 : IF SUEedible IS low THEN eadable IS low;
+	RULE 13 : IF BLINKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 14 : IF PINKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 15 : IF INKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 16 : IF SUEedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 17 : IF BLINKYedible IS low THEN edible IS low;
+	RULE 18 : IF PINKYedible IS low THEN edible IS low;
+	RULE 19 : IF INKYedible IS low THEN edible IS low;
+	RULE 20 : IF SUEedible IS low THEN edible IS low;
 	
 END_RULEBLOCK
 

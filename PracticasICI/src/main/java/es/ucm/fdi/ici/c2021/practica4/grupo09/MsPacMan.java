@@ -9,8 +9,8 @@ import pacman.game.Game;
 
 public class MsPacMan extends PacmanController{
 
-	private static final String RULES_PATH = "src/main/java/es/ucm/fdi/ici/c2021/practica4/grupo09/";
-	//private static final String RULES_PATH = "bin/";
+	//private static final String RULES_PATH = "src/main/java/es/ucm/fdi/ici/c2021/practica4/grupo09/";
+	private static final String RULES_PATH = "bin/";
 	FuzzyEngine fuzzyEngine;
 	MsPacManInput input ;
 	MapaInfo mapInfo;
