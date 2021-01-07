@@ -71,6 +71,8 @@ public class ChillAction implements Action{
 	}
 	
 	
+	
+	
 	public void setMap(MapaInfo map) {
 		mapInfo = map;
 	}

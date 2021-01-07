@@ -2,6 +2,7 @@ package es.ucm.fdi.ici.c2021.practica4.grupo09.actions;
 
 
 import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo.interseccion;
 import es.ucm.fdi.ici.fuzzy.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -17,8 +18,7 @@ public class RunAwayAction implements Action {
 	}
 	
 	@Override
-	public MOVE execute(Game game) {
-		
+	public MOVE execute(Game game) {		
 		System.out.println("Running");
 		int powerPillCercana = mapInfo.getClosestPP(game);
 		
@@ -51,9 +51,35 @@ public class RunAwayAction implements Action {
 			}
 		}
 		
-		if(dist == Double.MAX_VALUE) return MOVE.NEUTRAL;
-		else return game.getApproximateNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostDest),
-				game.getPacmanLastMoveMade(), DM.PATH);
+		if(dist == Double.MAX_VALUE) return mapInfo.getBestMove(game);
+		else {
+			MOVE proxMovAux = game.getApproximateNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghostDest),
+					game.getPacmanLastMoveMade(), DM.PATH);
+			if(!ghostInWay(game, proxMovAux, mapInfo.getInterseccionActual())) return proxMovAux;
+			else return mapInfo.getBestMove(game);
+		}
+				
+	}
+	
+	private boolean ghostInWay(Game game, MOVE m, interseccion interseccionActual) {
+		boolean hasGhost = false;
+		// mira si m no es de donde vienes, si no es neutral y si existe camino
+
+		// mira para todos los fantasmas, si avanzando por ese camino me pillan
+		for (GHOST g : GHOST.values()) {
+			int pos = game.getGhostCurrentNodeIndex(g);
+			if(pos != -1 && !game.isGhostEdible(g)) { //si vemos el fantasma y ademas no es comible
+				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
+					DM.PATH);
+														//hay que poner un +2 para que se cuenten las posiciones de las intersecciones
+				if (distancia != -1 && distancia <= (interseccionActual.distancias.get(m) + 2)) { // no pillar el camino
+					hasGhost = true;
+					break; // hacemos el breake por que ya no nos interesa seguir buscando
+				}
+			}	
+		}
+
+		return hasGhost;
 	}
            
 	public void setMap(MapaInfo map) {
