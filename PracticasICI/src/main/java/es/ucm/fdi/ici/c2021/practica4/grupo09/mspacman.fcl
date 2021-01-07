@@ -22,46 +22,47 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY BLINKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY PINKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY INKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY SUEdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 
 FUZZIFY BLINKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY INKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY PINKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY SUEconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
+
 DEFUZZIFY runAway			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
 	TERM calm := (0,1) (5,1) (15,0);
 	TERM nervious := gauss 15 5;
@@ -70,7 +71,7 @@ DEFUZZIFY runAway			// Defzzzify output variable 'tip' : {'cheap', 'average', 'g
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
-DEFUZZIFY eadable
+DEFUZZIFY edible
 	TERM low := (0, 1) (60, 0) ; 
 	TERM high := (50, 0) (150, 1) (200, 1);
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
@@ -118,14 +119,14 @@ RULEBLOCK MsPacManRules
 	RULE 11 : IF INKYdistance IS far THEN runAway IS calm;
 	RULE 12 : IF SUEdistance IS far THEN runAway IS calm;
 	
-	RULE 13 : IF BLINKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 14 : IF PINKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 15 : IF INKYedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 16 : IF SUEedible IS high AND PosibleEdible IS high THEN eadable IS high;
-	RULE 17 : IF BLINKYedible IS low THEN eadable IS low;
-	RULE 18 : IF PINKYedible IS low THEN eadable IS low;
-	RULE 19 : IF INKYedible IS low THEN eadable IS low;
-	RULE 20 : IF SUEedible IS low THEN eadable IS low;
+	RULE 13 : IF BLINKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 14 : IF PINKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 15 : IF INKYedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 16 : IF SUEedible IS high AND PosibleEdible IS high THEN edible IS high;
+	RULE 17 : IF BLINKYedible IS low THEN edible IS low;
+	RULE 18 : IF PINKYedible IS low THEN edible IS low;
+	RULE 19 : IF INKYedible IS low THEN edible IS low;
+	RULE 20 : IF SUEedible IS low THEN edible IS low;
 	
 END_RULEBLOCK
 
