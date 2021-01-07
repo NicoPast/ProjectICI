@@ -24,8 +24,9 @@ public class RunAwayAction implements Action {
 		
 		if(powerPillCercana == -1) {
 			// best move
-			return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.getClosestPill(game),
-					DM.PATH);
+			return mapInfo.getBestMove(game);
+			/*return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.getClosestPill(game),
+					DM.PATH);*/
 		}
 		
 		return game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), powerPillCercana,

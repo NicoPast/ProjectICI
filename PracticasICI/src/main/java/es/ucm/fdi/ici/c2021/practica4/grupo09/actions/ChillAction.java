@@ -62,13 +62,10 @@ public class ChillAction implements Action{
 	private MOVE proxMovNotPills(Game game) {
 		MOVE proxMov = MOVE.NEUTRAL;
 		
-		if(proxMov == MOVE.NEUTRAL) //ya no quedan mas pills
-		{
-			int closestPill = mapInfo.getClosestPillAnchura(game);
-			if(closestPill  != -1) 
-				proxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPill,
-						DM.PATH);
-		}
+		int closestPill = mapInfo.getClosestPillAnchura(game);
+		if(closestPill  != -1) 
+			proxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPill,
+					DM.PATH);
 		
 		return proxMov;
 	}

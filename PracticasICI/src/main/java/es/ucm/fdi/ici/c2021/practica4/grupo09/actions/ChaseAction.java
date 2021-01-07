@@ -62,9 +62,11 @@ public class ChaseAction implements Action{
 		if(target != -1) {
 			MOVE auxMov = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), mapInfo.ghostLastPos[target],
 					DM.PATH);
-			
+
 			//si por ese camino nos vamos a comer una PP, lo ignoramos y miramos el bestMove
-			if(mapInfo.getInterseccionActual().powerPill.get(auxMov) > 0) return mapInfo.getBestMove(game);
+			if(mapInfo.getInterseccionActual().powerPill.get(auxMov) != null &&
+					mapInfo.getInterseccionActual().powerPill.get(auxMov) > 0) 
+				return mapInfo.getBestMove(game);
 			else return auxMov;
 		}
 		

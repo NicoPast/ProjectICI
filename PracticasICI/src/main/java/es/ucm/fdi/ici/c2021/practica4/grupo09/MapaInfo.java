@@ -319,10 +319,9 @@ public class MapaInfo {
 			}		
 		}
 		else if(noPills.size()>0) {			
-			//MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game),
-			//game.getPacmanLastMoveMade(), metrica);	
-			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game), 
-					game.getPacmanLastMoveMade(), DM.PATH);
+			int clostPill = getClosestPill(game);
+			//System.out.println(clostPill);
+			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, clostPill, DM.PATH);
 			
 			boolean encontrado = false;
 			int i=0;
