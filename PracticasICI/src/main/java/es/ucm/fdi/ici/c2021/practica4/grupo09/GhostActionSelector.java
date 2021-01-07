@@ -15,9 +15,9 @@ import pacman.game.Constants.GHOST;
 
 public class GhostActionSelector implements ActionSelector {
 
-	private final float FIND = 25;
-	private final float PROTECT = 20;
-	private final float SEEKHELP = 10;
+	private final float FIND = 20;
+	private final float PROTECT = 22;
+	private final float SEEKHELP = 8;
 
 	private GhostsInput input;
 	MapaInfoGhost map;
