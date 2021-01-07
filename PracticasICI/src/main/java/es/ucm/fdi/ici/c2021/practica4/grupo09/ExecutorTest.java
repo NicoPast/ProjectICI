@@ -1,10 +1,7 @@
 package es.ucm.fdi.ici.c2021.practica4.grupo09;
 
-import es.ucm.fdi.ici.c2021.practica4.demofuzzy.MsPacManFuzzy;
 import pacman.Executor;
 import pacman.controllers.GhostController;
-import pacman.controllers.HumanController;
-import pacman.controllers.KeyBoardInput;
 import pacman.controllers.PacmanController;
 
 public class ExecutorTest {
@@ -19,7 +16,7 @@ public class ExecutorTest {
 		.setScaleFactor(3.0)
 		.build();
 			
-		PacmanController pacMan = new MsPacManFuzzy();
+		PacmanController pacMan = new MsPacMan();
 		GhostController ghosts = new Ghosts();
 		
 		System.out.println(
