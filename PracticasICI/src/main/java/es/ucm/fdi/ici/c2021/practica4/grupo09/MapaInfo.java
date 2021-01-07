@@ -214,12 +214,13 @@ public class MapaInfo {
 
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {
 		interseccion interLlegada = getInterseccion(proximoNodo);
-		for (MOVE m : MOVE.values()) {
-			if (interLlegada.distancias.get(m) != null
-					&& interLlegada.destinos.get(m) == interseccionActual.identificador
-					&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
-				return m;
-		}
+		if(interLlegada != null)
+			for (MOVE m : MOVE.values()) {
+				if (interLlegada.distancias.get(m) != null
+						&& interLlegada.destinos.get(m) == interseccionActual.identificador
+						&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
+					return m;
+			}
 		return MOVE.NEUTRAL; // nunca deberia llegar
 	}
 
@@ -230,6 +231,8 @@ public class MapaInfo {
 	
 
 	public MOVE getBestMove(Game game) {
+		if(interseccionActual == null) return MOVE.NEUTRAL;
+		
 		Vector<MOVE> fantasmas = new Vector<MOVE>();
 		Vector<MOVE> powerPills = new Vector<MOVE>();
 		Vector<MOVE> noPills = new Vector<MOVE>();

@@ -18,7 +18,7 @@ public class ChillAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {
-		
+			
 		//System.out.println("Chilling");
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		if(interseccionActual == null) return MOVE.DOWN;
@@ -27,7 +27,7 @@ public class ChillAction implements Action{
 		MOVE proxMov = MOVE.NEUTRAL;
 		int maxPills = 0;
 		for(MOVE m:MOVE.values()) {
-			if(interseccionActual.pills.get(m) != null && considerPath(game, m, interseccionActual)) {
+			if( interseccionActual.pills.get(m) != null && considerPath(game, m, interseccionActual)) {
 				//si existen pills por ese camino
 				int aux = interseccionActual.pills.get(m);
 				if(aux > maxPills) {

@@ -22,45 +22,45 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY BLINKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY PINKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY INKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 FUZZIFY SUEdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM near := (0, 1) (60, 0) ; 
-	TERM medium := gauss 75 25;
-	TERM far := (90, 0) (150, 1) (200, 1);
+	TERM near := (0, 1) (70, 0) ; 
+	TERM medium := gauss 80 35;
+	TERM far := (85, 0) (160, 1) (200, 1);
 END_FUZZIFY
 
 FUZZIFY BLINKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY INKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY PINKYconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 FUZZIFY SUEconfidence			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0,1)(25,1)(50,0) ; 
-	TERM medium := gauss 50 25;
-	TERM high := (50,0)(75,1)(100,1);
+	TERM low := (0,1)(20,1)(50,0) ; 
+	TERM medium := gauss 50 50;
+	TERM high := (50,0)(80,1)(100,1);
 END_FUZZIFY
 
 DEFUZZIFY runAway			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }

@@ -10,8 +10,8 @@ import es.ucm.fdi.ici.fuzzy.ActionSelector;
 
 public class MsPacManActionSelector implements ActionSelector {
 
-	private final Double RUN_AWAY_LIMIT = 20.0;
-	private final Double CHASE_LIMIT = 90.0;
+	private final Double RUN_AWAY_LIMIT = 18.5;
+	private final Double CHASE_LIMIT = 80.0;
 	MapaInfo mapInfo;
 	
 	public MsPacManActionSelector(MapaInfo map) {
