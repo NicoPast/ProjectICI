@@ -1,8 +1,12 @@
-package es.ucm.fdi.ici.c2021.practica3.grupo09;
-
+package es.ucm.fdi.ici.c2021.practica4.grupo09;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Vector;
 
 import pacman.game.Constants.DM;
@@ -14,6 +18,7 @@ import pacman.game.internal.Node;
 public class MapaInfo {
 
     private List<interseccion> mapa = new ArrayList<interseccion>();
+    private Vector<Integer> posPowerPills = new Vector<Integer>();
 	private int ultimoNodo = -1, proximoNodo = -1; // -1 es que aun no ha registrado nada
 	private MOVE ultimoMovimientoReal = MOVE.LEFT; // es down por que este programa siempre devuelve down
 	private MOVE movimientoDeLlegada = MOVE.RIGHT; // PROVISIONAL tambien
@@ -27,8 +32,11 @@ public class MapaInfo {
 	public EnumMap<GHOST, interseccion> destinosGhosts;
 	public EnumMap<GHOST, MOVE> movesCheckMate;
 	
+	public int[] ghostLastPos = {-1,-1,-1,-1};
+	public MOVE[] ghostLastMove = {MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL, MOVE.NEUTRAL};
+	public boolean[] isGhostEdible = {false, false, false, false};
+	public Map<Integer, Integer> ignoresPP = new LinkedHashMap<Integer, Integer>();
 	
-
     public MapaInfo() {
 
     }
@@ -67,6 +75,8 @@ public class MapaInfo {
 		// Primero actualizo el mapa usando la posicion del pacman
 		interseccion aux = getInterseccion(game.getPacmanCurrentNodeIndex());
 		
+		updateGhosts(game);
+		
 		if (aux == null) { // si es null, no estas en una interseccion (AKA, estas en un pasillo)
 			if (ultimoNodo != -1 && proximoNodo != -1)
 				updateMapa(game); // solo hay que actualizarlo durante las rectas
@@ -89,6 +99,19 @@ public class MapaInfo {
 		}
     }
 
+    private void updateGhosts(Game game) {
+    	
+    	for(GHOST g : GHOST.values()) {
+    		int index = g.ordinal();
+    		int pos = game.getGhostCurrentNodeIndex(g);
+    		if(pos != -1) {
+    			ghostLastPos[index] = pos;
+    			ghostLastMove[index] = game.getGhostLastMoveMade(g);
+    			isGhostEdible[index] = game.isGhostEdible(g);
+    		}
+    	}
+    }
+    
     private int[] buscaCamino(Node nodoActual, MOVE dir, Node[] graph) {
 		MOVE direccion = dir;
 		int pills = 0;
@@ -108,8 +131,13 @@ public class MapaInfo {
 			}
 			if (proximoNodo.pillIndex != -1)
 				pills++;
-			else if (proximoNodo.powerPillIndex != -1)
+			else if (proximoNodo.powerPillIndex != -1) {
 				powerPills++;
+				if(!posPowerPills.contains(proximoNodo.nodeIndex))
+					posPowerPills.add(proximoNodo.nodeIndex);
+				if(!ignoresPP.containsKey(proximoNodo.nodeIndex))
+					ignoresPP.put(proximoNodo.nodeIndex, 3);				
+			}
 			proximoNodo = graph[proximoNodo.neighbourhood.get(direccion)];
 			coste++;
 		}
@@ -175,6 +203,7 @@ public class MapaInfo {
 
 		}
 		else if (game.wasPowerPillEaten()) {
+			posPowerPills.removeElement(game.getPacmanCurrentNodeIndex());
 			interseccion interSalida = getInterseccion(ultimoNodo);
 			interseccion interLlegada = getInterseccion(proximoNodo);
 			int pills = interSalida.powerPill.get(ultimoMovimientoReal); // no har�a falta esta variable ya que pasaria de 1 a 0,
@@ -185,12 +214,13 @@ public class MapaInfo {
 
 	private MOVE proxMovimientoLlegada(MOVE proxMove) {
 		interseccion interLlegada = getInterseccion(proximoNodo);
-		for (MOVE m : MOVE.values()) {
-			if (interLlegada.distancias.get(m) != null
-					&& interLlegada.destinos.get(m) == interseccionActual.identificador
-					&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
-				return m;
-		}
+		if(interLlegada != null)
+			for (MOVE m : MOVE.values()) {
+				if (interLlegada.distancias.get(m) != null
+						&& interLlegada.destinos.get(m) == interseccionActual.identificador
+						&& interLlegada.distancias.get(m) == interseccionActual.distancias.get(proxMove))
+					return m;
+			}
 		return MOVE.NEUTRAL; // nunca deberia llegar
 	}
 
@@ -200,9 +230,9 @@ public class MapaInfo {
 	public DM getMetrica() {return metrica;}
 	
 
-	public MOVE getBestMove(Game game) {		
-
-	
+	public MOVE getBestMove(Game game) {
+		if(interseccionActual == null) return MOVE.NEUTRAL;
+		
 		Vector<MOVE> fantasmas = new Vector<MOVE>();
 		Vector<MOVE> powerPills = new Vector<MOVE>();
 		Vector<MOVE> noPills = new Vector<MOVE>();
@@ -217,17 +247,18 @@ public class MapaInfo {
 				GHOST eadableGhost = null;
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
 				for (GHOST g : GHOST.values()) {
-					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
-							game.getGhostLastMoveMade(g),DM.PATH);
+					int ghostIndex = g.ordinal();
+					if(ghostLastPos[ghostIndex] == -1) continue; //siempre sera -1 hasta que lo veamos una vez
+														
+					double distancia = game.getDistance(ghostLastPos[ghostIndex],interseccionActual.destinos.get(m),DM.PATH);
 					if (distancia > 0 && (distancia <= interseccionActual.distancias.get(m) + 2 ||
-							(game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
-									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2 
-									&& game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),DM.PATH)
+							(game.getDistance(ghostLastPos[ghostIndex], game.getPacmanCurrentNodeIndex(),DM.PATH)
+									<=  interseccionActual.distancias.get(m) + 2 
+									&& game.getDistance(ghostLastPos[ghostIndex],interseccionActual.destinos.get(m),DM.PATH)
 									 <= interseccionActual.distancias.get(m) + 2)) ||
 							lairDanger(game,interseccionActual.destinos.get(m),m))
-					{ // no pillar el camino						
-						
-						if(!game.isGhostEdible(g)){
+					{ // no pillar el camino							
+						if(!isGhostEdible[ghostIndex]){ 
 							hasGhost = true;
 							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas		
 							eadableGhost = null;	
@@ -264,8 +295,9 @@ public class MapaInfo {
 			double auxDistGhost = Double.MAX_VALUE;
 			
 			for(GHOST g : fantasmasComibles) {
-				double dis = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
-						game.getPacmanLastMoveMade(),metrica);
+				int ghostIndex = g.ordinal();
+				if(ghostLastPos[ghostIndex] == -1) continue; //siempre sera -1 hasta que lo veamos una vez
+				double dis = game.getDistance(interseccionActual.identificador, ghostLastPos[ghostIndex], metrica);
 				if(dis < auxDistGhost) {
 					ghostAux = g;
 					auxDistGhost = dis;
@@ -274,7 +306,7 @@ public class MapaInfo {
 			//tenemos que mirar si en esta direccion no hay otros fantasmas
 			
 			actual = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
-					game.getGhostCurrentNodeIndex(ghostAux), game.getPacmanLastMoveMade(), metrica);
+					ghostLastPos[ghostAux.ordinal()], game.getPacmanLastMoveMade(), metrica);
 			
 			if(!fantasmas.contains(actual)) return actual;
 		}
@@ -290,15 +322,13 @@ public class MapaInfo {
 			}		
 		}
 		else if(noPills.size()>0) {			
-			//MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game),
-			//game.getPacmanLastMoveMade(), metrica);	
-			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, getClosestPill(game), 
-					game.getPacmanLastMoveMade(), DM.PATH);
+			int clostPill = getClosestPill(game);
+			//System.out.println(clostPill);
+			MOVE auxMove = game.getNextMoveTowardsTarget(interseccionActual.identificador, clostPill, DM.PATH);
 			
 			boolean encontrado = false;
 			int i=0;
-			while(!encontrado && i<noPills.size()) {
-				
+			while(!encontrado && i<noPills.size()) {				
 				if(noPills.get(i) == auxMove) {
 					encontrado = true;
 					actual = auxMove;
@@ -354,7 +384,7 @@ public class MapaInfo {
 	
 	
     public int getClosestPill(Game game) {
-        int closestPill = -1;
+        /*int closestPill = -1;
         int pacmanPos = game.getPacmanCurrentNodeIndex();
         double closestDistance = Double.MAX_VALUE;
         for (int currentPill : game.getActivePillsIndices()) {
@@ -363,8 +393,8 @@ public class MapaInfo {
                 closestPill = currentPill;
                 closestDistance = aux;
             }
-        }
-        return closestPill;
+        }*/
+        return getClosestPillAnchura(game); //este get closestPill con visibilidad parcial no funciona
     }
     
     public void setReset() {
@@ -407,4 +437,54 @@ public class MapaInfo {
     	}    	
     	return false;
     }	
+    
+    public Integer getClosestPP(Game game) {
+    	int pp = -1;
+    	double dist = Double.MAX_VALUE;
+    	for(int index: posPowerPills) {
+    		double aux = game.getDistance(game.getPacmanCurrentNodeIndex(), index,
+    				game.getPacmanLastMoveMade(), DM.PATH);
+    		if (aux < dist) {
+    			dist = aux;
+    			pp = index;
+    		}
+    	}
+    	return pp;
+    }
+    
+    public Integer getClosestPillAnchura(Game game) {
+    	Queue<interseccion> cola = new LinkedList<interseccion>();
+    	List<Integer> interseccionesVisitadas = new ArrayList<Integer>();
+    	cola.add(interseccionActual);
+    	interseccionesVisitadas.add(interseccionActual.identificador);
+    	int dest = -1;
+    	while(!cola.isEmpty() && dest == -1) {
+    		interseccion i = cola.remove();
+    		for(MOVE m : i.destinos.keySet()) {
+    			if(i.pills.get(m) > 0) {
+    				//System.out.println("pills: " + i.pills.get(m));
+    				dest = i.identificador;
+    				break;
+    			}
+    			else {
+    				interseccion interseccionAux = findInterseccionIndex(i.destinos.get(m));
+    				if(interseccionesVisitadas.contains(interseccionAux.identificador) == false) {
+    					cola.add(interseccionAux);
+    					interseccionesVisitadas.add(interseccionAux.identificador);
+    				}
+    			}
+    				
+    		}
+    	}
+    	return dest;
+    }
+    
+    private interseccion findInterseccionIndex(int index) {
+    	for(interseccion i : mapa) {
+    		if(i.identificador == index)
+    			return i;
+    	}
+    	
+    	return null;
+    }
 }

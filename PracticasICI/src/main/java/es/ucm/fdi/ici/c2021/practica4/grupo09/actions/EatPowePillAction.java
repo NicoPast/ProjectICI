@@ -1,27 +1,35 @@
-package es.ucm.fdi.ici.c2021.practica3.grupo09.MsPacManRules.actions;
+package es.ucm.fdi.ici.c2021.practica4.grupo09.actions;
 
-import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfo;
-import es.ucm.fdi.ici.c2021.practica3.grupo09.MapaInfo.interseccion;
-import es.ucm.fdi.ici.rules.Action;
-import jess.Fact;
+
+import java.util.Random;
+
+import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo;
+import es.ucm.fdi.ici.c2021.practica4.grupo09.MapaInfo.interseccion;
+import es.ucm.fdi.ici.fuzzy.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
-public class EatPowePillAction implements Action{
-	
-	MapaInfo mapInfo;
-	
-	public EatPowePillAction(MapaInfo map) {
+
+public class EatPowePillAction implements Action {
+	MapaInfo mapInfo; 
+    
+    
+    public EatPowePillAction(MapaInfo map) {
 		mapInfo = map;
 	}
 	
+	
 	@Override
 	public MOVE execute(Game game) {
+		
+		System.out.println("Eating");
 		if(mapInfo.getInterseccion(game.getPacmanCurrentNodeIndex()) == null) return MOVE.NEUTRAL;
 		
-		int powerPillCercana = getPowerPillCercana(game);
+		int powerPillCercana = mapInfo.getClosestPP(game);
+		
+		if(powerPillCercana == -1); //"best move"
 		
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		
@@ -34,7 +42,8 @@ public class EatPowePillAction implements Action{
 				//entre todos estos caminos, por cual te quedas mas cerca de la pill
 				
 				boolean fantasmaDetectado = false;
-				for(GHOST g:GHOST.values()){ //recorremos todos los fantasmas
+				for(GHOST g: GHOST.values()){ //recorremos todos los fantasmas
+					if(game.getGhostCurrentNodeIndex(g)==-1) continue;
 					double distanciaFantasma = game.getDistance(interseccionActual.destinos.get(m), 
 							game.getGhostCurrentNodeIndex(g), DM.PATH);
 					
@@ -64,6 +73,7 @@ public class EatPowePillAction implements Action{
 			
 			boolean fantasma = false;
 			for(GHOST g:GHOST.values()){ //recorremos todos los fantasmas
+				if(game.getGhostCurrentNodeIndex(g)==-1) continue;
 				double distanciaFantasma = game.getDistance(powerPillCercana, 
 						game.getGhostCurrentNodeIndex(g), DM.PATH);
 				
@@ -78,14 +88,8 @@ public class EatPowePillAction implements Action{
 			else return mAux;
 		}
 		else return direccion;
-	}
-
-	@Override
-	public void parseFact(Fact actionFact) {
-		// Nothing to parse
-		
-	}
-	
+    }
+            
 	private int getPowerPillCercana(Game game) {
         int closestPowerPill = -1;
         int pacmanPos = game.getPacmanCurrentNodeIndex();
