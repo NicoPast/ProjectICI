@@ -18,7 +18,7 @@ END_VAR
 
 VAR_OUTPUT				// Define output variable
 	runAway : REAL;
-	eadable : REAL;
+	edible : REAL;
 END_VAR
 
 FUZZIFY BLINKYdistance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
