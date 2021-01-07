@@ -66,7 +66,7 @@ public class ProtectAlliesAction implements Action {
 
 				if (aux < nearestDist) {
 					nearestDist = aux;
-					nearestP = LastGhostsKnownPositions.elementAt(i).identificador;
+					nearestP = i;
 				}
 			}
 		}
