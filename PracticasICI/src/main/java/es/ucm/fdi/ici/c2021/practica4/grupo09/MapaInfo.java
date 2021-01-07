@@ -245,21 +245,17 @@ public class MapaInfo {
 				//mira para todos los fantasmas, si avanzando por ese camino me pillan
 				for (GHOST g : GHOST.values()) {
 					int ghostIndex = g.ordinal();
-					if(ghostLastPos[ghostIndex] == -1) continue;
-					
-					//VAMOS POR AQUI
-					
-					double distancia = game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),
-							game.getGhostLastMoveMade(g),DM.PATH);
+					if(ghostLastPos[ghostIndex] == -1) continue; //siempre sera -1 hasta que lo veamos una vez
+														
+					double distancia = game.getDistance(ghostLastPos[ghostIndex],interseccionActual.destinos.get(m),DM.PATH);
 					if (distancia > 0 && (distancia <= interseccionActual.distancias.get(m) + 2 ||
-							(game.getDistance(game.getGhostCurrentNodeIndex(g), game.getPacmanCurrentNodeIndex(),
-									game.getGhostLastMoveMade(g),DM.PATH)  <=  interseccionActual.distancias.get(m) + 2 
-									&& game.getDistance( game.getGhostCurrentNodeIndex(g),interseccionActual.destinos.get(m),DM.PATH)
+							(game.getDistance(ghostLastPos[ghostIndex], game.getPacmanCurrentNodeIndex(),DM.PATH)
+									<=  interseccionActual.distancias.get(m) + 2 
+									&& game.getDistance(ghostLastPos[ghostIndex],interseccionActual.destinos.get(m),DM.PATH)
 									 <= interseccionActual.distancias.get(m) + 2)) ||
 							lairDanger(game,interseccionActual.destinos.get(m),m))
-					{ // no pillar el camino						
-						
-						if(!game.isGhostEdible(g)){
+					{ // no pillar el camino							
+						if(!isGhostEdible[ghostIndex]){ 
 							hasGhost = true;
 							fantasmas.add(m); //por aqui hay fantasma, meterlo a la lista de caminos con fantasmas		
 							eadableGhost = null;	
@@ -296,8 +292,9 @@ public class MapaInfo {
 			double auxDistGhost = Double.MAX_VALUE;
 			
 			for(GHOST g : fantasmasComibles) {
-				double dis = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
-						game.getPacmanLastMoveMade(),metrica);
+				int ghostIndex = g.ordinal();
+				if(ghostLastPos[ghostIndex] == -1) continue; //siempre sera -1 hasta que lo veamos una vez
+				double dis = game.getDistance(interseccionActual.identificador, ghostLastPos[ghostIndex], metrica);
 				if(dis < auxDistGhost) {
 					ghostAux = g;
 					auxDistGhost = dis;
@@ -306,7 +303,7 @@ public class MapaInfo {
 			//tenemos que mirar si en esta direccion no hay otros fantasmas
 			
 			actual = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),
-					game.getGhostCurrentNodeIndex(ghostAux), game.getPacmanLastMoveMade(), metrica);
+					ghostLastPos[ghostAux.ordinal()], game.getPacmanLastMoveMade(), metrica);
 			
 			if(!fantasmas.contains(actual)) return actual;
 		}
@@ -329,8 +326,7 @@ public class MapaInfo {
 			
 			boolean encontrado = false;
 			int i=0;
-			while(!encontrado && i<noPills.size()) {
-				
+			while(!encontrado && i<noPills.size()) {				
 				if(noPills.get(i) == auxMove) {
 					encontrado = true;
 					actual = auxMove;
@@ -386,7 +382,7 @@ public class MapaInfo {
 	
 	
     public int getClosestPill(Game game) {
-        int closestPill = -1;
+        /*int closestPill = -1;
         int pacmanPos = game.getPacmanCurrentNodeIndex();
         double closestDistance = Double.MAX_VALUE;
         for (int currentPill : game.getActivePillsIndices()) {
@@ -395,8 +391,8 @@ public class MapaInfo {
                 closestPill = currentPill;
                 closestDistance = aux;
             }
-        }
-        return closestPill;
+        }*/
+        return getClosestPillAnchura(game); //este get closestPill con visibilidad parcial no funciona
     }
     
     public void setReset() {
@@ -462,7 +458,7 @@ public class MapaInfo {
     		interseccion i = cola.remove();
     		for(MOVE m : i.destinos.keySet()) {
     			if(i.pills.get(m) > 0) {
-    				System.out.println("pills: " + i.pills.get(m));
+    				//System.out.println("pills: " + i.pills.get(m));
     				dest = i.identificador;
     				break;
     			}
