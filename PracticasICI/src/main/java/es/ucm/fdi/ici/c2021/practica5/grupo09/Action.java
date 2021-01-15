@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica5;
+package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;

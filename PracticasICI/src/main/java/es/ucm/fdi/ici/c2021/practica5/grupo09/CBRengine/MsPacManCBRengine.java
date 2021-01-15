@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica5.CBRengine;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.io.File;
 import java.util.Collection;
@@ -18,8 +18,8 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equ
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
-import es.ucm.fdi.ici.c2021.practica5.Action;
-import es.ucm.fdi.ici.c2021.practica5.MsPacManActionSelector;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
@@ -34,7 +34,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	
 	
 	
-	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aquí
+	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aquí
 
 	/**
 	 * Simple extension to allow custom case base files. It also creates a new empty file if it does not exist.

@@ -1,7 +1,7 @@
-package es.ucm.fdi.ici.c2021.practica5;
+package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
-import es.ucm.fdi.ici.c2021.practica5.CBRengine.MsPacManDescription;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManDescription;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;

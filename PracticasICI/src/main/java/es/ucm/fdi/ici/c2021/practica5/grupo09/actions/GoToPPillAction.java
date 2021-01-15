@@ -1,25 +1,27 @@
-package es.ucm.fdi.ici.c2021.practica5.actions;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.actions;
+
 
 import java.util.Random;
 
-import es.ucm.fdi.ici.c2021.practica5.Action;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
-public class RunAwayAction implements Action {
+public class GoToPPillAction implements Action {
     
 	private Random rnd = new Random();
     private MOVE[] allMoves = MOVE.values();
-	public RunAwayAction() {
+	public GoToPPillAction() {
 	}
 	
 	@Override
 	public MOVE execute(Game game) {
 		return allMoves[rnd.nextInt(allMoves.length)];
     }
-	
+
 	@Override
 	public String getActionId() {
-		return "Run Away";
-	}            
+		return "Go to PPill";
+	}
+            
 }

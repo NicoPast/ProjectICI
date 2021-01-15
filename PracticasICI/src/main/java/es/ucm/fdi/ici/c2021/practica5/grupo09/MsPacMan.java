@@ -1,13 +1,13 @@
-package es.ucm.fdi.ici.c2021.practica5;
+package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
-import es.ucm.fdi.ici.c2021.practica5.CBRengine.MsPacManCBRengine;
-import es.ucm.fdi.ici.c2021.practica5.CBRengine.MsPacManStorageManager;
-import es.ucm.fdi.ici.c2021.practica5.actions.GoToPPillAction;
-import es.ucm.fdi.ici.c2021.practica5.actions.RunAwayAction;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManCBRengine;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManStorageManager;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.GoToPPillAction;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.RunAwayAction;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
