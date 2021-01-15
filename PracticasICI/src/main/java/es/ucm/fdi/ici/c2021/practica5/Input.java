@@ -1,7 +1,6 @@
-package es.ucm.fdi.ici.fuzzy;
+package es.ucm.fdi.ici.c2021.practica5;
 
-import java.util.Map;
-
+import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
 import pacman.game.Game;
 
 /**
@@ -15,10 +14,5 @@ public interface Input {
 	 */
 	public abstract void parseInput(Game game);
 
-	/**
-	 * Returns a list of fuzzy values.
-	 * The String key of the map corresponds to one variable that must be defined in the fcl file.
-	 * @see es.ucm.fdi.ici.rules.RuleEngine
-	 */
-	public abstract Map<String,Double> getFuzzyValues(); 
+	public abstract CBRQuery getQuery(); 
 }
