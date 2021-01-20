@@ -6,6 +6,38 @@ import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;
 public class MsPacManDescription implements CaseComponent {
 
 	Integer id;
+
+	Integer distanciaUp;
+	Integer distanciaRight;
+	Integer distanciaDown;
+	Integer distanciaLeft;
+
+	Integer ghostUp;
+	Integer ghostRight;
+	Integer ghostDown;
+	Integer ghostLeft;
+
+	Boolean edibleUp;
+	Boolean edibleRight;
+	Boolean edibleDown;
+	Boolean edibleLeft;
+	
+	Boolean vulnerable;
+	
+	Integer direction;
+
+	Integer pillsUp;
+	Integer pillsRight;
+	Integer pillsDown;
+	Integer pillsLeft;
+
+	Integer powerPillUp;
+	Integer powerPillRight;
+	Integer powerPillDown;
+	Integer powerPillLeft;
+	
+	
+	
 	
 	Integer score;
 	Integer time;
