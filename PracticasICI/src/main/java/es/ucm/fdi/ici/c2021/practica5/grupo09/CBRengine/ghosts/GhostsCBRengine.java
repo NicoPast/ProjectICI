@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.io.File;
 import java.util.Collection;
@@ -18,15 +18,15 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equ
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.GhostsAction;
+import pacman.game.Constants.MOVE;
 
-public class MsPacManCBRengine implements StandardCBRApplication {
+public class GhostsCBRengine implements StandardCBRApplication {
 
 	private String casebaseFile;
-	private Action action;
-	private MsPacManActionSelector actionSelector;
-	private MsPacManStorageManager storageManager;
+	private MOVE move;
+	private GhostsAction actionSelector;
+	private GhostsStorageManager storageManager;
 
 	CustomPlainTextConnector connector;
 	CBRCaseBase caseBase;
@@ -34,7 +34,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	
 	
 	
-	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aquí
+	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/ghostsplaintextconfig.xml"; //Cuidado!! poner el grupo aquí
 
 	/**
 	 * Simple extension to allow custom case base files. It also creates a new empty file if it does not exist.
@@ -54,7 +54,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 	
 	
-	public MsPacManCBRengine(MsPacManActionSelector actionSelector, MsPacManStorageManager storageManager)
+	public GhostsCBRengine(GhostsAction actionSelector, GhostsStorageManager storageManager)
 	{
 		this.actionSelector = actionSelector;
 		this.storageManager = storageManager;
@@ -68,7 +68,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	@Override
 	public void configure() throws ExecutionException {
 		connector = new CustomPlainTextConnector();
-		caseBase = new CachedLinearCaseBase();
+		caseBase = new GhostsCachedLinearCaseBase();
 		
 		connector.initFromXMLfile(FileIO.findFile(CONNECTOR_FILE_PATH));
 		connector.setCaseBaseFile(this.casebaseFile);
@@ -76,11 +76,12 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		
 		simConfig = new NNConfig();
 		simConfig.setDescriptionSimFunction(new Average());
-		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(15000));
-		simConfig.addMapping(new Attribute("time",MsPacManDescription.class), new Interval(4000));
-		simConfig.addMapping(new Attribute("nearestPPill",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("nearestGhost",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleGhost",MsPacManDescription.class), new Equal());
+		simConfig.addMapping(new Att
+									ribute("score",GhostsDescription.class), new Interval(15000));
+		simConfig.addMapping(new Attribute("time",GhostsDescription.class), new Interval(4000));
+		simConfig.addMapping(new Attribute("nearestPPill",GhostsDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("nearestGhost",GhostsDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("edibleGhost",GhostsDescription.class), new Equal());
 		
 	}
 
@@ -93,7 +94,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
 		if(caseBase.getCases().isEmpty()) {
-			this.action = actionSelector.findAction();
+			this.move = actionSelector.defaultAction();
 		}else {
 			//Compute NN
 			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
@@ -104,17 +105,19 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			CBRCase mostSimilarCase = first.get_case();
 			double similarity = first.getEval();
 	
-			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-			MsPacManSolution solution = (MsPacManSolution) mostSimilarCase.getSolution();
+			GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
+			GhostsSolution solution = (GhostsSolution) mostSimilarCase.getSolution();
 			
+			MOVE solMove = MOVE.values()[solution.getMove()];
+
 			//Now compute a solution for the query
-			this.action = actionSelector.getAction(solution.getAction());
+			this.move = solMove;
 			
 			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
-				this.action = actionSelector.findAction();
+				this.move = actionSelector.defaultAction();
 			
 			else if(result.getScore()<0) //This was a bad case, ask actionSelector for another one.
-				this.action = actionSelector.findAnotherAction(solution.getAction());
+				this.move = actionSelector.findAnotherMove(solMove);
 		}
 		CBRCase newCase = createNewCase(query);
 		this.storageManager.storeCase(newCase);
@@ -128,23 +131,23 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	 */
 	private CBRCase createNewCase(CBRQuery query) {
 		CBRCase newCase = new CBRCase();
-		MsPacManDescription newDescription = (MsPacManDescription) query.getDescription();
-		MsPacManResult newResult = new MsPacManResult();
-		MsPacManSolution newSolution = new MsPacManSolution();
+		GhostsDescription newDescription = (GhostsDescription) query.getDescription();
+		GhostsResult newResult = new GhostsResult();
+		GhostsSolution newSolution = new GhostsSolution();
 		int newId = this.caseBase.getCases().size();
 		newId+= storageManager.getPendingCases();
 		newDescription.setId(newId);
 		newResult.setId(newId);
 		newSolution.setId(newId);
-		newSolution.setAction(this.action.getActionId());
+		newSolution.setMove(this.move.ordinal());
 		newCase.setDescription(newDescription);
 		newCase.setResult(newResult);
 		newCase.setSolution(newSolution);
 		return newCase;
 	}
 	
-	public Action getSolution() {
-		return this.action;
+	public MOVE getSolution() {
+		return this.move;
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManDescription;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsDescription;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
 
-public class MsPacManInput implements Input {
+public class GhostsInput implements Input {
 
 	Integer nearestGhost;
 	Boolean edible;
@@ -24,7 +24,7 @@ public class MsPacManInput implements Input {
 
 	@Override
 	public CBRQuery getQuery() {
-		MsPacManDescription description = new MsPacManDescription();
+		GhostsDescription description = new GhostsDescription();
 		description.setEdibleGhost(edible);
 		description.setNearestGhost(nearestGhost);
 		description.setNearestPPill(nearestPPill);

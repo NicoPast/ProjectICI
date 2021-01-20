@@ -1,11 +1,11 @@
-package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;
 
-public class MsPacManSolution implements CaseComponent, Cloneable {
+public class GhostsSolution implements CaseComponent, Cloneable {
 	Integer id;
-	String action;
+	Integer move;
 	
 	public Integer getId() {
 		return id;
@@ -13,16 +13,16 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getAction() {
-		return action;
+	public Integer getMove() {
+		return move;
 	}
-	public void setAction(String action) {
-		this.action = action;
+	public void setMove(Integer action) {
+		this.move = action;
 	}
 	
 	@Override
 	public Attribute getIdAttribute() {
-		return new Attribute("id", MsPacManSolution.class);
+		return new Attribute("id", GhostsSolution.class);
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	}
 	@Override
 	public String toString() {
-		return "MsPacManSolution [id=" + id + ", action=" + action + "]";
+		return "MsPacManSolution [id=" + id + ", action=" + move + "]";
 	}  
 	
 	

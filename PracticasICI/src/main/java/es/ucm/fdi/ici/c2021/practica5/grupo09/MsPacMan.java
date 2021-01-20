@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManCBRengine;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManStorageManager;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManCBRengine;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManStorageManager;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.GoToPPillAction;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.RunAwayAction;
 import pacman.controllers.PacmanController;

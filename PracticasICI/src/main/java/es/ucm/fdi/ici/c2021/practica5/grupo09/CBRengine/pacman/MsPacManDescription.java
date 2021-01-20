@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;

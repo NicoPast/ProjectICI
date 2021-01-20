@@ -1,11 +1,10 @@
 
 
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Ghosts;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacMan;
 import pacman.Executor;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
-
-
 
 
 public class ExecutorTest {
@@ -18,7 +17,7 @@ public class ExecutorTest {
                 .build();
 
         PacmanController pacMan = new MsPacMan();
-        GhostController ghosts = new AggressiveGhosts();
+        GhostController ghosts = new Ghosts();
       
         
         System.out.println( 

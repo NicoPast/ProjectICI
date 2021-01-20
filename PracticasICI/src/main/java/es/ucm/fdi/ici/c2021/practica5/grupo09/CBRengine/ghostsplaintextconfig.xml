@@ -1,0 +1,34 @@
+<TextFileConfiguration>
+	<FilePath>es/ucm/fdi/ici/c2021/practica5/grupo09/data/ghostsgeneralcasebase.txt</FilePath>
+	<Delimiters>,</Delimiters>
+	<DescriptionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsDescription</DescriptionClassName>
+	<DescriptionMappings>
+		<Map>id</Map>
+		<Map>distanceNextIntersectionUp</Map>
+		<Map>distanceNearestGhostUp</Map>
+		<Map>GhostEdibleUp</Map>		
+		<Map>distanceNextIntersectionDown</Map>
+		<Map>distanceNearestGhostDown</Map>
+		<Map>GhostEdibleDown</Map>		
+		<Map>distanceNextIntersectionLeft</Map>
+		<Map>distanceNearestGhostLeft</Map>
+		<Map>GhostEdibleLeft</Map>		
+		<Map>distanceNextIntersectionRight</Map>
+		<Map>distanceNearestGhostRight</Map>
+		<Map>GhostEdibleRight</Map>		
+		<Map>edible</Map>
+		<Map>lastMove</Map>
+		<Map>distanceToPacMan</Map>		
+	</DescriptionMappings>
+	<SolutionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsSolution</SolutionClassName>
+	<SolutionMappings>
+		<Map>id</Map>
+		<Map>move</Map>
+	</SolutionMappings>
+	<ResultClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsResult</ResultClassName>
+	<ResultMappings>
+		<Map>id</Map>
+		<Map>score</Map>
+		<Map>pacmanHealth</Map>
+	</ResultMappings>
+</TextFileConfiguration>

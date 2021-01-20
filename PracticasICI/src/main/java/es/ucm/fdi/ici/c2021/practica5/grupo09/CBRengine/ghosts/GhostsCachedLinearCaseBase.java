@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import es.ucm.fdi.gaia.jcolibri.exception.InitializingException;
  * 
  * @author Juan A. Recio-García
  */
-public class CachedLinearCaseBase implements CBRCaseBase {
+public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 
 	private Connector connector;
 	private Collection<CBRCase> originalCases;
