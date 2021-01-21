@@ -7,6 +7,7 @@ import java.util.List;
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsCBRengine;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsStorageManager;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.MapaInfoGhost;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.GoToPPillAction;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.RunAwayAction;
 import pacman.controllers.GhostController;
@@ -27,7 +28,8 @@ public class Ghosts extends GhostController {
 	
 	public Ghosts()
 	{
-		this.input = new GhostsInput();
+		MapaInfoGhost mapa=new MapaInfoGhost();
+		this.input = new GhostsInput(mapa);
 		
 		List<Action> actions = new ArrayList<Action>();
 		actions.add(new GoToPPillAction());
@@ -73,6 +75,7 @@ public class Ghosts extends GhostController {
 			
 			try {
 				input.parseInput(game);
+				input.setGhost(ghost);
 				actionSelector.setGame(game);
 				storageManager.setGame(game);
 				cbrEngine.cycle(input.getQuery());
