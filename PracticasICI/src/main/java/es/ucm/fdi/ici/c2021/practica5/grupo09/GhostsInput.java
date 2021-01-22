@@ -2,6 +2,8 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
 import java.util.EnumMap;
 
+import com.hp.hpl.jena.sparql.function.library.min;
+
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsDescription;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.MapaInfoGhost;
@@ -13,36 +15,51 @@ import pacman.game.Game;
 
 public class GhostsInput implements Input {
 
-	MapaInfoGhost mapa;
-	GHOST ghost;
-	interseccion interseccion;
-	EnumMap<MOVE,Integer> nearestGhosts;
-	EnumMap<MOVE,Boolean> areGhostsedible;
+	//Descripcion
+	EnumMap<MOVE, Integer> nearestGhosts;
+	EnumMap<MOVE, Boolean> areGhostsEdible;
+	EnumMap<MOVE, Integer> distanceNextInterseccion;
 	Boolean edible;
 	MOVE lastMove;
 	Double PacmanDistance;
+
+	//Auxiliares
+	MapaInfoGhost mapa;
+	GHOST ghostType;
+	interseccion myInterseccion;
+
+	DM DISTANCE_MEASURE = DM.PATH;
 	
 	public GhostsInput(MapaInfoGhost map) {
 		this.mapa=map;
+	}
 
-	}
 	public void setGhost(GHOST myGhost) {
-		this.ghost=myGhost;
+		this.ghostType = myGhost;
 	}
+
 	@Override
 	public void parseInput(Game game) {
 		mapa.update(game);
-		if(game.doesGhostRequireAction(ghost)) {
-			interseccion=mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghost));
-			for(MOVE m:interseccion.destinos.keySet())
-				computeNearestGhostAndEdible(game, m);
-			edible=game.isGhostEdible(ghost);
-			lastMove=game.getGhostLastMoveMade(ghost);
-			PacmanDistance=game.getDistance(this.interseccion.identificador, 
-					game.getPacmanCurrentNodeIndex(), this.lastMove,DM.PATH);
-		}
-		
-		
+		if(game.doesGhostRequireAction(ghostType)) {
+			myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
+			edible = game.isGhostEdible(ghostType);
+			lastMove = game.getGhostLastMoveMade(ghostType);
+			PacmanDistance = game.getDistance(this.myInterseccion.identificador, game.getPacmanCurrentNodeIndex(), this.lastMove, DISTANCE_MEASURE);
+
+			for(MOVE m : MOVE.values())
+				if(m != MOVE.NEUTRAL) computeNearestGhostAndEdible(game, m);
+
+			//Compute distances to intersection
+			for(MOVE m : MOVE.values()){
+				if(m == MOVE.NEUTRAL) 
+					continue;
+				if(myInterseccion.distancias.containsKey(m))
+					distanceNextInterseccion.put(m, myInterseccion.distancias.get(m));
+				else 
+					distanceNextInterseccion.put(m, Integer.MAX_VALUE);			
+			}
+		}		
 	}
 
 	@Override
@@ -54,15 +71,15 @@ public class GhostsInput implements Input {
 		description.setDistanceNearestGhostLeft(this.nearestGhosts.get(MOVE.LEFT));
 		description.setDistanceNearestGhostRight(this.nearestGhosts.get(MOVE.RIGHT));
 		
-		description.setDistanceNextIntersectionUp(this.interseccion.distancias.get(MOVE.UP));
-		description.setDistanceNextIntersectionDown(this.interseccion.distancias.get(MOVE.DOWN));
-		description.setDistanceNextIntersectionLeft(this.interseccion.distancias.get(MOVE.LEFT));
-		description.setDistanceNextIntersectionRight(this.interseccion.distancias.get(MOVE.RIGHT));
+		description.setDistanceNextIntersectionUp(this.distanceNextInterseccion.get(MOVE.UP));
+		description.setDistanceNextIntersectionDown(this.distanceNextInterseccion.get(MOVE.DOWN));
+		description.setDistanceNextIntersectionLeft(this.distanceNextInterseccion.get(MOVE.LEFT));
+		description.setDistanceNextIntersectionRight(this.distanceNextInterseccion.get(MOVE.RIGHT));
 		
-		description.setGhostEdibleUp(this.areGhostsedible.get(MOVE.UP));
-		description.setGhostEdibleDown(this.areGhostsedible.get(MOVE.DOWN));
-		description.setGhostEdibleLeft(this.areGhostsedible.get(MOVE.LEFT));
-		description.setGhostEdibleRight(this.areGhostsedible.get(MOVE.RIGHT));
+		description.setGhostEdibleUp(this.areGhostsEdible.get(MOVE.UP));
+		description.setGhostEdibleDown(this.areGhostsEdible.get(MOVE.DOWN));
+		description.setGhostEdibleLeft(this.areGhostsEdible.get(MOVE.LEFT));
+		description.setGhostEdibleRight(this.areGhostsEdible.get(MOVE.RIGHT));
 		
 		description.setEdible(edible);
 		description.setLastMove(this.lastMove.ordinal());
@@ -74,29 +91,35 @@ public class GhostsInput implements Input {
 		return query;
 	}
 	
-	private void computeNearestGhostAndEdible(Game game,MOVE m) {
-		this.nearestGhosts.clear();
-		int []pos=new int[3];
-		for(int i=0;i<3;i++) {
-			if(GHOST.values()[i]==ghost)
-				continue;
-			pos[i]=game.getGhostCurrentNodeIndex(GHOST.values()[i]);
-		}
-		
-		GHOST nearestP=GHOST.BLINKY;
-		double nearestDist = Double.MAX_VALUE;
-		for (int j=0;j<3;j++) {
-			
-			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), pos[j], m, DM.PATH);
-			if (aux < nearestDist) {
-				nearestDist = aux;
-				nearestP=GHOST.values()[j];
+	private void computeNearestGhostAndEdible(Game game, MOVE m) {
+		if(!myInterseccion.destinos.containsKey(m)){
+			nearestGhosts.put(m, Integer.MAX_VALUE);
+			areGhostsEdible.put(m, false);
+			return;
+		}	
+
+		interseccion siguiente = mapa.getInterseccion(myInterseccion.destinos.get(m));
+		double minDistance = Double.MAX_VALUE, ghostDistance = -1, distanceToIntersection = myInterseccion.distancias.get(m);
+		MOVE prohibido = MOVE.NEUTRAL, towards = MOVE.NEUTRAL;
+		for(MOVE moveInter : siguiente.destinos.keySet()){
+			if(siguiente.destinos.get(moveInter) == myInterseccion.identificador){
+				prohibido = moveInter;
+				break;
 			}
 		}
-		this.nearestGhosts.put(m, (int)nearestDist);
-		this.areGhostsedible.put(m,game.isGhostEdible(nearestP));
+
+		double distanceSigToGhost = 0;
+		for(GHOST g : GHOST.values()){
+			if(g == ghostType)
+				continue;	
+			distanceSigToGhost = game.getDistance(siguiente.identificador, game.getGhostCurrentNodeIndex(g), DISTANCE_MEASURE);
+			towards = game.getNextMoveTowardsTarget(siguiente.identificador, game.getGhostCurrentNodeIndex(g), DISTANCE_MEASURE);
+			ghostDistance = towards == prohibido ? distanceToIntersection - distanceSigToGhost : distanceToIntersection + distanceSigToGhost;
+			if(ghostDistance < minDistance) {
+				minDistance = ghostDistance;
+				areGhostsEdible.put(m, game.isGhostEdible(g));
+			}
+		}
+		nearestGhosts.put(m, (int)minDistance);
 	}
-	
-	
-	
 }

@@ -1,4 +1,4 @@
-package es.ucm.fdi.ici.c2021.practica4.grupo09;
+package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
