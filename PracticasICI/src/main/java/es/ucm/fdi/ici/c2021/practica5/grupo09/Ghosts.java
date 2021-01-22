@@ -30,11 +30,8 @@ public class Ghosts extends GhostController {
 	{
 		MapaInfoGhost mapa=new MapaInfoGhost();
 		this.input = new GhostsInput(mapa);
-		
-		List<Action> actions = new ArrayList<Action>();
-		actions.add(new GoToPPillAction());
-		actions.add(new RunAwayAction());
-		this.actionSelector = new GhostsAction(actions);
+
+		this.actionSelector = new GhostsAction();
 
 		this.storageManager = new GhostsStorageManager();
 		
@@ -68,15 +65,15 @@ public class Ghosts extends GhostController {
 
 		for (GHOST ghost : GHOST.values()) //for each ghost
         {
-			if(!game.isJunction(game.getPacmanCurrentNodeIndex())){
+			if(!game.isJunction(game.getGhostCurrentNodeIndex(ghost))){
 				myMoves.put(ghost, MOVE.NEUTRAL);
 				continue;
-			}		
+			}
 			
 			try {
 				input.parseInput(game);
 				input.setGhost(ghost);
-				actionSelector.setGame(game);
+				actionSelector.setGameAndGhost(game, ghost);
 				storageManager.setGame(game);
 				cbrEngine.cycle(input.getQuery());
 				MOVE movimiento = cbrEngine.getSolution();

@@ -19,7 +19,7 @@ public class MsPacMan extends PacmanController {
 	MsPacManActionSelector actionSelector;
 	MsPacManStorageManager storageManager;
 	
-	final static String FILE_PATH = "cbrdata/grupo09/Ghosts.csv"; //Cuidado!! poner el grupo aquí
+	final static String FILE_PATH = "cbrdata/grupo09/Pacman.csv"; //Cuidado!! poner el grupo aquí
 	
 	public MsPacMan()
 	{
