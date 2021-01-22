@@ -23,10 +23,15 @@ public class GhostsAction {
 	 * @return
 	 */
 	public MOVE defaultAction() {
+
+		
 		return MOVE.NEUTRAL;
 	}
 
 	public MOVE findAnotherMove(MOVE wrongMove){
+
+
+
 		return MOVE.NEUTRAL;
 	}
 }

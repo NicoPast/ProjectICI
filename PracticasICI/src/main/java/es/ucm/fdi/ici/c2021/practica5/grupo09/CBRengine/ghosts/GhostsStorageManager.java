@@ -44,13 +44,19 @@ public class GhostsStorageManager {
 	}
 	
 	private void reviseCase(CBRCase bCase) {
-		MsPacManDescription description = (MsPacManDescription)bCase.getDescription();
+		GhostsDescription description = (GhostsDescription)bCase.getDescription();
 		int oldScore = description.getScore();
 		int currentScore = game.getScore();
 		int resultValue = currentScore - oldScore;
-		MsPacManResult result = (MsPacManResult)bCase.getResult();
+
+		int oldLifes = description.getPacmanLife();
+		int currentLifes = game.getPacmanNumberOfLivesRemaining();
+		int lifesValue = currentLifes - oldLifes;
+
+		GhostsResult result = (GhostsResult)bCase.getResult();
 		result.setScore(resultValue);
-		
+		result.setPacmanHealth(lifesValue);
+
 		//Store the old case right now into the case base
 		//Alternatively we could store all them when game finishes in close() method
 		StoreCasesMethod.storeCase(this.caseBase, bCase);

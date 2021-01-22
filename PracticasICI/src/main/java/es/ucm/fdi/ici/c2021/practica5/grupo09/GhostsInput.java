@@ -23,6 +23,10 @@ public class GhostsInput implements Input {
 	MOVE lastMove;
 	Double PacmanDistance;
 
+	//Relacionadas con el resultado
+	Integer score;
+	Integer pacManLife;
+
 	//Auxiliares
 	MapaInfoGhost mapa;
 	GHOST ghostType;
@@ -46,6 +50,8 @@ public class GhostsInput implements Input {
 			edible = game.isGhostEdible(ghostType);
 			lastMove = game.getGhostLastMoveMade(ghostType);
 			PacmanDistance = game.getDistance(this.myInterseccion.identificador, game.getPacmanCurrentNodeIndex(), this.lastMove, DISTANCE_MEASURE);
+			score = game.getScore();
+			pacManLife = game.getPacmanNumberOfLivesRemaining();
 
 			for(MOVE m : MOVE.values())
 				if(m != MOVE.NEUTRAL) computeNearestGhostAndEdible(game, m);
@@ -63,8 +69,7 @@ public class GhostsInput implements Input {
 	}
 
 	@Override
-	public CBRQuery getQuery() {
-		
+	public CBRQuery getQuery() {		
 		GhostsDescription description = new GhostsDescription();
 		description.setDistanceNearestGhostUp(this.nearestGhosts.get(MOVE.UP));
 		description.setDistanceNearestGhostDown(this.nearestGhosts.get(MOVE.DOWN));
@@ -81,9 +86,11 @@ public class GhostsInput implements Input {
 		description.setGhostEdibleLeft(this.areGhostsEdible.get(MOVE.LEFT));
 		description.setGhostEdibleRight(this.areGhostsEdible.get(MOVE.RIGHT));
 		
-		description.setEdible(edible);
+		description.setEdible(this.edible);
 		description.setLastMove(this.lastMove.ordinal());
 		description.setDistanceToPacMan(this.PacmanDistance);
+		description.setScore(this.score);
+		description.setPacmanLife(this.pacManLife);
 		
 		
 		CBRQuery query = new CBRQuery();

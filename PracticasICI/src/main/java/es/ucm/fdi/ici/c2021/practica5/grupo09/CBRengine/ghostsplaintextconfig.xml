@@ -18,7 +18,9 @@
 		<Map>GhostEdibleRight</Map>		
 		<Map>edible</Map>
 		<Map>lastMove</Map>
-		<Map>distanceToPacMan</Map>		
+		<Map>distanceToPacMan</Map>
+		<Map>score</Map>
+		<Map>pacmanLife</Map>			
 	</DescriptionMappings>
 	<SolutionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsSolution</SolutionClassName>
 	<SolutionMappings>

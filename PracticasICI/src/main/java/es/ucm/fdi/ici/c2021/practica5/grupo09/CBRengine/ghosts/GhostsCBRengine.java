@@ -76,45 +76,64 @@ public class GhostsCBRengine implements StandardCBRApplication {
 		
 		simConfig = new NNConfig();
 		simConfig.setDescriptionSimFunction(new Average());
-		simConfig.addMapping(new Attribute("distanceNextIntersectionUp",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNextIntersectionDown",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNextIntersectionLeft",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNextIntersectionRight",GhostsDescription.class), new Interval(650));
-		
-		simConfig.addMapping(new Attribute("distanceNearestGhostUp",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNearestGhostDown",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNearestGhostLeft",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanceNearestGhostRight",GhostsDescription.class), new Interval(650));
-		
-		simConfig.addMapping(new Attribute("GhostEdibleUp",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("GhostEdibleDown",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("GhostEdibleLeft",GhostsDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("GhostEdibleRight",GhostsDescription.class), new Interval(650));
 
-		simConfig.addMapping(new Attribute("edible",GhostsDescription.class), new Equal());
-		simConfig.addMapping(new Attribute("lastMove",GhostsDescription.class), new Equal());
-		simConfig.addMapping(new Attribute("distanceToPacMan",GhostsDescription.class), new Interval(650));
+		Attribute att;
 
+		att = new Attribute("distanceNextIntersectionUp",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNextIntersectionDown",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNextIntersectionLeft",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNextIntersectionRight",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+
+		att = new Attribute("distanceNearestGhostUp",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNearestGhostDown",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNearestGhostLeft",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
+		att = new Attribute("distanceNearestGhostRight",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
 		
-		simConfig.setWeight(distanceNextIntersectionUp, weight);
-		simConfig.setWeight(distanceNextIntersectionDown, weight);
-		simConfig.setWeight(distanceNextIntersectionLeft, weight);
-		simConfig.setWeight(distanceNextIntersectionRight, weight);
+		att = new Attribute("GhostEdibleUp",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("GhostEdibleDown",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("GhostEdibleLeft",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("GhostEdibleRight",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+
+		att = new Attribute("edible",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("lastMove",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("distanceToPacMan",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
 		
-		simConfig.setWeight(distanceNearestGhostUp, weight);
-		simConfig.setWeight(distanceNearestGhostDown, weight);
-		simConfig.setWeight(distanceNearestGhostLeft, weight);
-		simConfig.setWeight(distanceNearestGhostRight, weight);
-		
-		simConfig.setWeight(GhostEdibleUp, weight);
-		simConfig.setWeight(GhostEdibleDown, weight);
-		simConfig.setWeight(GhostEdibleLeft, weight);
-		simConfig.setWeight(GhostEdibleRight, weight);
-		
-		simConfig.setWeight(edible, weight);
-		simConfig.setWeight(lastMove, weight);
-		simConfig.setWeight(distanceToPacMan, weight);
-		
+		att = new Attribute("pacmanLife",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Equal());
+		att = new Attribute("score",GhostsDescription.class);
+		simConfig.setWeight(att, 1.0);
+		simConfig.addMapping(att, new Interval(650));
 	}
 
 	@Override

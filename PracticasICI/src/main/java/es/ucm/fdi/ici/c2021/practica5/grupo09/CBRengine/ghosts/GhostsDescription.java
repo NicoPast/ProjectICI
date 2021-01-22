@@ -35,7 +35,9 @@ public class GhostsDescription implements CaseComponent {
 
 	Double distanceToPacMan;
 	
-
+	//Relacionadas con hacer el resultado
+	Integer score;
+	Integer pacmanLife;
 	
 	public Integer getId() {
 		return id;
@@ -196,25 +198,39 @@ public class GhostsDescription implements CaseComponent {
 		this.distanceToPacMan = distanceToPacMan;
 	}
 
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
+	public Integer getPacmanLife() {
+		return pacmanLife;
+	}
+
+	public void setPacmanLife(Integer pacmanLife) {
+		this.pacmanLife = pacmanLife;
+	}
 
 	@Override
 	public Attribute getIdAttribute() {
 		return new Attribute("id", MsPacManDescription.class);
-	}	
-	
-	@Override
-	public String toString() {
-		return "GhostsDescription [id=" + id + ", distanceNextIntersectionUp=" + distanceNextIntersectionUp
-				+ ", distanceNearestGhostUp=" + distanceNearestGhostUp + ", GhostEdibleUp=" + GhostEdibleUp
-				+ ", distanceNextIntersectionDown=" + distanceNextIntersectionDown + ", distanceNearestGhostDown="
-				+ distanceNearestGhostDown + ", GhostEdibleDown=" + GhostEdibleDown
-				+ ", distanceNextIntersectionLeft=" + distanceNextIntersectionLeft + ", distanceNearestGhostLeft="
-				+ distanceNearestGhostLeft + ", GhostEdibleLeft=" + GhostEdibleLeft
-				+ ", distanceNextIntersectionRight=" + distanceNextIntersectionRight
-				+ ", distanceNearestGhostRight=" + distanceNearestGhostRight + ", GhostEdibleRight="
-				+ GhostEdibleRight + ", edible=" + edible + ", lastMove=" + lastMove + ", distanceToPacMan="
-				+ distanceToPacMan + "]";
 	}
 
+	@Override
+	public String toString() {
+		return "GhostsDescription [GhostEdibleDown=" + GhostEdibleDown + ", GhostEdibleLeft=" + GhostEdibleLeft
+				+ ", GhostEdibleRight=" + GhostEdibleRight + ", GhostEdibleUp=" + GhostEdibleUp
+				+ ", distanceNearestGhostDown=" + distanceNearestGhostDown + ", distanceNearestGhostLeft="
+				+ distanceNearestGhostLeft + ", distanceNearestGhostRight=" + distanceNearestGhostRight
+				+ ", distanceNearestGhostUp=" + distanceNearestGhostUp + ", distanceNextIntersectionDown="
+				+ distanceNextIntersectionDown + ", distanceNextIntersectionLeft=" + distanceNextIntersectionLeft
+				+ ", distanceNextIntersectionRight=" + distanceNextIntersectionRight + ", distanceNextIntersectionUp="
+				+ distanceNextIntersectionUp + ", distanceToPacMan=" + distanceToPacMan + ", edible=" + edible + ", id="
+				+ id + ", lastMove=" + lastMove + ", pacmanLife=" + pacmanLife + ", score=" + score + "]";
+	}
 
+	
 }

@@ -9,7 +9,6 @@ public class GhostsResult implements CaseComponent, Cloneable {
 	Integer score;
 	Integer pacmanHealth;
 
-
 	@Override
 	public Attribute getIdAttribute() {
 		return new Attribute("id", GhostsResult.class);
