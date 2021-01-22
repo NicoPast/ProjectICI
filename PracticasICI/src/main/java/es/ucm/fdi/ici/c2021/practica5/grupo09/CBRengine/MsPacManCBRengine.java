@@ -75,13 +75,38 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		this.storageManager.setCaseBase(caseBase);
 		
 		simConfig = new NNConfig();
-		simConfig.setDescriptionSimFunction(new Average());
-		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(15000));
-		simConfig.addMapping(new Attribute("time",MsPacManDescription.class), new Interval(4000));
-		simConfig.addMapping(new Attribute("nearestPPill",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("nearestGhost",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleGhost",MsPacManDescription.class), new Equal());
+		simConfig.setDescriptionSimFunction(new Average());	
+
+		simConfig.addMapping(new Attribute("distanciaUp",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distanciaRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distanciaDown",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distanciaLeft",MsPacManDescription.class), new Interval(650));
+
+		simConfig.addMapping(new Attribute("ghostUp",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("ghostRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("ghostDown",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("ghostLeft",MsPacManDescription.class), new Interval(650));
 		
+		simConfig.addMapping(new Attribute("edibleUp",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("edibleRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("edibleDown",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("edibleLeft",MsPacManDescription.class), new Interval(650));
+
+		simConfig.addMapping(new Attribute("vulnerable",MsPacManDescription.class), new Equal());
+
+		simConfig.addMapping(new Attribute("direction",MsPacManDescription.class), new Interval(4));
+
+		simConfig.addMapping(new Attribute("pillsUp",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("pillsRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("pillsDown",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("pillsLeft",MsPacManDescription.class), new Interval(650));
+
+		simConfig.addMapping(new Attribute("powerPillUp",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("powerPillDown",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(650));
+
+		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(15000));
 	}
 
 	@Override
