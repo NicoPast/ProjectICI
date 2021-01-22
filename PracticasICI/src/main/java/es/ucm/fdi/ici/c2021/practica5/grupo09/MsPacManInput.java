@@ -8,61 +8,83 @@ import pacman.game.Game;
 
 public class MsPacManInput implements Input {
 
-	Integer nearestGhost;
-	Boolean edible;
-	Integer nearestPPill;
+	Integer distanciaUp;
+	Integer distanciaRight;
+	Integer distanciaDown;
+	Integer distanciaLeft;
+
+	Integer ghostUp;
+	Integer ghostRight;
+	Integer ghostDown;
+	Integer ghostLeft;
+
+	Boolean edibleUp;
+	Boolean edibleRight;
+	Boolean edibleDown;
+	Boolean edibleLeft;
+	
+	Boolean vulnerable;
+	
+	Integer direction;
+
+	Integer pillsUp;
+	Integer pillsRight;
+	Integer pillsDown;
+	Integer pillsLeft;
+
+	Integer powerPillUp;
+	Integer powerPillRight;
+	Integer powerPillDown;
+	Integer powerPillLeft;
+
 	Integer score;
-	Integer time;
 	
 	@Override
 	public void parseInput(Game game) {
-		computeNearestGhost(game);
-		computeNearestPPill(game);
-		time = game.getTotalTime();
+		
+		
+		//AQUI SE ACTUALIZAN LOS DATOS PARA GUARDARLOS
+		
+		
+		//computeNearestGhost(game);
+		//computeNearestPPill(game);
 		score = game.getScore();
 	}
 
 	@Override
 	public CBRQuery getQuery() {
 		MsPacManDescription description = new MsPacManDescription();
-		description.setEdibleGhost(edible);
-		description.setNearestGhost(nearestGhost);
-		description.setNearestPPill(nearestPPill);
+		
+		
+		//Hacer todos los sets
+		description.setDistanciaUp(distanciaUp);
+		description.setDistanciaRight(distanciaRight);
+		description.setDistanciaDown(distanciaDown);
+		description.setDistanciaLeft(distanciaLeft);
+		description.setGhostUp(ghostUp);
+		description.setGhostRight(ghostRight);
+		description.setGhostDown(ghostDown);
+		description.setGhostLeft(ghostLeft);
+		description.setEdibleUp(edibleUp);
+		description.setEdibleRight(edibleRight);
+		description.setEdibleDown(edibleDown);
+		description.setEdibleLeft(edibleLeft);
+		description.setVulnerable(vulnerable);
+		description.setDirection(direction);
+		description.setPillsUp(pillsUp);
+		description.setPillsRight(pillsRight);
+		description.setPillsDown(pillsDown);
+		description.setPillsLeft(pillsLeft);
+		description.setPowerPillUp(powerPillUp);
+		description.setPowerPillRight(powerPillRight);
+		description.setPowerPillDown(powerPillDown);
+		description.setPowerPillLeft(powerPillLeft);
 		description.setScore(score);
-		description.setTime(time);
 		
 		CBRQuery query = new CBRQuery();
 		query.setDescription(description);
 		return query;
 	}
 	
-	private void computeNearestGhost(Game game) {
-		nearestGhost = Integer.MAX_VALUE;
-		edible = false;
-		GHOST nearest = null;
-		for(GHOST g: GHOST.values()) {
-			int pos = game.getGhostCurrentNodeIndex(g);
-			int distance; 
-			if(pos != -1) 
-				distance = (int)game.getDistance(game.getPacmanCurrentNodeIndex(), pos, DM.PATH);
-			else
-				distance = Integer.MAX_VALUE;
-			if(distance < nearestGhost)
-			{
-				nearestGhost = distance;
-				nearest = g;
-			}
-		}
-		if(nearest!=null)
-			edible = game.isGhostEdible(nearest);
-	}
-	
-	private void computeNearestPPill(Game game) {
-		nearestPPill = Integer.MAX_VALUE;
-		for(int pos: game.getPowerPillIndices()) {
-			int distance = (int)game.getDistance(game.getPacmanCurrentNodeIndex(), pos, DM.PATH);
-			if(distance < nearestGhost)
-				nearestPPill = distance;
-		}
-	}
+
 }
