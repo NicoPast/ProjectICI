@@ -22,15 +22,21 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 
 	private Connector connector;
 	private Collection<CBRCase> originalCases;
-	private Collection<CBRCase> workingCases;
+	private Collection<CBRCase> EdibleCases;
+	private Collection<CBRCase> StrongCases;
 	private Collection<CBRCase> casesToRemove;
+	private Boolean AmIEdible=false;
+	public void setEdible(Boolean Edible) {this.AmIEdible=Edible;}
 	/**
 	 * Closes the case base saving or deleting the cases of the persistence media
 	 */
 	public void close() {
-		workingCases.removeAll(casesToRemove);
+		EdibleCases.removeAll(casesToRemove);
+		StrongCases.removeAll(casesToRemove);
+		//le meto los edibles y luego le añado los strong
+		Collection<CBRCase> casesToStore = new ArrayList<>(EdibleCases);
+		casesToStore.addAll(StrongCases);
 		
-		Collection<CBRCase> casesToStore = new ArrayList<>(workingCases);
 		casesToStore.removeAll(originalCases);
 
 		connector.storeCases(casesToStore);
@@ -41,14 +47,20 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	 * Forgets cases. It only removes the cases from the storage media when closing.
 	 */
 	public void forgetCases(Collection<CBRCase> cases) {
-		workingCases.removeAll(cases);
+		if(AmIEdible)
+			this.EdibleCases.removeAll(cases);
+		else this.StrongCases.removeAll(cases);
+		
+		
 	}
 
 	/**
 	 * Returns working cases.
 	 */
 	public Collection<CBRCase> getCases() {
-		return workingCases;
+		if(AmIEdible)
+			return EdibleCases;
+		else return StrongCases;
 	}
 
 	/**
@@ -65,15 +77,27 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	public void init(Connector connector) throws InitializingException {
 		this.connector = connector;
 		originalCases = this.connector.retrieveAllCases();	
-		workingCases = new java.util.ArrayList<CBRCase>(originalCases);
+		EdibleCases = new ArrayList<>();
+		StrongCases = new ArrayList<>();
+		for(CBRCase c:originalCases) {
+		
+            if(((GhostsDescription) c.getDescription()).getEdible())
+            	EdibleCases.add(c);
+            else this.StrongCases.add(c);
+	            		
+			
+		}
 		casesToRemove = new ArrayList<>();
+
 	}
 
 	/**
 	 * Learns cases that are only saved when closing the Case Base.
 	 */
 	public void learnCases(Collection<CBRCase> cases) {
-		workingCases.addAll(cases);
+		if(AmIEdible)
+			this.EdibleCases.addAll(cases);
+		else this.StrongCases.addAll(cases);
 	}
 
 }
