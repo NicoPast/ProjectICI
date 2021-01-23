@@ -73,7 +73,7 @@ public class Ghosts extends GhostController {
 				input.setGhost(ghost);
 				input.parseInput(game);
 				actionSelector.setGameAndGhost(game, ghost);
-				storageManager.setGame(game);
+				storageManager.setGameAndGhost(game, ghost);
 				cbrEngine.cycle(input.getQuery());
 				MOVE movimiento = cbrEngine.getSolution();
 				myMoves.put(ghost, movimiento);

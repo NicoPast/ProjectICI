@@ -33,5 +33,6 @@
 		<Map>id</Map>
 		<Map>score</Map>
 		<Map>pacmanHealth</Map>
+		<Map>deltaDistanceToPacMan</Map>
 	</ResultMappings>
 </TextFileConfiguration>

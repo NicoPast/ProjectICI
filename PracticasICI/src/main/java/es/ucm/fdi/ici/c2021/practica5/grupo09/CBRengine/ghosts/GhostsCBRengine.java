@@ -166,7 +166,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			
 			// This simple implementation only uses 1NN
 			// Consider using kNNs with majority voting
-			Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 1);
+			Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
 
 			EnumMap<MOVE, Double> votacion = new EnumMap<>(MOVE.class);
 			
@@ -205,15 +205,19 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
 				this.move = actionSelector.defaultAction();
 			
-			else if(result.getScore() > 100 && result.getPacmanHealth() == 0) //Pacman gano demasiados puntos y no murio
+			else if(badCase((GhostsDescription)mostSimilarCase.getDescription(), result)) 
 				this.move = actionSelector.findAnotherMove(mostVotedMove);
 		}
 		CBRCase newCase = createNewCase(query);
 		this.storageManager.storeCase(newCase);
-		
 	}
 
-
+	//Pacman gano demasiados puntos y no murio o se alejo o acerco cuando no debia
+	boolean badCase(GhostsDescription description, GhostsResult result){
+		return result.getScore() > 100 && result.getPacmanHealth() == 0 ||
+			(description.getEdible() && result.deltaDistanceToPacMan > 20) 
+			|| (!description.getEdible() && result.deltaDistanceToPacMan < -20);
+	}
 
 
 	/**

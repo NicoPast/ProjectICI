@@ -98,7 +98,7 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	public void learnCases(Collection<CBRCase> cases) {	
 		for(CBRCase c : cases) {
             if(((GhostsDescription)c.getDescription()).getEdible())
-            	EdibleCases.add(c);
+            	this.EdibleCases.add(c);
 			else 
 				this.StrongCases.add(c);
 		}

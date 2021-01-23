@@ -9,6 +9,8 @@ public class GhostsResult implements CaseComponent, Cloneable {
 	Integer score;
 	Integer pacmanHealth;
 
+	Integer deltaDistanceToPacMan;
+
 	@Override
 	public Attribute getIdAttribute() {
 		return new Attribute("id", GhostsResult.class);
@@ -43,8 +45,17 @@ public class GhostsResult implements CaseComponent, Cloneable {
 		this.pacmanHealth = pacmanHealth;
 	}
 
+	public Integer getDeltaDistanceToPacMan() {
+		return deltaDistanceToPacMan;
+	}
+
+	public void setDeltaDistanceToPacMan(Integer deltaDistanceToPacMan) {
+		this.deltaDistanceToPacMan = deltaDistanceToPacMan;
+	}
+
 	@Override
 	public String toString() {
-		return "GhostsResult [id=" + id + ", score=" + score + ", pacmanHealth=" + pacmanHealth + "]";
+		return "GhostsResult [deltaDistanceToPacMan=" + deltaDistanceToPacMan + ", id=" + id + ", pacmanHealth="
+				+ pacmanHealth + ", score=" + score + "]";
 	}
 }
