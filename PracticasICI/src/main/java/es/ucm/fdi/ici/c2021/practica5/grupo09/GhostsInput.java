@@ -67,8 +67,8 @@ public class GhostsInput implements Input {
 
 			//Compute distances to intersection
 			for(MOVE m : MOVE.values()){
-				if(m == MOVE.NEUTRAL) 
-					continue;
+//				if(m == MOVE.NEUTRAL) 
+//					continue;
 				if(myInterseccion.distancias.containsKey(m))
 					distanceNextInterseccion.put(m, myInterseccion.distancias.get(m));
 				else 

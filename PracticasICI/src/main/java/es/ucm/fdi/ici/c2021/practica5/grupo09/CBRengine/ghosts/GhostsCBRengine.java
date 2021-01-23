@@ -82,6 +82,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 
 		Attribute att;
 
+
 		att = new Attribute("distanceNextIntersectionUp",GhostsDescription.class);
 		simConfig.setWeight(att, 1.0);
 		simConfig.addMapping(att, new Interval(650));

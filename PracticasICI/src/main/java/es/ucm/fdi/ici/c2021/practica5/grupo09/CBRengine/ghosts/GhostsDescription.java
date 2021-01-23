@@ -225,7 +225,7 @@ public class GhostsDescription implements CaseComponent {
 	
 	@Override
 	public Attribute getIdAttribute() {
-		return new Attribute("id", MsPacManDescription.class);
+		return new Attribute("id", GhostsDescription.class);
 	}
 
 	@Override
