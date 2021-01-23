@@ -38,7 +38,7 @@ public class GhostsAction {
 	}
 
 	public MOVE findAnotherMove(MOVE wrongMove){
-		int length = MOVE.values().length;
+		int length = 4;
 		int randomIndex = new Random().nextInt(length);
 		MOVE other = MOVE.values()[randomIndex];
 		if(other.equals(wrongMove))

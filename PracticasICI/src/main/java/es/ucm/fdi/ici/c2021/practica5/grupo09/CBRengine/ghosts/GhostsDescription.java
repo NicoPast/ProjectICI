@@ -10,6 +10,7 @@ public class GhostsDescription implements CaseComponent {
 	Integer id;
 	
 	//Inteseccion
+		Integer intersectionType;
 		//Up
 		Integer distanceNextIntersectionUp;
 		Integer distanceNearestGhostUp;
@@ -214,6 +215,14 @@ public class GhostsDescription implements CaseComponent {
 		this.pacmanLife = pacmanLife;
 	}
 
+	public Integer getIntersectionType() {
+		return intersectionType;
+	}
+
+	public void setIntersectionType(Integer intersectionType) {
+		this.intersectionType = intersectionType;
+	}
+	
 	@Override
 	public Attribute getIdAttribute() {
 		return new Attribute("id", MsPacManDescription.class);
@@ -229,7 +238,8 @@ public class GhostsDescription implements CaseComponent {
 				+ distanceNextIntersectionDown + ", distanceNextIntersectionLeft=" + distanceNextIntersectionLeft
 				+ ", distanceNextIntersectionRight=" + distanceNextIntersectionRight + ", distanceNextIntersectionUp="
 				+ distanceNextIntersectionUp + ", distanceToPacMan=" + distanceToPacMan + ", edible=" + edible + ", id="
-				+ id + ", lastMove=" + lastMove + ", pacmanLife=" + pacmanLife + ", score=" + score + "]";
+				+ id + ", intersectionType=" + intersectionType + ", lastMove=" + lastMove + ", pacmanLife="
+				+ pacmanLife + ", score=" + score + "]";
 	}
 
 	

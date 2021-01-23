@@ -16,6 +16,7 @@ import pacman.game.Game;
 public class GhostsInput implements Input {
 
 	//Descripcion
+	Integer intersectionType;
 	EnumMap<MOVE, Integer> nearestGhosts;
 	EnumMap<MOVE, Boolean> areGhostsEdible;
 	EnumMap<MOVE, Integer> distanceNextInterseccion;
@@ -65,12 +66,21 @@ public class GhostsInput implements Input {
 				else 
 					distanceNextInterseccion.put(m, Integer.MAX_VALUE);			
 			}
+
+			if(nearestGhosts.get(MOVE.LEFT) == -1) intersectionType = 1;
+			else if(nearestGhosts.get(MOVE.UP) == -1) intersectionType = 2;
+			else if(nearestGhosts.get(MOVE.RIGHT) == -1) intersectionType = 3;
+			else if(nearestGhosts.get(MOVE.DOWN) == -1) intersectionType = 4;
+			else intersectionType = 0;
 		}		
 	}
 
 	@Override
 	public CBRQuery getQuery() {		
 		GhostsDescription description = new GhostsDescription();
+
+		description.setIntersectionType(intersectionType);
+
 		description.setDistanceNearestGhostUp(this.nearestGhosts.get(MOVE.UP));
 		description.setDistanceNearestGhostDown(this.nearestGhosts.get(MOVE.DOWN));
 		description.setDistanceNearestGhostLeft(this.nearestGhosts.get(MOVE.LEFT));
@@ -92,7 +102,6 @@ public class GhostsInput implements Input {
 		description.setScore(this.score);
 		description.setPacmanLife(this.pacManLife);
 		
-		
 		CBRQuery query = new CBRQuery();
 		query.setDescription(description);
 		return query;
@@ -100,7 +109,7 @@ public class GhostsInput implements Input {
 	
 	private void computeNearestGhostAndEdible(Game game, MOVE m) {
 		if(!myInterseccion.destinos.containsKey(m)){
-			nearestGhosts.put(m, Integer.MAX_VALUE);
+			nearestGhosts.put(m, -1);
 			areGhostsEdible.put(m, false);
 			return;
 		}	

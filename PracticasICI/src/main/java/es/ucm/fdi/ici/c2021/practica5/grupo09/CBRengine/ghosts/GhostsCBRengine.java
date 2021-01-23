@@ -1,7 +1,9 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
@@ -29,7 +31,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 	private GhostsStorageManager storageManager;
 
 	CustomPlainTextConnector connector;
-	CBRCaseBase caseBase;
+	GhostsCachedLinearCaseBase caseBase;
 	NNConfig simConfig;
 	
 	
@@ -76,6 +78,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 		
 		simConfig = new NNConfig();
 		simConfig.setDescriptionSimFunction(new Average());
+		
 
 		Attribute att;
 
@@ -144,36 +147,72 @@ public class GhostsCBRengine implements StandardCBRApplication {
 
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
-		if(caseBase.getCases().isEmpty()) {
+		Collection<CBRCase> cases = caseBase.getCases(((GhostsDescription)query.getDescription()).getEdible());
+		if(cases.isEmpty()) {
 			this.move = actionSelector.defaultAction();
 		}else {
+			//Se filtran aquellas interseccion que no tengan la misma forma o aquellas cuya solucion es imposible de realizar
+			Collection<CBRCase> filtered = new ArrayList<CBRCase>();
+			for(CBRCase c : cases){
+				if(((GhostsDescription)query.getDescription()).getIntersectionType() == ((GhostsDescription)c.getDescription()).getIntersectionType() ||
+					((GhostsSolution)c.getSolution()).getMove() != MOVE.values()[((GhostsDescription)query.getDescription()).getLastMove()].opposite().ordinal())
+					filtered.add(c);
+			}
+
 			//Compute NN
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
+			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(cases, query, simConfig);
 			
 			// This simple implementation only uses 1NN
 			// Consider using kNNs with majority voting
-			RetrievalResult first = SelectCases.selectTopKRR(eval, 1).iterator().next();
-			CBRCase mostSimilarCase = first.get_case();
-			double similarity = first.getEval();
-	
-			GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
-			GhostsSolution solution = (GhostsSolution) mostSimilarCase.getSolution();
+			Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 1);
+
+			EnumMap<MOVE, Double> votacion = new EnumMap<>(MOVE.class);
 			
-			MOVE solMove = MOVE.values()[solution.getMove()];
+			//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
+			for(RetrievalResult similarCase : similarCases){
+				if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
+					MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
+					votacion.put(m, votacion.get(m) + similarCase.getEval() * similarCase.getEval());
+				}
+			}
+			//Pillamos el movimiento mas votado
+			MOVE mostVotedMove = MOVE.NEUTRAL;
+			Double mostVotes = 0.0;
+			for(MOVE m : votacion.keySet()){
+				if(votacion.get(m) > mostVotes){
+					mostVotes = votacion.get(m);
+					mostVotedMove = m;
+				}
+			}
+
+			CBRCase mostSimilarCase = similarCases.iterator().next().get_case();
+			double similarity = 0;
+
+			for(RetrievalResult similarCase : similarCases){
+				if(MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()] == mostVotedMove && similarity < similarCase.getEval()){
+					mostSimilarCase = similarCase.get_case();
+					similarity = similarCase.getEval();
+				}
+			}
+
+			GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
 
 			//Now compute a solution for the query
-			this.move = solMove;
+			this.move = mostVotedMove;
 			
 			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
 				this.move = actionSelector.defaultAction();
 			
-			else if(result.getScore()<0) //This was a bad case, ask actionSelector for another one.
-				this.move = actionSelector.findAnotherMove(solMove);
+			else if(result.getScore() > 50 && result.getPacmanHealth() == 0) //Pacman gano demasiados puntos y no murio
+				this.move = actionSelector.findAnotherMove(mostVotedMove);
 		}
 		CBRCase newCase = createNewCase(query);
 		this.storageManager.storeCase(newCase);
 		
 	}
+
+
+
 
 	/**
 	 * Creates a new case using the query as description, 

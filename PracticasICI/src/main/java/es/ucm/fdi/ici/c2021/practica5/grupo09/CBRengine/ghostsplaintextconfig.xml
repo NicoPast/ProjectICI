@@ -4,6 +4,7 @@
 	<DescriptionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsDescription</DescriptionClassName>
 	<DescriptionMappings>
 		<Map>id</Map>
+		<Map>intersectionType</Map>
 		<Map>distanceNextIntersectionUp</Map>
 		<Map>distanceNearestGhostUp</Map>
 		<Map>GhostEdibleUp</Map>		
