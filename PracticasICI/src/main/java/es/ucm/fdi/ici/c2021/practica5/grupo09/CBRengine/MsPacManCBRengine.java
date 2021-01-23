@@ -20,11 +20,12 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
+import pacman.game.Constants.MOVE;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
 	private String casebaseFile;
-	private Action action;
+	private MOVE move = MOVE.NEUTRAL;
 	private MsPacManActionSelector actionSelector;
 	private MsPacManStorageManager storageManager;
 
@@ -77,36 +78,36 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		simConfig = new NNConfig();
 		simConfig.setDescriptionSimFunction(new Average());	
 
-		simConfig.addMapping(new Attribute("distanciaUp",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanciaRight",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanciaDown",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("distanciaLeft",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distanciaUp",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("distanciaRight",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("distanciaDown",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("distanciaLeft",MsPacManDescription.class), new Interval(150));
 
-		simConfig.addMapping(new Attribute("ghostUp",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("ghostRight",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("ghostDown",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("ghostLeft",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("ghostUp",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("ghostRight",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("ghostDown",MsPacManDescription.class), new Interval(150));
+		simConfig.addMapping(new Attribute("ghostLeft",MsPacManDescription.class), new Interval(150));
 		
-		simConfig.addMapping(new Attribute("edibleUp",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleRight",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleDown",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleLeft",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("edibleUp",MsPacManDescription.class), new Equal());
+		simConfig.addMapping(new Attribute("edibleRight",MsPacManDescription.class), new Equal());
+		simConfig.addMapping(new Attribute("edibleDown",MsPacManDescription.class), new Equal());
+		simConfig.addMapping(new Attribute("edibleLeft",MsPacManDescription.class), new Equal());
 
 		simConfig.addMapping(new Attribute("vulnerable",MsPacManDescription.class), new Equal());
 
-		simConfig.addMapping(new Attribute("direction",MsPacManDescription.class), new Interval(4));
+		simConfig.addMapping(new Attribute("direction",MsPacManDescription.class), new Interval(3)); //0 up, 1 right, 2 down, 3 left
 
-		simConfig.addMapping(new Attribute("pillsUp",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("pillsRight",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("pillsDown",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("pillsLeft",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("pillsUp",MsPacManDescription.class), new Interval(25));
+		simConfig.addMapping(new Attribute("pillsRight",MsPacManDescription.class), new Interval(25));
+		simConfig.addMapping(new Attribute("pillsDown",MsPacManDescription.class), new Interval(25));
+		simConfig.addMapping(new Attribute("pillsLeft",MsPacManDescription.class), new Interval(25));
 
-		simConfig.addMapping(new Attribute("powerPillUp",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("powerPillDown",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("powerPillUp",MsPacManDescription.class), new Interval(1));
+		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(1));
+		simConfig.addMapping(new Attribute("powerPillDown",MsPacManDescription.class), new Interval(1));
+		simConfig.addMapping(new Attribute("powerPillRight",MsPacManDescription.class), new Interval(1));
 
-		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(15000));
+		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(20000));
 	}
 
 	@Override
@@ -118,32 +119,48 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
 		if(caseBase.getCases().isEmpty()) {
-			this.action = actionSelector.findAction();
-		}else {
-			//Compute NN
+			this.move = MOVE.NEUTRAL;
+		}
+		else {
+			//Cargamos todos los casos
 			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
+			//elegimos el top 5
+			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
 			
-			// This simple implementation only uses 1NN
-			// Consider using kNNs with majority voting
-			RetrievalResult first = SelectCases.selectTopKRR(eval, 1).iterator().next();
-			CBRCase mostSimilarCase = first.get_case();
-			double similarity = first.getEval();
+			//nunca deberia de acabar siendo null por que entonces no habria ni entrado en el else
+			CBRCase mostSimilarCase = null; //el caso mas similar que veremos en las proximas 5 pos
+			double similarity = null; //la similaridad del mejor caso respecto del actual
+			//elegimos cual es el mejor caso de los dados			
+			for(int i=0;i<5;i++) {
+				//itera por todos los casos¿?
+				RetrievalResult caso = colaMejores.iterator().next();
+				
+				//cambiar el mostSimilarCase
+				
+			}
+			
 	
+			//la puntuacion que nos dice si ha sido bueno o no ¿?
 			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
+			
+			//el movimiento solucion
 			MsPacManSolution solution = (MsPacManSolution) mostSimilarCase.getSolution();
 			
-			//Now compute a solution for the query
-			this.action = actionSelector.getAction(solution.getAction());
+			//Procesamos la colas
 			
-			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
-				this.action = actionSelector.findAction();
 			
-			else if(result.getScore()<0) //This was a bad case, ask actionSelector for another one.
-				this.action = actionSelector.findAnotherAction(solution.getAction());
+			if(similarity<0.7) //no es lo suficientemente parecido, tenemos que crear otro
+				; //llamar al bestMove xd pero que de momento sea random
+			
+			else if(result.getScore()<0) //el mejor caso ha dado resultados maloes
+				; //guess who's back: BESTMOVE
+			
+			else this.move = solution.getMove(); //cogemos el caso
 		}
-		CBRCase newCase = createNewCase(query);
-		this.storageManager.storeCase(newCase);
 		
+		//se guarda el caso en memoria ¿?
+		CBRCase newCase = createNewCase(query);
+		this.storageManager.storeCase(newCase);		
 	}
 
 	/**
@@ -161,15 +178,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		newDescription.setId(newId);
 		newResult.setId(newId);
 		newSolution.setId(newId);
-		newSolution.setAction(this.action.getActionId());
+		//newSolution.setAction(this.action.getActionId());
 		newCase.setDescription(newDescription);
 		newCase.setResult(newResult);
 		newCase.setSolution(newSolution);
 		return newCase;
 	}
 	
-	public Action getSolution() {
-		return this.action;
+	public MOVE getSolution() {
+		return move;
 	}
 
 	@Override

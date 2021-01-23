@@ -6,7 +6,8 @@ import java.util.List;
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManCBRengine;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManStorageManager;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions.GoToPPillAction;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions.ChaseAction;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions.ChillAction;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions.RunAwayAction;
 import pacman.controllers.PacmanController;
 import pacman.game.Constants.MOVE;
@@ -33,8 +34,6 @@ public class MsPacMan extends PacmanController {
 		//runAwayAction = new RunAwayAction(mapInfo);
 		
 		List<Action> actions = new ArrayList<Action>();
-		actions.add(new GoToPPillAction());
-		actions.add(new RunAwayAction(mapInfo));
 		this.actionSelector = new MsPacManActionSelector(actions);
 
 		this.storageManager = new MsPacManStorageManager();
@@ -76,11 +75,11 @@ public class MsPacMan extends PacmanController {
 			return MOVE.NEUTRAL;		
 		try {
 			input.parseInput(game);
-			actionSelector.setGame(game);
+			actionSelector.setGame(game); //realmente no hace falta
 			storageManager.setGame(game);
 			cbrEngine.cycle(input.getQuery());
-			Action action = cbrEngine.getSolution();
-			return action.execute(game);
+			MOVE move = cbrEngine.getSolution(); //si no encuentra movimiento que mire en la accion (best move)
+			return move;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

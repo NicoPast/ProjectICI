@@ -99,4 +99,6 @@ public class ChaseAction implements Action{
 		mapInfo = map;
 	}
 	
+	
+	
 }

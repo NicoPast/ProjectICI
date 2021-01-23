@@ -2,10 +2,11 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;
+import pacman.game.Constants.MOVE;
 
 public class MsPacManSolution implements CaseComponent, Cloneable {
 	Integer id;
-	String action;
+	MOVE move;
 	
 	public Integer getId() {
 		return id;
@@ -13,11 +14,11 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getAction() {
-		return action;
+	public MOVE getMove() {
+		return move;
 	}
-	public void setAction(String action) {
-		this.action = action;
+	public void setMove(MOVE move) {
+		this.move = move;
 	}
 	
 	@Override
