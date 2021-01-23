@@ -69,7 +69,6 @@ public class Ghosts extends GhostController {
 				myMoves.put(ghost, MOVE.NEUTRAL);
 				continue;
 			}
-			
 			try {
 				input.setGhost(ghost);
 				input.parseInput(game);

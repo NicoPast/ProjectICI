@@ -54,33 +54,32 @@ public class GhostsInput implements Input {
 
 		mapa.update(game);
 		
-		if(game.doesGhostRequireAction(ghostType)) {
-			myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
-			edible = game.isGhostEdible(ghostType);
-			lastMove = game.getGhostLastMoveMade(ghostType);
-			PacmanDistance = game.getDistance(this.myInterseccion.identificador, game.getPacmanCurrentNodeIndex(), this.lastMove, DISTANCE_MEASURE);
-			score = game.getScore();
-			pacManLife = game.getPacmanNumberOfLivesRemaining();
+		myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
+		edible = game.isGhostEdible(ghostType);
+		lastMove = game.getGhostLastMoveMade(ghostType);
+		PacmanDistance = game.getDistance(this.myInterseccion.identificador, game.getPacmanCurrentNodeIndex(), this.lastMove, DISTANCE_MEASURE);
+		score = game.getScore();
+		pacManLife = game.getPacmanNumberOfLivesRemaining();
 
-			for(MOVE m : MOVE.values())
-				if(m != MOVE.NEUTRAL) computeNearestGhostAndEdible(game, m);
+		for(MOVE m : MOVE.values())
+			if(m != MOVE.NEUTRAL) computeNearestGhostAndEdible(game, m);
 
-			//Compute distances to intersection
-			for(MOVE m : MOVE.values()){
-//				if(m == MOVE.NEUTRAL) 
-//					continue;
-				if(myInterseccion.distancias.containsKey(m))
-					distanceNextInterseccion.put(m, myInterseccion.distancias.get(m));
-				else 
-					distanceNextInterseccion.put(m, Integer.MAX_VALUE);			
-			}
+		//Compute distances to intersection
+		for(MOVE m : MOVE.values()){
+			if(m == MOVE.NEUTRAL) 
+				continue;
+			if(myInterseccion.distancias.containsKey(m))
+				distanceNextInterseccion.put(m, myInterseccion.distancias.get(m));
+			else 
+				distanceNextInterseccion.put(m, -1);			
+		}
 
-			if(nearestGhosts.get(MOVE.LEFT) == -1) intersectionType = 1;
-			else if(nearestGhosts.get(MOVE.UP) == -1) intersectionType = 2;
-			else if(nearestGhosts.get(MOVE.RIGHT) == -1) intersectionType = 3;
-			else if(nearestGhosts.get(MOVE.DOWN) == -1) intersectionType = 4;
-			else intersectionType = 0;
-		}		
+		if(nearestGhosts.get(MOVE.LEFT) == -1) intersectionType = 1;
+		else if(nearestGhosts.get(MOVE.UP) == -1) intersectionType = 2;
+		else if(nearestGhosts.get(MOVE.RIGHT) == -1) intersectionType = 3;
+		else if(nearestGhosts.get(MOVE.DOWN) == -1) intersectionType = 4;
+		else intersectionType = 0;	
+
 	}
 
 	@Override
@@ -139,7 +138,10 @@ public class GhostsInput implements Input {
 				continue;	
 			distanceSigToGhost = game.getDistance(siguiente.identificador, game.getGhostCurrentNodeIndex(g), DISTANCE_MEASURE);
 			towards = game.getNextMoveTowardsTarget(siguiente.identificador, game.getGhostCurrentNodeIndex(g), DISTANCE_MEASURE);
-			ghostDistance = towards == prohibido ? distanceToIntersection - distanceSigToGhost : distanceToIntersection + distanceSigToGhost;
+
+			ghostDistance = towards == prohibido && distanceSigToGhost < distanceToIntersection ? 
+				distanceToIntersection - distanceSigToGhost : distanceToIntersection + distanceSigToGhost;
+
 			if(ghostDistance < minDistance) {
 				minDistance = ghostDistance;
 				areGhostsEdible.put(m, game.isGhostEdible(g));

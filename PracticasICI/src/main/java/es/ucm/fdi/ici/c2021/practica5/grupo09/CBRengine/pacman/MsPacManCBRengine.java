@@ -20,6 +20,7 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ParallelNNScoringMethod;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
@@ -96,7 +97,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			this.action = actionSelector.findAction();
 		}else {
 			//Compute NN
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
+			Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(caseBase.getCases(), query, simConfig);
 			
 			// This simple implementation only uses 1NN
 			// Consider using kNNs with majority voting

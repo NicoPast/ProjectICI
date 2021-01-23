@@ -21,6 +21,7 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Int
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.GhostsAction;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ParallelNNScoringMethod;
 import pacman.game.Constants.MOVE;
 
 public class GhostsCBRengine implements StandardCBRApplication {
@@ -161,7 +162,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			}
 
 			//Compute NN
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(cases, query, simConfig);
+			Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(cases, query, simConfig);
 			
 			// This simple implementation only uses 1NN
 			// Consider using kNNs with majority voting
