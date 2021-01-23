@@ -5,8 +5,6 @@ import java.util.Vector;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
 import es.ucm.fdi.gaia.jcolibri.method.retain.StoreCasesMethod;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManDescription;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManResult;
 import pacman.game.Game;
 
 public class GhostsStorageManager {
@@ -15,7 +13,7 @@ public class GhostsStorageManager {
 	CBRCaseBase caseBase;
 	Vector<CBRCase> buffer;
 
-	private final static int TIME_WINDOW = 2;
+	private final static int TIME_WINDOW = 1;
 	
 	public GhostsStorageManager()
 	{

@@ -8,10 +8,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/ici.c1920.practica1.jar"/>
 	<classpathentry kind="lib" path="lib/ici.c2021.practica1.jar"/>
-	<classpathentry kind="lib" path="lib/ici-c2021-practica2.jar"/>
-	<classpathentry kind="lib" path="lib/PacManEngineFSM.jar"/>
-	<classpathentry kind="lib" path="lib/PacManEngineFSMGraphObserver.jar"/>
-	<classpathentry kind="lib" path="lib/jFuzzyLogic.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PracticasICI"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

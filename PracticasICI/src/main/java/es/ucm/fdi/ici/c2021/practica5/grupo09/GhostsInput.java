@@ -37,6 +37,9 @@ public class GhostsInput implements Input {
 	
 	public GhostsInput(MapaInfoGhost map) {
 		this.mapa=map;
+		nearestGhosts = new EnumMap<>(MOVE.class);
+		areGhostsEdible = new EnumMap<>(MOVE.class);
+		distanceNextInterseccion = new EnumMap<>(MOVE.class);
 	}
 
 	public void setGhost(GHOST myGhost) {
@@ -45,7 +48,12 @@ public class GhostsInput implements Input {
 
 	@Override
 	public void parseInput(Game game) {
+		nearestGhosts.clear();
+		areGhostsEdible.clear();
+		distanceNextInterseccion.clear();
+
 		mapa.update(game);
+		
 		if(game.doesGhostRequireAction(ghostType)) {
 			myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
 			edible = game.isGhostEdible(ghostType);
@@ -108,6 +116,7 @@ public class GhostsInput implements Input {
 	}
 	
 	private void computeNearestGhostAndEdible(Game game, MOVE m) {
+
 		if(!myInterseccion.destinos.containsKey(m)){
 			nearestGhosts.put(m, -1);
 			areGhostsEdible.put(m, false);

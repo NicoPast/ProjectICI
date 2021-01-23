@@ -71,8 +71,8 @@ public class Ghosts extends GhostController {
 			}
 			
 			try {
-				input.parseInput(game);
 				input.setGhost(ghost);
+				input.parseInput(game);
 				actionSelector.setGameAndGhost(game, ghost);
 				storageManager.setGame(game);
 				cbrEngine.cycle(input.getQuery());

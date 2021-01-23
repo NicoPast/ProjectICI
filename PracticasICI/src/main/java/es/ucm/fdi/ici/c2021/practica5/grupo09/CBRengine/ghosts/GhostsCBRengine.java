@@ -172,7 +172,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			for(RetrievalResult similarCase : similarCases){
 				if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
 					MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
-					votacion.put(m, votacion.get(m) + similarCase.getEval() * similarCase.getEval());
+					votacion.put(m, votacion.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
 				}
 			}
 			//Pillamos el movimiento mas votado
@@ -203,7 +203,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
 				this.move = actionSelector.defaultAction();
 			
-			else if(result.getScore() > 50 && result.getPacmanHealth() == 0) //Pacman gano demasiados puntos y no murio
+			else if(result.getScore() > 100 && result.getPacmanHealth() == 0) //Pacman gano demasiados puntos y no murio
 				this.move = actionSelector.findAnotherMove(mostVotedMove);
 		}
 		CBRCase newCase = createNewCase(query);
