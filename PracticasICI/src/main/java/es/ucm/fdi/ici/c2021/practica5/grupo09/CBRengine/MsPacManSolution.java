@@ -6,7 +6,7 @@ import pacman.game.Constants.MOVE;
 
 public class MsPacManSolution implements CaseComponent, Cloneable {
 	Integer id;
-	MOVE move;
+	MOVE move = MOVE.NEUTRAL;
 	
 	public Integer getId() {
 		return id;
@@ -32,8 +32,8 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	}
 	@Override
 	public String toString() {
-		return "MsPacManSolution [id=" + id + ", action=" + action + "]";
-	}  
+		return "MsPacManSolution [id=" + id + ", move=" + move + "]";
+	}
 	
 	
 	

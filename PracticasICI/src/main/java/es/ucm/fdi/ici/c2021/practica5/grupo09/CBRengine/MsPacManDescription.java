@@ -2,6 +2,7 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;
+import pacman.game.Constants.MOVE;
 
 public class MsPacManDescription implements CaseComponent {
 
@@ -24,7 +25,7 @@ public class MsPacManDescription implements CaseComponent {
 	
 	Boolean vulnerable;
 	
-	Integer direction;
+	MOVE lastMove;
 
 	Integer pillsUp;
 	Integer pillsRight;
@@ -150,12 +151,12 @@ public class MsPacManDescription implements CaseComponent {
 		this.vulnerable = vulnerable;
 	}
 
-	public Integer getDirection() {
-		return direction;
+	public MOVE getLastMove() {
+		return lastMove;
 	}
 
-	public void setDirection(Integer direction) {
-		this.direction = direction;
+	public void setLastMove(MOVE lastMove) {
+		this.lastMove = lastMove;
 	}
 
 	public Integer getPillsUp() {
@@ -241,7 +242,7 @@ public class MsPacManDescription implements CaseComponent {
 				+ ", distanciaDown=" + distanciaDown + ", distanciaLeft=" + distanciaLeft + ", ghostUp=" + ghostUp
 				+ ", ghostRight=" + ghostRight + ", ghostDown=" + ghostDown + ", ghostLeft=" + ghostLeft + ", edibleUp="
 				+ edibleUp + ", edibleRight=" + edibleRight + ", edibleDown=" + edibleDown + ", edibleLeft="
-				+ edibleLeft + ", vulnerable=" + vulnerable + ", direction=" + direction + ", pillsUp=" + pillsUp
+				+ edibleLeft + ", vulnerable=" + vulnerable + ", direction=" + lastMove + ", pillsUp=" + pillsUp
 				+ ", pillsRight=" + pillsRight + ", pillsDown=" + pillsDown + ", pillsLeft=" + pillsLeft
 				+ ", powerPillUp=" + powerPillUp + ", powerPillRight=" + powerPillRight + ", powerPillDown="
 				+ powerPillDown + ", powerPillLeft=" + powerPillLeft + ", score=" + score + "]";

@@ -29,7 +29,7 @@ public class MsPacMan extends PacmanController {
 	{
 		mapInfo = new MapaInfo();
 		
-		this.input = new MsPacManInput();
+		this.input = new MsPacManInput(mapInfo);
 
 		//runAwayAction = new RunAwayAction(mapInfo);
 		
@@ -44,6 +44,8 @@ public class MsPacMan extends PacmanController {
 	@Override
 	public void preCompute(String opponent) {
 		mapInfo = new MapaInfo(); //esto deberia resetearlo en todos los estados
+		this.input.setMap(mapInfo);		
+		
 		
 		cbrEngine.setCaseBaseFile(String.format(FILE_PATH, opponent));
 		try {

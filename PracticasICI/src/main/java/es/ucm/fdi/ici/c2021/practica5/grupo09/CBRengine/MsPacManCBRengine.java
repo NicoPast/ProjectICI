@@ -32,7 +32,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	CustomPlainTextConnector connector;
 	CBRCaseBase caseBase;
 	NNConfig simConfig;
-	
+	CBRCase newCase = null; //el caso que vamos a ir guardando
 	
 	
 	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aqu√≠
@@ -95,7 +95,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 
 		simConfig.addMapping(new Attribute("vulnerable",MsPacManDescription.class), new Equal());
 
-		simConfig.addMapping(new Attribute("direction",MsPacManDescription.class), new Interval(3)); //0 up, 1 right, 2 down, 3 left
+		simConfig.addMapping(new Attribute("lastMove",MsPacManDescription.class), new Interval(3)); //0 up, 1 right, 2 down, 3 left
 
 		simConfig.addMapping(new Attribute("pillsUp",MsPacManDescription.class), new Interval(25));
 		simConfig.addMapping(new Attribute("pillsRight",MsPacManDescription.class), new Interval(25));
@@ -117,11 +117,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 
 	@Override
-	public void cycle(CBRQuery query) throws ExecutionException {
+	public void cycle(CBRQuery query) throws ExecutionException { //se llama en cada interseccion
+		
+		if(newCase != null) this.storageManager.storeCase(newCase);			
+		
 		if(caseBase.getCases().isEmpty()) {
-			this.move = MOVE.NEUTRAL;
+			this.move = MOVE.UP;
 		}
 		else {
+			/*
 			//Cargamos todos los casos
 			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
 			//elegimos el top 5
@@ -129,14 +133,13 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			
 			//nunca deberia de acabar siendo null por que entonces no habria ni entrado en el else
 			CBRCase mostSimilarCase = null; //el caso mas similar que veremos en las proximas 5 pos
-			double similarity = null; //la similaridad del mejor caso respecto del actual
+			double similarity = 0; //la similaridad del mejor caso respecto del actual
 			//elegimos cual es el mejor caso de los dados			
 			for(int i=0;i<5;i++) {
 				//itera por todos los casosø?
 				RetrievalResult caso = colaMejores.iterator().next();
 				
 				//cambiar el mostSimilarCase
-				
 			}
 			
 	
@@ -155,12 +158,11 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			else if(result.getScore()<0) //el mejor caso ha dado resultados maloes
 				; //guess who's back: BESTMOVE
 			
-			else this.move = solution.getMove(); //cogemos el caso
+			else this.move = solution.getMove(); //cogemos el caso*/
 		}
 		
-		//se guarda el caso en memoria ø?
-		CBRCase newCase = createNewCase(query);
-		this.storageManager.storeCase(newCase);		
+		//se guarda el caso en memoria
+		newCase = createNewCase(query);
 	}
 
 	/**
