@@ -161,52 +161,56 @@ public class GhostsCBRengine implements StandardCBRApplication {
 					filtered.add(c);
 			}
 
-			//Compute NN
-			Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(cases, query, simConfig);
-			
-			// This simple implementation only uses 1NN
-			// Consider using kNNs with majority voting
-			Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
-
-			EnumMap<MOVE, Double> votacion = new EnumMap<>(MOVE.class);
-			
-			//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
-			for(RetrievalResult similarCase : similarCases){
-				if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
-					MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
-					votacion.put(m, votacion.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
-				}
-			}
-			//Pillamos el movimiento mas votado
-			MOVE mostVotedMove = MOVE.NEUTRAL;
-			Double mostVotes = 0.0;
-			for(MOVE m : votacion.keySet()){
-				if(votacion.get(m) > mostVotes){
-					mostVotes = votacion.get(m);
-					mostVotedMove = m;
-				}
-			}
-
-			CBRCase mostSimilarCase = similarCases.iterator().next().get_case();
-			double similarity = 0;
-
-			for(RetrievalResult similarCase : similarCases){
-				if(MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()] == mostVotedMove && similarity < similarCase.getEval()){
-					mostSimilarCase = similarCase.get_case();
-					similarity = similarCase.getEval();
-				}
-			}
-
-			GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
-
-			//Now compute a solution for the query
-			this.move = mostVotedMove;
-			
-			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
+			if(filtered.isEmpty()){
 				this.move = actionSelector.defaultAction();
-			
-			else if(badCase((GhostsDescription)mostSimilarCase.getDescription(), result)) 
-				this.move = actionSelector.findAnotherMove(mostVotedMove);
+			}
+			else {
+
+				//Compute NN
+				Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(filtered, query, simConfig);
+				
+				Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
+				
+				EnumMap<MOVE, Double> votacion = new EnumMap<>(MOVE.class);
+				
+				//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
+				for(RetrievalResult similarCase : similarCases){
+					if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
+						MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
+						votacion.put(m, votacion.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
+					}
+				}
+				//Pillamos el movimiento mas votado
+				MOVE mostVotedMove = MOVE.NEUTRAL;
+				Double mostVotes = 0.0;
+				for(MOVE m : votacion.keySet()){
+					if(votacion.get(m) > mostVotes){
+						mostVotes = votacion.get(m);
+						mostVotedMove = m;
+					}
+				}
+				
+				CBRCase mostSimilarCase = similarCases.iterator().next().get_case();
+				double similarity = 0;
+				
+				for(RetrievalResult similarCase : similarCases){
+					if(MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()] == mostVotedMove && similarity < similarCase.getEval()){
+						mostSimilarCase = similarCase.get_case();
+						similarity = similarCase.getEval();
+					}
+				}
+				
+				GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
+				
+				//Now compute a solution for the query
+				this.move = mostVotedMove;
+				
+				if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
+					this.move = actionSelector.defaultAction();
+				
+				else if(badCase((GhostsDescription)mostSimilarCase.getDescription(), result)) 
+					this.move = actionSelector.findAnotherMove(mostVotedMove);
+			}
 		}
 		CBRCase newCase = createNewCase(query);
 		this.storageManager.storeCase(newCase);

@@ -1,26 +1,30 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
+import java.util.EnumMap;
 import java.util.Vector;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
 import es.ucm.fdi.gaia.jcolibri.method.retain.StoreCasesMethod;
-import pacman.game.Game;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
+import pacman.game.Game;
 
 public class GhostsStorageManager {
 
 	Game game;
 	GHOST ghostType;
 	CBRCaseBase caseBase;
-	Vector<CBRCase> buffer;
+	EnumMap<GHOST, Vector<CBRCase>> buffer;
 
-	private final static int TIME_WINDOW = 1;
+	private final static int TIME_WINDOW = 2;
 	
 	public GhostsStorageManager()
 	{
-		this.buffer = new Vector<CBRCase>();
+		this.buffer = new EnumMap<>(GHOST.class);
+		for(GHOST g : GHOST.values()){
+			this.buffer.put(g, new Vector<CBRCase>());
+		}
 	}
 	
 	public void setGameAndGhost(Game game, GHOST ghost) {
@@ -35,12 +39,12 @@ public class GhostsStorageManager {
 	
 	public void storeCase(CBRCase newCase)
 	{			
-		this.buffer.add(newCase);
+		this.buffer.get(ghostType).add(newCase);
 		
 		//Check buffer for old cases to store
-		if(this.buffer.size()>TIME_WINDOW)
+		if(this.buffer.get(ghostType).size() >TIME_WINDOW)
 		{
-			CBRCase bCase = this.buffer.remove(0);
+			CBRCase bCase = this.buffer.get(ghostType).remove(0);
 			reviseCase(bCase);
 		}
 	}
@@ -71,18 +75,23 @@ public class GhostsStorageManager {
 		if(resultValue > 100 || lifesValue < 0 ||
 			(description.getEdible() && game.isGhostEdible(ghostType) && resultDistance > 20) 
 			|| (!description.getEdible() && !game.isGhostEdible(ghostType) && resultDistance < -20) ){
-
-			StoreCasesMethod.storeCase(this.caseBase, bCase);
-		}
+				StoreCasesMethod.storeCase(this.caseBase, bCase);
+			}
 	}
 
 	public void close() {
-		for(CBRCase oldCase: this.buffer)
-			reviseCase(oldCase);
-		this.buffer.removeAllElements();
+		for(GHOST g : GHOST.values()){
+			for(CBRCase oldCase: this.buffer.get(ghostType))
+				reviseCase(oldCase);
+			this.buffer.get(ghostType).removeAllElements();
+		}
 	}
 
 	public int getPendingCases() {
-		return this.buffer.size();
+		int size = 0;
+		for(GHOST g : GHOST.values()){
+			size += this.buffer.get(g).size();
+		}
+		return size;
 	}
 }

@@ -11,7 +11,7 @@ public class ExecutorTest {
 
     public static void main(String[] args) { 
         Executor executor = new Executor.Builder()
-                .setTickLimit(4000)
+                .setTickLimit(400)
                 .setVisual(true)
                 .setScaleFactor(3.0)
                 .build();
