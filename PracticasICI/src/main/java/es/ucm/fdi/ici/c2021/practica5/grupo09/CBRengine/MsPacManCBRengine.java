@@ -2,6 +2,7 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Random;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
@@ -126,11 +127,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 
 		//se guarda el caso en memoria
 		if(newCase != null) this.storageManager.storeCase(newCase);			
-		
-
-		this.move = allMoves[rnd.nextInt(allMoves.length)];
-		
-		
+				
 		//pedir segun que lista
 		MsPacManDescription descripcion = (MsPacManDescription)query.getDescription();
 		Boolean vulnerable = descripcion.getVulnerable(); //para saber de que lista sacar
@@ -147,42 +144,16 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			//elegimos el top 5
 			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
 			
-			//nunca deberia de acabar siendo null por que entonces no habria ni entrado en el else
-			CBRCase mostSimilarCase = null; //el caso mas similar que veremos en las proximas 5 pos
-			double similarity = 0; //la similaridad del mejor caso respecto del actual
-			//elegimos cual es el mejor caso de los dados			
-			for(int i=0;i<5;i++) {
-				//itera por todos los casos¿?
-				RetrievalResult caso = colaMejores.iterator().next();
-				
-				double similitudCaso;
-				
-				
-				//similitudCaso += caso.
-				
-				
-				mostSimilarCase = caso.get_case();
-;				//cambiar el mostSimilarCase con la ponderacion
+			//elegimos cual es el mejor caso de los dado (votacion ponderada)
+			EnumMap<MOVE, Double> votacion = new EnumMap<MOVE, Double>(MOVE.class); //se van colocando las votaciones de los casos
+			
+			for(RetrievalResult caso : colaMejores) {
+				MOVE moveRes = MOVE.valueOf(((MsPacManSolution)caso.get_case().getSolution()).getMove());				
+				votacion.put(moveRes,caso.getEval());
 			}
 			
-	
-			//la puntuacion que nos dice si ha sido bueno o no ¿?
-			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-						
-			//el movimiento solucion
-			MsPacManSolution solution = (MsPacManSolution) mostSimilarCase.getSolution();
+			//recorremos las votaciones y miramos que movimiento se ha votado mas y sacamos la media
 			
-			//Procesamos la colas
-			
-			
-			if(similarity<0.7) //no es lo suficientemente parecido, tenemos que crear otro
-				; //llamar al bestMove xd pero que de momento sea random
-			
-			else if(result.getScore()<0) //el mejor caso ha dado resultados maloes
-				; //guess who's back: BESTMOVE
-			
-			
-			else this.move = MOVE.valueOf(solution.getMove()); //cogemos el caso
 		}
 		
 		newCase = createNewCase(query);
