@@ -6,7 +6,7 @@ import pacman.game.Constants.MOVE;
 
 public class MsPacManSolution implements CaseComponent, Cloneable {
 	Integer id;
-	MOVE move = MOVE.NEUTRAL;
+	String move = "NEUTRAL";
 	
 	public Integer getId() {
 		return id;
@@ -14,10 +14,10 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public MOVE getMove() {
+	public String getMove() {
 		return move;
 	}
-	public void setMove(MOVE move) {
+	public void setMove(String move) {
 		this.move = move;
 	}
 	

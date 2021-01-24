@@ -86,7 +86,7 @@ public class MsPacManInput implements Input {
 		description.setEdibleDown(edible[2]);
 		description.setEdibleLeft(edible[3]);
 		description.setVulnerable(vulnerable);
-		description.setLastMove(lastMove);
+		description.setLastMove(lastMove.ordinal());
 		description.setPillsUp(pills[0]);
 		description.setPillsRight(pills[1]);
 		description.setPillsDown(pills[2]);
@@ -116,7 +116,7 @@ public class MsPacManInput implements Input {
 		//recorrido en anchura oara buscar el fantasma
 		for(GHOST g: GHOST.values()) {
 			double dist = game.getDistance(interseccionActual.identificador, game.getGhostCurrentNodeIndex(g),
-					game.getPacmanLastMoveMade(), DM.PATH);
+					DM.PATH);
 			if(dist <= interseccionActual.distancias.get(m)) {
 				pair.ghost = g;
 				pair.dist = dist;
@@ -160,14 +160,12 @@ public class MsPacManInput implements Input {
 		for(GHOST g: GHOST.values()) {
 			if(!game.isGhostEdible(g)) {
 				double distAux = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(g),
-						game.getPacmanLastMoveMade(), DM.PATH);
+						DM.PATH);
 				if(distAux < distMin) {
 					distMin = distAux;
 				}
 			}
-		}
-		
-		
+		}		
 		return distMin < distAlerta;
 	}
 	

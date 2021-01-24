@@ -25,7 +25,7 @@ public class MsPacManDescription implements CaseComponent {
 	
 	Boolean vulnerable;
 	
-	MOVE lastMove;
+	Integer lastMove;
 
 	Integer pillsUp;
 	Integer pillsRight;
@@ -151,11 +151,11 @@ public class MsPacManDescription implements CaseComponent {
 		this.vulnerable = vulnerable;
 	}
 
-	public MOVE getLastMove() {
+	public Integer getLastMove() {
 		return lastMove;
 	}
 
-	public void setLastMove(MOVE lastMove) {
+	public void setLastMove(Integer lastMove) {
 		this.lastMove = lastMove;
 	}
 

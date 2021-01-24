@@ -2,6 +2,7 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Random;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
@@ -18,7 +19,6 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equ
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
 import pacman.game.Constants.MOVE;
 
@@ -33,6 +33,11 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	CBRCaseBase caseBase;
 	NNConfig simConfig;
 	CBRCase newCase = null; //el caso que vamos a ir guardando
+	
+	
+	//PROVISIONAL (para definitivo, no te enfades Juan porfa, que es muy tarde)
+	private Random rnd = new Random();
+    private MOVE[] allMoves = MOVE.values();
 	
 	
 	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aqu√≠
@@ -118,14 +123,21 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException { //se llama en cada interseccion
-		
+
+		//se guarda el caso en memoria
 		if(newCase != null) this.storageManager.storeCase(newCase);			
 		
+
+		this.move = allMoves[rnd.nextInt(allMoves.length)];
+		
+		
 		if(caseBase.getCases().isEmpty()) {
-			this.move = MOVE.UP;
+			
+			//de momento hace un random move
+			this.move = allMoves[rnd.nextInt(allMoves.length)];
 		}
-		else {
-			/*
+		else { //ya tenemos algun caso guardado
+			
 			//Cargamos todos los casos
 			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
 			//elegimos el top 5
@@ -139,13 +151,20 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 				//itera por todos los casosø?
 				RetrievalResult caso = colaMejores.iterator().next();
 				
-				//cambiar el mostSimilarCase
+				double similitudCaso;
+				
+				
+				//similitudCaso += caso.
+				
+				
+				mostSimilarCase = caso.get_case();
+;				//cambiar el mostSimilarCase con la ponderacion
 			}
 			
 	
 			//la puntuacion que nos dice si ha sido bueno o no ø?
 			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-			
+						
 			//el movimiento solucion
 			MsPacManSolution solution = (MsPacManSolution) mostSimilarCase.getSolution();
 			
@@ -158,10 +177,10 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			else if(result.getScore()<0) //el mejor caso ha dado resultados maloes
 				; //guess who's back: BESTMOVE
 			
-			else this.move = solution.getMove(); //cogemos el caso*/
+			
+			else this.move = MOVE.valueOf(solution.getMove()); //cogemos el caso
 		}
 		
-		//se guarda el caso en memoria
 		newCase = createNewCase(query);
 	}
 
@@ -180,7 +199,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		newDescription.setId(newId);
 		newResult.setId(newId);
 		newSolution.setId(newId);
-		//newSolution.setAction(this.action.getActionId());
+		newSolution.setMove(this.move.toString());
 		newCase.setDescription(newDescription);
 		newCase.setResult(newResult);
 		newCase.setSolution(newSolution);
