@@ -22,15 +22,21 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 
 	private Connector connector;
 	private Collection<CBRCase> originalCases;
-	private Collection<CBRCase> workingCases;
+	
+	//las dos distintas listas para mejorar rendimiento
+	private Collection<CBRCase> casesNotVulnerable;
+	private Collection<CBRCase> casesVulnerable;
+	
 	private Collection<CBRCase> casesToRemove;
 	/**
 	 * Closes the case base saving or deleting the cases of the persistence media
 	 */
 	public void close() {
-		workingCases.removeAll(casesToRemove);
+		casesNotVulnerable.removeAll(casesToRemove);
+		casesVulnerable.removeAll(casesToRemove);
 		
-		Collection<CBRCase> casesToStore = new ArrayList<>(workingCases);
+		Collection<CBRCase> casesToStore = new ArrayList<>(casesNotVulnerable);
+		casesToStore.addAll(casesVulnerable);
 		casesToStore.removeAll(originalCases);
 
 		connector.storeCases(casesToStore);
@@ -41,14 +47,22 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	 * Forgets cases. It only removes the cases from the storage media when closing.
 	 */
 	public void forgetCases(Collection<CBRCase> cases) {
-		workingCases.removeAll(cases);
+		casesNotVulnerable.removeAll(cases);
+		casesVulnerable.removeAll(cases);
 	}
 
 	/**
 	 * Returns working cases.
 	 */
 	public Collection<CBRCase> getCases() {
-		return workingCases;
+		//nunca se deberia llamar a esto
+		Collection<CBRCase> aux = new ArrayList<>(casesNotVulnerable);
+		aux.addAll(casesVulnerable);
+		return aux;
+	}
+	
+	public Collection<CBRCase> getCases(Boolean vulnerable){
+		return vulnerable ? casesNotVulnerable : casesVulnerable;
 	}
 
 	/**
@@ -65,15 +79,33 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	public void init(Connector connector) throws InitializingException {
 		this.connector = connector;
 		originalCases = this.connector.retrieveAllCases();	
-		workingCases = new java.util.ArrayList<CBRCase>(originalCases);
+		
+		
+		casesNotVulnerable = new ArrayList<CBRCase>();
+		casesVulnerable = new ArrayList<CBRCase>();		
+		
+		//hay que leer todos los casos y clasificarlos en su lista correspondiente
+		for(CBRCase caso : originalCases) {
+			if(((MsPacManDescription)caso.getDescription()).getVulnerable()) 
+				casesVulnerable.add(caso);
+			else 
+				casesNotVulnerable.add(caso);
+		}
+		
+		
 		casesToRemove = new ArrayList<>();
 	}
 
 	/**
 	 * Learns cases that are only saved when closing the Case Base.
 	 */
+	public void learnCases(Boolean vulnerable , Collection<CBRCase> cases) {
+		if(vulnerable) casesNotVulnerable.addAll(cases);
+		else casesNotVulnerable.addAll(cases);
+	}
+	
 	public void learnCases(Collection<CBRCase> cases) {
-		workingCases.addAll(cases);
+		casesNotVulnerable.addAll(cases);
 	}
 
 }

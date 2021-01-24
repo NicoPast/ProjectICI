@@ -30,7 +30,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	private MsPacManStorageManager storageManager;
 
 	CustomPlainTextConnector connector;
-	CBRCaseBase caseBase;
+	CachedLinearCaseBase caseBase;
 	NNConfig simConfig;
 	CBRCase newCase = null; //el caso que vamos a ir guardando
 	
@@ -131,7 +131,11 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		this.move = allMoves[rnd.nextInt(allMoves.length)];
 		
 		
-		if(caseBase.getCases().isEmpty()) {
+		//pedir segun que lista
+		MsPacManDescription descripcion = (MsPacManDescription)query.getDescription();
+		Boolean vulnerable = descripcion.getVulnerable(); //para saber de que lista sacar
+				
+		if(caseBase.getCases(vulnerable).isEmpty()) {
 			
 			//de momento hace un random move
 			this.move = allMoves[rnd.nextInt(allMoves.length)];
@@ -139,7 +143,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		else { //ya tenemos algun caso guardado
 			
 			//Cargamos todos los casos
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
+			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(vulnerable), query, simConfig);
 			//elegimos el top 5
 			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
 			
