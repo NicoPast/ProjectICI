@@ -2,6 +2,8 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
@@ -22,20 +24,32 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 
 	private Connector connector;
 	private Collection<CBRCase> originalCases;
-	private Collection<CBRCase> EdibleCases;
-	private Collection<CBRCase> StrongCases;
+
+	private Collection<CBRCase> allCasesTogether;
+
+	private Map<Integer, Collection<CBRCase>> edibleCases, strongCases;
+
 	private Collection<CBRCase> casesToRemove;
 
 	/**
 	 * Closes the case base saving or deleting the cases of the persistence media
 	 */
 	public void close() {
-		EdibleCases.removeAll(casesToRemove);
-		StrongCases.removeAll(casesToRemove);
+		for(Integer tipo : edibleCases.keySet()){
+			this.edibleCases.get(tipo).removeAll(casesToRemove);
+		}
+		for(Integer tipo : strongCases.keySet()){
+			this.strongCases.get(tipo).removeAll(casesToRemove);
+		}
 
 		//le meto los edibles y luego le a�ado los strong
-		Collection<CBRCase> casesToStore = new ArrayList<>(EdibleCases);
-		casesToStore.addAll(StrongCases);
+		Collection<CBRCase> casesToStore = new ArrayList<>();
+		for(Integer tipo : edibleCases.keySet()){
+			casesToStore.addAll(edibleCases.get(tipo));
+		}
+		for(Integer tipo : strongCases.keySet()){
+			casesToStore.addAll(strongCases.get(tipo));
+		}
 		
 		casesToStore.removeAll(originalCases);
 
@@ -47,24 +61,27 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	 * Forgets cases. It only removes the cases from the storage media when closing.
 	 */
 	public void forgetCases(Collection<CBRCase> cases) {
-		this.EdibleCases.removeAll(cases);
-		this.StrongCases.removeAll(cases);
+		for(Integer tipo : edibleCases.keySet()){
+			this.edibleCases.get(tipo).removeAll(cases);
+		}
+		for(Integer tipo : strongCases.keySet()){
+			this.strongCases.get(tipo).removeAll(cases);
+		}
+		this.allCasesTogether.removeAll(cases);
 	}
 
 	/**
 	 * Returns all cases.
 	 */
 	public Collection<CBRCase> getCases() {
-		Collection<CBRCase> allTogether = new ArrayList<>(EdibleCases);
-		allTogether.addAll(StrongCases);
-		return allTogether;
+		return allCasesTogether;
 	}
 
 	/**
 	 * Returns working cases.
 	 */
-	public Collection<CBRCase> getCases(boolean edible) {
-		return edible ? EdibleCases : StrongCases;
+	public Collection<CBRCase> getCases(boolean edible, int tipoInterseccion) {
+		return edible ? edibleCases.get(tipoInterseccion) : strongCases.get(tipoInterseccion);
 	}
 
 	/**
@@ -81,14 +98,18 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	public void init(Connector connector) throws InitializingException {
 		this.connector = connector;
 		originalCases = this.connector.retrieveAllCases();	
-		EdibleCases = new ArrayList<>();
-		StrongCases = new ArrayList<>();
-		for(CBRCase c : originalCases) {
-            if(((GhostsDescription)c.getDescription()).getEdible())
-				this.EdibleCases.add(c);
-			else 
-				this.StrongCases.add(c);
+
+		this.edibleCases = new HashMap<Integer, Collection<CBRCase>>();
+		this.strongCases = new HashMap<Integer, Collection<CBRCase>>();
+		for(int i = 0; i < 5; ++i){
+			this.edibleCases.put(i, new ArrayList<>());
+			this.strongCases.put(i, new ArrayList<>());
 		}
+	
+		allCasesTogether = new ArrayList<>();
+
+		learnCases(originalCases);
+
 		casesToRemove = new ArrayList<>();
 	}
 
@@ -96,11 +117,15 @@ public class GhostsCachedLinearCaseBase implements CBRCaseBase {
 	 * Learns cases that are only saved when closing the Case Base.
 	 */
 	public void learnCases(Collection<CBRCase> cases) {	
+		GhostsDescription description;
 		for(CBRCase c : cases) {
-            if(((GhostsDescription)c.getDescription()).getEdible())
-            	this.EdibleCases.add(c);
+			allCasesTogether.add(c);
+			description = ((GhostsDescription)c.getDescription()); 
+			int tipo = description.getIntersectionType();
+            if(description.getEdible())
+				this.edibleCases.get(tipo).add(c);
 			else 
-				this.StrongCases.add(c);
+				this.strongCases.get(tipo).add(c);
 		}
 	}
 }

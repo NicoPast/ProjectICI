@@ -83,62 +83,55 @@ public class GhostsCBRengine implements StandardCBRApplication {
 
 		Attribute att;
 
-
 		att = new Attribute("distanceNextIntersectionUp",GhostsDescription.class);
 		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.addMapping(att, new Interval(40));
 		att = new Attribute("distanceNextIntersectionDown",GhostsDescription.class);
 		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.addMapping(att, new Interval(40));
 		att = new Attribute("distanceNextIntersectionLeft",GhostsDescription.class);
 		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.addMapping(att, new Interval(40));
 		att = new Attribute("distanceNextIntersectionRight",GhostsDescription.class);
 		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.addMapping(att, new Interval(40));
 
 		att = new Attribute("distanceNearestGhostUp",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.setWeight(att, 0.5);
+		simConfig.addMapping(att, new Interval(150));
 		att = new Attribute("distanceNearestGhostDown",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.setWeight(att, 0.5);
+		simConfig.addMapping(att, new Interval(150));
 		att = new Attribute("distanceNearestGhostLeft",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.setWeight(att, 0.5);
+		simConfig.addMapping(att, new Interval(150));
 		att = new Attribute("distanceNearestGhostRight",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.setWeight(att, 0.5);
+		simConfig.addMapping(att, new Interval(150));
 		
 		att = new Attribute("GhostEdibleUp",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
+		simConfig.setWeight(att, 2.0);
 		simConfig.addMapping(att, new Equal());
 		att = new Attribute("GhostEdibleDown",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
+		simConfig.setWeight(att, 2.0);
 		simConfig.addMapping(att, new Equal());
 		att = new Attribute("GhostEdibleLeft",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
+		simConfig.setWeight(att, 2.0);
 		simConfig.addMapping(att, new Equal());
 		att = new Attribute("GhostEdibleRight",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
+		simConfig.setWeight(att, 2.0);
 		simConfig.addMapping(att, new Equal());
 
-		att = new Attribute("edible",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Equal());
 		att = new Attribute("lastMove",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
+		simConfig.setWeight(att, 10.0);
 		simConfig.addMapping(att, new Equal());
 		att = new Attribute("distanceToPacMan",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		simConfig.setWeight(att, 3.0);
+		simConfig.addMapping(att, new Interval(300));
 		
-		att = new Attribute("pacmanLife",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Equal());
-		att = new Attribute("score",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(650));
+		// att = new Attribute("score",GhostsDescription.class);
+		// simConfig.setWeight(att, 1.0);
+		// simConfig.addMapping(att, new Interval(15000));
 	}
 
 	@Override
@@ -149,25 +142,26 @@ public class GhostsCBRengine implements StandardCBRApplication {
 
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
-		Collection<CBRCase> cases = caseBase.getCases(((GhostsDescription)query.getDescription()).getEdible());
+
+		GhostsDescription description = (GhostsDescription)query.getDescription();
+		Collection<CBRCase> cases = caseBase.getCases(description.getEdible(), description.getIntersectionType());
 		if(cases.isEmpty()) {
 			this.move = actionSelector.defaultAction();
 		}else {
-			//Se filtran aquellas interseccion que no tengan la misma forma o aquellas cuya solucion es imposible de realizar
-			Collection<CBRCase> filtered = new ArrayList<CBRCase>();
-			for(CBRCase c : cases){
-				if(((GhostsDescription)query.getDescription()).getIntersectionType() == ((GhostsDescription)c.getDescription()).getIntersectionType() ||
-					((GhostsSolution)c.getSolution()).getMove() != MOVE.values()[((GhostsDescription)query.getDescription()).getLastMove()].opposite().ordinal())
-					filtered.add(c);
-			}
+			//Se filtran aquellas interseccion cuya solucion es imposible de realizar
+			// Collection<CBRCase> filtered = new ArrayList<CBRCase>();
+			// for(CBRCase c : cases){
+			// 	if(((GhostsSolution)c.getSolution()).getMove() != MOVE.values()[((GhostsDescription)c.getDescription()).getLastMove()].opposite().ordinal())
+			// 		filtered.add(c);
+			// }
 
-			if(filtered.isEmpty()){
-				this.move = actionSelector.defaultAction();
-			}
-			else {
+			// if(filtered.isEmpty()){
+			// 	this.move = actionSelector.defaultAction();
+			// }
+			// else {
 
 				//Compute NN
-				Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(filtered, query, simConfig);
+				Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(/*filtered*/ cases, query, simConfig);
 				
 				Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
 				
@@ -211,16 +205,16 @@ public class GhostsCBRengine implements StandardCBRApplication {
 				else if(badCase((GhostsDescription)mostSimilarCase.getDescription(), result)) 
 					this.move = actionSelector.findAnotherMove(mostVotedMove);
 			}
-		}
+		//}
 		CBRCase newCase = createNewCase(query);
-		this.storageManager.storeCase(newCase);
+		this.storageManager.storeCase(newCase, simConfig);
 	}
 
 	//Pacman gano demasiados puntos y no murio o se alejo o acerco cuando no debia
 	boolean badCase(GhostsDescription description, GhostsResult result){
-		return result.getScore() > 100 && result.getPacmanHealth() == 0 ||
-			(description.getEdible() && result.deltaDistanceToPacMan > 20) 
-			|| (!description.getEdible() && result.deltaDistanceToPacMan < -20);
+		return result.getScore() > 200 && result.getPacmanHealth() == 0 ||
+			(description.getEdible() && result.deltaDistanceToPacMan > 40) 
+			|| (!description.getEdible() && result.deltaDistanceToPacMan < -40);
 	}
 
 
