@@ -23,7 +23,6 @@ public class MsPacMan extends PacmanController {
 	final static String FILE_PATH = "cbrdata/grupo09/Ghosts.csv";
 
 	MapaInfo mapInfo;
-	//RunAwayAction runAwayAction;
 	
 	public MsPacMan()
 	{
@@ -38,14 +37,14 @@ public class MsPacMan extends PacmanController {
 
 		this.storageManager = new MsPacManStorageManager();
 		
-		cbrEngine = new MsPacManCBRengine(actionSelector, storageManager);
+		cbrEngine = new MsPacManCBRengine(actionSelector, storageManager, mapInfo);
 	}
 	
 	@Override
 	public void preCompute(String opponent) {
 		mapInfo = new MapaInfo(); //esto deberia resetearlo en todos los estados
-		this.input.setMap(mapInfo);		
-		
+		this.input.setMap(mapInfo); //evita errores en el mapa a la hora de usar el evaluador
+		this.cbrEngine.setMap(mapInfo);
 		
 		cbrEngine.setCaseBaseFile(String.format(FILE_PATH, opponent));
 		try {
@@ -79,6 +78,7 @@ public class MsPacMan extends PacmanController {
 			input.parseInput(game);
 			actionSelector.setGame(game); //realmente no hace falta
 			storageManager.setGame(game);
+			cbrEngine.setGame(game);
 			cbrEngine.cycle(input.getQuery());
 			MOVE move = cbrEngine.getSolution(); //si no encuentra movimiento que mire en la accion (best move)
 			return move;

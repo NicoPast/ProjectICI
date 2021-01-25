@@ -20,8 +20,10 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equ
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
 import pacman.game.Constants.MOVE;
+import pacman.game.Game;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
@@ -34,6 +36,8 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	CachedLinearCaseBase caseBase;
 	NNConfig simConfig;
 	CBRCase newCase = null; //el caso que vamos a ir guardando
+	MapaInfo mapInfo;
+	Game game;
 	
 	
 	//PROVISIONAL (para definitivo, no te enfades Juan porfa, que es muy tarde)
@@ -61,10 +65,11 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 	
 	
-	public MsPacManCBRengine(MsPacManActionSelector actionSelector, MsPacManStorageManager storageManager)
+	public MsPacManCBRengine(MsPacManActionSelector actionSelector, MsPacManStorageManager storageManager, MapaInfo map)
 	{
 		this.actionSelector = actionSelector;
 		this.storageManager = storageManager;
+		this.mapInfo = map;
 	}
 	
 	
@@ -84,10 +89,20 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		simConfig = new NNConfig();
 		simConfig.setDescriptionSimFunction(new Average());	
 
-		simConfig.addMapping(new Attribute("distanciaUp",MsPacManDescription.class), new Interval(150));
-		simConfig.addMapping(new Attribute("distanciaRight",MsPacManDescription.class), new Interval(150));
-		simConfig.addMapping(new Attribute("distanciaDown",MsPacManDescription.class), new Interval(150));
-		simConfig.addMapping(new Attribute("distanciaLeft",MsPacManDescription.class), new Interval(150));
+		Attribute attribute;
+		
+		attribute = new Attribute("distanciaUp",MsPacManDescription.class);
+		simConfig.addMapping(attribute, new Interval(150));
+		simConfig.setWeight(attribute, 10.0);
+		attribute = new Attribute("distanciaRight",MsPacManDescription.class);
+		simConfig.setWeight(attribute, 10.0);
+		simConfig.addMapping(attribute, new Interval(150));
+		attribute = new Attribute("distanciaDown",MsPacManDescription.class);
+		simConfig.setWeight(attribute, 10.0);
+		simConfig.addMapping(attribute, new Interval(150));
+		attribute = new Attribute("distanciaLeft",MsPacManDescription.class);
+		simConfig.setWeight(attribute, 10.0);
+		simConfig.addMapping(attribute, new Interval(150));
 
 		simConfig.addMapping(new Attribute("ghostUp",MsPacManDescription.class), new Interval(150));
 		simConfig.addMapping(new Attribute("ghostRight",MsPacManDescription.class), new Interval(150));
@@ -131,11 +146,14 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		//pedir segun que lista
 		MsPacManDescription descripcion = (MsPacManDescription)query.getDescription();
 		Boolean vulnerable = descripcion.getVulnerable(); //para saber de que lista sacar
+		
+
+		Double bestVote = 0.0;
+		CBRCase mostSimilarCase = null;
 				
-		if(caseBase.getCases(vulnerable).isEmpty()) {
-			
+		if(caseBase.getCases(vulnerable).isEmpty()) {			
 			//de momento hace un random move
-			this.move = allMoves[rnd.nextInt(allMoves.length)];
+			this.move = mapInfo.getBestMove(game);
 		}
 		else { //ya tenemos algun caso guardado
 			
@@ -144,17 +162,36 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			//elegimos el top 5
 			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
 			
-			//elegimos cual es el mejor caso de los dado (votacion ponderada)
-			EnumMap<MOVE, Double> votacion = new EnumMap<MOVE, Double>(MOVE.class); //se van colocando las votaciones de los casos
+			//elegimos cual es el mejor caso de los dado (votacion ponderada
+			int numVotos[] = {0,0,0,0};
+			double sumSimilaridades[] = {0.0,0.0,0.0,0.0};
 			
 			for(RetrievalResult caso : colaMejores) {
-				MOVE moveRes = MOVE.valueOf(((MsPacManSolution)caso.get_case().getSolution()).getMove());				
-				votacion.put(moveRes,caso.getEval());
+				MOVE moveRes = MOVE.valueOf(((MsPacManSolution)caso.get_case().getSolution()).getMove());	
+				mostSimilarCase = caso.get_case();
+				numVotos[moveRes.ordinal()]++;
+				sumSimilaridades[moveRes.ordinal()] += caso.getEval();
 			}
 			
 			//recorremos las votaciones y miramos que movimiento se ha votado mas y sacamos la media
-			
+			for(int i=0;i<4;i++) {
+				double mediaAux = sumSimilaridades[i]/numVotos[i];
+				if(mediaAux > bestVote) {
+					bestVote = mediaAux;
+					this.move = MOVE.values()[i];
+				}
+			}			
 		}
+
+		System.out.println(bestVote);
+		if(bestVote < 0.6) { //si el caso no es lo sufucientemente parecido
+			this.move = mapInfo.getBestMove(game);
+		}
+		else if (mostSimilarCase != null) {
+			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
+			if(((MsPacManResult) mostSimilarCase.getResult()).getScore() < 0) this.move = mapInfo.getBestMove(game);
+		}
+		
 		
 		newCase = createNewCase(query);
 	}
@@ -189,6 +226,14 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	public void postCycle() throws ExecutionException {
 		this.storageManager.close();
 		this.caseBase.close();
+	}
+	
+	public void setMap(MapaInfo map) {
+		this.mapInfo = map;
+	}
+	
+	public void setGame(Game _game) {
+		this.game = _game;
 	}
 
 }
