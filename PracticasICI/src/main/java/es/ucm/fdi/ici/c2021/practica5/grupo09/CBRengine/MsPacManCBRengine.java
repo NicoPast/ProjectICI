@@ -93,15 +93,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		
 		attribute = new Attribute("distanciaUp",MsPacManDescription.class);
 		simConfig.addMapping(attribute, new Interval(150));
-		simConfig.setWeight(attribute, 10.0);
+		simConfig.setWeight(attribute, 1.0);
 		attribute = new Attribute("distanciaRight",MsPacManDescription.class);
-		simConfig.setWeight(attribute, 10.0);
+		simConfig.setWeight(attribute, 1.0);
 		simConfig.addMapping(attribute, new Interval(150));
 		attribute = new Attribute("distanciaDown",MsPacManDescription.class);
-		simConfig.setWeight(attribute, 10.0);
+		simConfig.setWeight(attribute, 1.0);
 		simConfig.addMapping(attribute, new Interval(150));
 		attribute = new Attribute("distanciaLeft",MsPacManDescription.class);
-		simConfig.setWeight(attribute, 10.0);
+		simConfig.setWeight(attribute, 1.0);
 		simConfig.addMapping(attribute, new Interval(150));
 
 		simConfig.addMapping(new Attribute("ghostUp",MsPacManDescription.class), new Interval(150));
@@ -183,13 +183,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 			}			
 		}
 
-		System.out.println(bestVote);
-		if(bestVote < 0.6) { //si el caso no es lo sufucientemente parecido
+		//System.out.println(bestVote);
+		if(bestVote < 0.9) { //si el caso no es lo sufucientemente parecido
+			
+			//si es vulnerable poer pill
 			this.move = mapInfo.getBestMove(game);
 		}
 		else if (mostSimilarCase != null) {
 			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-			if(((MsPacManResult) mostSimilarCase.getResult()).getScore() < 0) this.move = mapInfo.getBestMove(game);
+			if(((MsPacManResult) mostSimilarCase.getResult()).getScore() < 50) this.move = mapInfo.getBestMove(game);
 		}
 		
 		

@@ -45,7 +45,7 @@ public class MsPacManStorageManager {
 		MsPacManDescription description = (MsPacManDescription)bCase.getDescription();
 		int oldScore = description.getScore();
 		int currentScore = game.getScore();
-		int resultValue = currentScore - oldScore;
+		int resultValue = currentScore - oldScore; //el incremento en puntuacion
 		MsPacManResult result = (MsPacManResult)bCase.getResult();
 		result.setScore(resultValue);
 		
