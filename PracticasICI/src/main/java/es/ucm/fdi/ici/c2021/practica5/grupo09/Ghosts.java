@@ -8,8 +8,6 @@ import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsCBRengine;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.GhostsStorageManager;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts.MapaInfoGhost;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.GoToPPillAction;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.actions.RunAwayAction;
 import pacman.controllers.GhostController;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;

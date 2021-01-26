@@ -9,6 +9,7 @@ import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseBaseFilter;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Connector;
 import es.ucm.fdi.gaia.jcolibri.exception.InitializingException;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.INTER;
 
 
 
@@ -54,7 +55,7 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 			casesToStore.addAll(listCasesNotVulnerable.get(i));
 			casesToStore.addAll(listCasesVulnerable.get(i));
 		}
-		
+			
 		casesToStore.removeAll(originalCases);
 		
 		connector.storeCases(casesToStore);

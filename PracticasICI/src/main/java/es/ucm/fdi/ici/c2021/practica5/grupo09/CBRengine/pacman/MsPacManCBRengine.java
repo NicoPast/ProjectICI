@@ -23,6 +23,7 @@ import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.INTER;
 import pacman.game.Game;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
