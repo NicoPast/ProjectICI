@@ -213,7 +213,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		MsPacManDescription newDescription = (MsPacManDescription) query.getDescription();
 		MsPacManResult newResult = new MsPacManResult();
 		MsPacManSolution newSolution = new MsPacManSolution();
-		int newId = this.caseBase.getCases().size();
+		int newId = this.caseBase.getNumCases();
 		newId+= storageManager.getPendingCases();
 		newDescription.setId(newId);
 		newResult.setId(newId);

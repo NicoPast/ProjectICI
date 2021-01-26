@@ -18,7 +18,7 @@ public class ChaseAction implements Action{
 	
 	@Override
 	public MOVE execute(Game game) {		 
-		//System.out.println("Chasing");
+		System.out.println("Chasing");
 				
 		//miramos si hay algun fantasma al que estamos viendo 
 		GHOST ghostDest = GHOST.BLINKY;

@@ -33,6 +33,8 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	private Collection<CBRCase> casesNotVulnerable;
 	private Collection<CBRCase> casesVulnerable;
 	
+	Integer numCases = 0;
+	
 
 	INTER intersecciones[] = {INTER.CRUZ,INTER.T_HOR,INTER.L_INVER,INTER.T_INVER,INTER.L_VERT};
 	
@@ -77,6 +79,10 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 		return originalCases;
 	}
 	
+	public int getNumCases() {
+		return numCases;
+	}
+	
 	public Collection<CBRCase> getCases(Boolean vulnerable, INTER interseccion){
 		if(vulnerable) {
 			return listCasesVulnerable.get(interseccion);
@@ -112,6 +118,7 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 		
 		//hay que leer todos los casos y clasificarlos en su lista correspondiente
 		for(CBRCase caso : originalCases) {
+			numCases++;
 			MsPacManDescription description = (MsPacManDescription)caso.getDescription();
 			//descripcion.get
 			if(description.getVulnerable()) 
@@ -136,6 +143,7 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 		else {
 			listCasesNotVulnerable.get(interseccion).addAll(cases);			
 		}
+		numCases++;
 	}
 	
 	public void learnCases(Collection<CBRCase> cases) {

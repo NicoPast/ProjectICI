@@ -12,6 +12,7 @@ public class MsPacManStorageManager {
 	Game game;
 	CBRCaseBase caseBase;
 	Vector<CBRCase> buffer;
+	Integer numCases = 0;
 
 	private final static int TIME_WINDOW = 3;
 	
@@ -39,6 +40,7 @@ public class MsPacManStorageManager {
 			CBRCase bCase = this.buffer.remove(0);
 			reviseCase(bCase);
 		}
+		else numCases++;
 	}
 	
 	private void reviseCase(CBRCase bCase) {
@@ -61,6 +63,7 @@ public class MsPacManStorageManager {
 	}
 
 	public int getPendingCases() {
-		return this.buffer.size();
+		return numCases;
+		//return this.buffer.size();
 	}
 }
