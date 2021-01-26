@@ -1,9 +1,9 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions;
 
 
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo.interseccion;
-import es.ucm.fdi.ici.fuzzy.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
@@ -75,6 +75,7 @@ public class ChaseAction implements Action{
     }
 	
 	private boolean ghostInWay(Game game, MOVE m, interseccion interseccionActual) {
+		if(interseccionActual == null) return false;
 		boolean hasGhost = false;
 		// mira si m no es de donde vienes, si no es neutral y si existe camino
 
@@ -99,6 +100,10 @@ public class ChaseAction implements Action{
 		mapInfo = map;
 	}
 	
-	
+
+	@Override
+	public String getActionId() {
+		return "ChaseAction";
+	}   
 	
 }

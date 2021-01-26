@@ -6,19 +6,26 @@ import pacman.game.Constants.MOVE;
 
 public class MsPacManSolution implements CaseComponent, Cloneable {
 	Integer id;
-	String move = "NEUTRAL";
+	String action = "ChillAction";
+	String interseccion = "CRUZ";
 	
+	public String getInterseccion() {
+		return interseccion;
+	}
+	public void setInterseccion(String interseccion) {
+		this.interseccion = interseccion;
+	}
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getMove() {
-		return move;
+	public String getAction() {
+		return action;
 	}
-	public void setMove(String move) {
-		this.move = move;
+	public void setAction(String act) {
+		this.action = act;
 	}
 	
 	@Override
@@ -32,7 +39,7 @@ public class MsPacManSolution implements CaseComponent, Cloneable {
 	}
 	@Override
 	public String toString() {
-		return "MsPacManSolution [id=" + id + ", move=" + move + "]";
+		return "MsPacManSolution [id=" + id + ", action=" + action + ", interseccion=" + interseccion + "]";
 	}
 	
 	

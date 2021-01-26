@@ -1,8 +1,8 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09.msPacMan.actions;
 
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo.interseccion;
-import es.ucm.fdi.ici.fuzzy.Action;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -18,7 +18,7 @@ public class ChillAction implements Action{
 	@Override
 	public MOVE execute(Game game) {
 			
-		//System.out.println("Chilling");
+		//System.out.println("Chill");
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		if(interseccionActual == null) return MOVE.DOWN;
 		//buscamos por que camino nos comemos mas pils
@@ -69,7 +69,11 @@ public class ChillAction implements Action{
 		return proxMov;
 	}
 	
-	
+
+	@Override
+	public String getActionId() {
+		return "ChillAction";
+	}   
 	
 	
 	public void setMap(MapaInfo map) {

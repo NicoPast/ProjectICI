@@ -2,8 +2,8 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
@@ -20,18 +20,18 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equ
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
-import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
 	private String casebaseFile;
-	private MOVE move = MOVE.NEUTRAL;
 	private MsPacManActionSelector actionSelector;
 	private MsPacManStorageManager storageManager;
-
+	private Action action;
+	
 	CustomPlainTextConnector connector;
 	CachedLinearCaseBase caseBase;
 	NNConfig simConfig;
@@ -39,11 +39,10 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	MapaInfo mapInfo;
 	Game game;
 	
+	Queue<CBRCase> cases_a_guardar = new LinkedList<CBRCase>();
+	String actionsStrings[] = {"ChaseAction", "ChillAction", "RunAwayAction"};
 	
-	//PROVISIONAL (para definitivo, no te enfades Juan porfa, que es muy tarde)
-	private Random rnd = new Random();
-    private MOVE[] allMoves = MOVE.values();
-	
+	INTER intersecciones[] = {INTER.CRUZ,INTER.T_HOR,INTER.L_INVER,INTER.T_INVER,INTER.L_VERT};
 	
 	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aquí
 
@@ -116,8 +115,6 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 
 		simConfig.addMapping(new Attribute("vulnerable",MsPacManDescription.class), new Equal());
 
-		simConfig.addMapping(new Attribute("lastMove",MsPacManDescription.class), new Interval(3)); //0 up, 1 right, 2 down, 3 left
-
 		simConfig.addMapping(new Attribute("pillsUp",MsPacManDescription.class), new Interval(25));
 		simConfig.addMapping(new Attribute("pillsRight",MsPacManDescription.class), new Interval(25));
 		simConfig.addMapping(new Attribute("pillsDown",MsPacManDescription.class), new Interval(25));
@@ -140,62 +137,70 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException { //se llama en cada interseccion
 
-		//se guarda el caso en memoria
-		if(newCase != null) this.storageManager.storeCase(newCase);			
+		//se guarda el caso en memoria, hay que esperar 3 ciclos
+		if(cases_a_guardar.size() == 3) this.storageManager.storeCase(cases_a_guardar.poll());
 				
 		//pedir segun que lista
 		MsPacManDescription descripcion = (MsPacManDescription)query.getDescription();
 		Boolean vulnerable = descripcion.getVulnerable(); //para saber de que lista sacar
-		
 
 		Double bestVote = 0.0;
-		CBRCase mostSimilarCase = null;
-				
-		if(caseBase.getCases(vulnerable).isEmpty()) {			
-			//de momento hace un random move
-			this.move = mapInfo.getBestMove(game);
-		}
-		else { //ya tenemos algun caso guardado
-			
+		
+		INTER tipoInter = intersecciones[descripcion.getTipoInterseccion()]; //se necesita el tipo de interseccion			
+		
+		if(caseBase.getCases(vulnerable, tipoInter).isEmpty()) {		
+			this.action = actionSelector.findAction(); 
+			}
+		else { //ya tenemos algun caso guardado		
 			//Cargamos todos los casos
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(vulnerable), query, simConfig);
+			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(vulnerable, tipoInter),
+					query, simConfig);
 			//elegimos el top 5
 			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
 			
 			//elegimos cual es el mejor caso de los dado (votacion ponderada
-			int numVotos[] = {0,0,0,0};
-			double sumSimilaridades[] = {0.0,0.0,0.0,0.0};
+			int votos[] = {0,0,0}; //votos para cada estadp 0=chase, 1=chill, 2=runaway
+			double probabilidadesAcumuladas[] = {0,0,0};
 			
-			for(RetrievalResult caso : colaMejores) {
-				MOVE moveRes = MOVE.valueOf(((MsPacManSolution)caso.get_case().getSolution()).getMove());	
-				mostSimilarCase = caso.get_case();
-				numVotos[moveRes.ordinal()]++;
-				sumSimilaridades[moveRes.ordinal()] += caso.getEval();
+			for(RetrievalResult caso : colaMejores) {			
+				String actionRes = ((MsPacManSolution)(caso.get_case()).getSolution()).getAction();
+				if(actionRes == "ChaseAction") {
+					votos[0]++;
+					probabilidadesAcumuladas[0] += caso.getEval();
+				}
+				else if(actionRes == "ChillAction"){
+					votos[1]++;
+					probabilidadesAcumuladas[1] += caso.getEval();
+				}
+				else if(actionRes == "RunAwayAction"){
+					votos[2]++;
+					probabilidadesAcumuladas[2] += caso.getEval();
+				}
 			}
 			
-			//recorremos las votaciones y miramos que movimiento se ha votado mas y sacamos la media
-			for(int i=0;i<4;i++) {
-				double mediaAux = sumSimilaridades[i]/numVotos[i];
-				if(mediaAux > bestVote) {
-					bestVote = mediaAux;
-					this.move = MOVE.values()[i];
+			//sacar la media ponderada
+			int accionResultante = 1; //por defecto que sea chill
+			
+			for(int i=0;i<3;i++) {
+				double media = probabilidadesAcumuladas[i] / votos[i];
+				if(media > bestVote) {
+					bestVote = media;
+					accionResultante = i;
 				}
-			}			
+			}
+			
+			this.action = actionSelector.getAction(actionsStrings[accionResultante]);
 		}
 
 		//System.out.println(bestVote);
-		if(bestVote < 0.9) { //si el caso no es lo sufucientemente parecido
-			
-			//si es vulnerable poer pill
-			this.move = mapInfo.getBestMove(game);
-		}
-		else if (mostSimilarCase != null) {
-			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-			if(((MsPacManResult) mostSimilarCase.getResult()).getScore() < 50) this.move = mapInfo.getBestMove(game);
+		if(bestVote < 0.9) 
+		{ //si el caso no es lo sufucientemente parecido
+			this.action = actionSelector.findAction(); //saca una accion random			
 		}
 		
 		
 		newCase = createNewCase(query);
+		cases_a_guardar.add(newCase);
 	}
 
 	/**
@@ -213,15 +218,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		newDescription.setId(newId);
 		newResult.setId(newId);
 		newSolution.setId(newId);
-		newSolution.setMove(this.move.toString());
+		newSolution.setAction(this.action.getActionId());
 		newCase.setDescription(newDescription);
 		newCase.setResult(newResult);
 		newCase.setSolution(newSolution);
 		return newCase;
 	}
 	
-	public MOVE getSolution() {
-		return move;
+	public Action getSolution() {
+		return action;
 	}
 
 	@Override

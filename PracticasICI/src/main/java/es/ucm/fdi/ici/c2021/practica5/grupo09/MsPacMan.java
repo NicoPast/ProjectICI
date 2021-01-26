@@ -20,7 +20,7 @@ public class MsPacMan extends PacmanController {
 	MsPacManActionSelector actionSelector;
 	MsPacManStorageManager storageManager;
 	
-	final static String FILE_PATH = "cbrdata/grupo09/Ghosts.csv";
+	final static String FILE_PATH = "cbrdata/grupo09/MsPacMan.csv";
 
 	MapaInfo mapInfo;
 	
@@ -33,6 +33,9 @@ public class MsPacMan extends PacmanController {
 		//runAwayAction = new RunAwayAction(mapInfo);
 		
 		List<Action> actions = new ArrayList<Action>();
+		actions.add(new ChaseAction(mapInfo));
+		actions.add(new ChillAction(mapInfo));
+		actions.add(new RunAwayAction(mapInfo));
 		this.actionSelector = new MsPacManActionSelector(actions);
 
 		this.storageManager = new MsPacManStorageManager();
@@ -76,11 +79,11 @@ public class MsPacMan extends PacmanController {
 			return MOVE.NEUTRAL;		
 		try {
 			input.parseInput(game);
-			actionSelector.setGame(game); //realmente no hace falta
+			actionSelector.setGame(game);
 			storageManager.setGame(game);
 			cbrEngine.setGame(game);
 			cbrEngine.cycle(input.getQuery());
-			MOVE move = cbrEngine.getSolution(); //si no encuentra movimiento que mire en la accion (best move)
+			MOVE move = cbrEngine.getSolution().execute(game); //si no encuentra movimiento que mire en la accion (best move)
 			return move;
 		} catch (Exception e) {
 			e.printStackTrace();

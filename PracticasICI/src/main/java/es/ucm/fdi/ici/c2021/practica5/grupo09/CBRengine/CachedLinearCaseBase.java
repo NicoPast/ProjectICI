@@ -2,12 +2,15 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseBaseFilter;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Connector;
 import es.ucm.fdi.gaia.jcolibri.exception.InitializingException;
+
+
 
 /**
  * Cached case base that only persists cases when closing.
@@ -23,7 +26,10 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	private Connector connector;
 	private Collection<CBRCase> originalCases;
 	
+	
 	//las dos distintas listas para mejorar rendimiento
+	private EnumMap<INTER, Collection<CBRCase>> listCasesNotVulnerable;
+	private EnumMap<INTER, Collection<CBRCase>> listCasesVulnerable;
 	private Collection<CBRCase> casesNotVulnerable;
 	private Collection<CBRCase> casesVulnerable;
 	
@@ -32,13 +38,20 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	 * Closes the case base saving or deleting the cases of the persistence media
 	 */
 	public void close() {
-		casesNotVulnerable.removeAll(casesToRemove);
-		casesVulnerable.removeAll(casesToRemove);
 		
-		Collection<CBRCase> casesToStore = new ArrayList<>(casesNotVulnerable);
-		casesToStore.addAll(casesVulnerable);
-		casesToStore.removeAll(originalCases);
+		Collection<CBRCase> casesToStore = new ArrayList<>();
+		
+		
+		for(INTER i:INTER.values()) {
+			listCasesNotVulnerable.get(i).removeAll(casesToRemove);
+			listCasesVulnerable.get(i).removeAll(casesToRemove);
 
+			casesToStore.addAll(listCasesNotVulnerable.get(i));
+			casesToStore.addAll(listCasesVulnerable.get(i));
+		}
+		
+		casesToStore.removeAll(originalCases);
+		
 		connector.storeCases(casesToStore);
 		connector.close();
 	}
@@ -47,8 +60,10 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	 * Forgets cases. It only removes the cases from the storage media when closing.
 	 */
 	public void forgetCases(Collection<CBRCase> cases) {
-		casesNotVulnerable.removeAll(cases);
-		casesVulnerable.removeAll(cases);
+		for(INTER i:INTER.values()) {
+			listCasesNotVulnerable.get(i).removeAll(cases);
+			listCasesVulnerable.get(i).removeAll(cases);
+		}
 	}
 
 	/**
@@ -56,13 +71,16 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	 */
 	public Collection<CBRCase> getCases() {
 		//nunca se deberia llamar a esto
-		Collection<CBRCase> aux = new ArrayList<>(casesNotVulnerable);
-		aux.addAll(casesVulnerable);
-		return aux;
+		return originalCases;
 	}
 	
-	public Collection<CBRCase> getCases(Boolean vulnerable){
-		return vulnerable ? casesNotVulnerable : casesVulnerable;
+	public Collection<CBRCase> getCases(Boolean vulnerable, INTER interseccion){
+		if(vulnerable) {
+			return listCasesVulnerable.get(interseccion);
+		}
+		else {
+			return listCasesNotVulnerable.get(interseccion);			
+		}
 	}
 
 	/**
@@ -79,17 +97,24 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	public void init(Connector connector) throws InitializingException {
 		this.connector = connector;
 		originalCases = this.connector.retrieveAllCases();	
+
+		listCasesNotVulnerable = new EnumMap<INTER, Collection<CBRCase>>(INTER.class);
+		listCasesVulnerable = new EnumMap<INTER, Collection<CBRCase>>(INTER.class);
 		
+		for(INTER i:INTER.values()) {
+			listCasesNotVulnerable.put(i, new ArrayList<CBRCase>());
+			listCasesVulnerable.put(i, new ArrayList<CBRCase>());
+		}
 		
-		casesNotVulnerable = new ArrayList<CBRCase>();
-		casesVulnerable = new ArrayList<CBRCase>();		
 		
 		//hay que leer todos los casos y clasificarlos en su lista correspondiente
 		for(CBRCase caso : originalCases) {
+			MsPacManSolution solucion = (MsPacManSolution)caso.getSolution();
+			
 			if(((MsPacManDescription)caso.getDescription()).getVulnerable()) 
-				casesVulnerable.add(caso);
+				listCasesVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
 			else 
-				casesNotVulnerable.add(caso);
+				listCasesNotVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
 		}
 		
 		
@@ -99,13 +124,29 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	/**
 	 * Learns cases that are only saved when closing the Case Base.
 	 */
-	public void learnCases(Boolean vulnerable , Collection<CBRCase> cases) {
-		if(vulnerable) casesNotVulnerable.addAll(cases);
-		else casesNotVulnerable.addAll(cases);
+	public void learnCases(Boolean vulnerable, INTER interseccion, Collection<CBRCase> cases) {
+		if(vulnerable) {
+			listCasesVulnerable.get(interseccion).addAll(cases);
+		}
+		else {
+			listCasesNotVulnerable.get(interseccion).addAll(cases);			
+		}
 	}
 	
 	public void learnCases(Collection<CBRCase> cases) {
-		casesNotVulnerable.addAll(cases);
+		//hay que dividirlos
+		
+		for(CBRCase caso: cases) {
+			MsPacManSolution solucion = (MsPacManSolution)caso.getSolution();
+			MsPacManDescription descripcion = (MsPacManDescription)caso.getDescription();
+			
+			if(descripcion.getVulnerable()) {
+				listCasesVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
+			}
+			else {
+				listCasesNotVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);				
+			}
+		}
 	}
 
 }

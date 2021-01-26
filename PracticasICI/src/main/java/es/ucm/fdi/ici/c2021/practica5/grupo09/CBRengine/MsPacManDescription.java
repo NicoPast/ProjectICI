@@ -25,8 +25,6 @@ public class MsPacManDescription implements CaseComponent {
 	
 	Boolean vulnerable;
 	
-	Integer lastMove;
-
 	Integer pillsUp;
 	Integer pillsRight;
 	Integer pillsDown;
@@ -38,6 +36,15 @@ public class MsPacManDescription implements CaseComponent {
 	Integer powerPillLeft;
 		
 	Integer score;
+	Integer tipoInterseccion;
+
+	public Integer getTipoInterseccion() {
+		return tipoInterseccion;
+	}
+
+	public void setTipoInterseccion(Integer tipoInterseccion) {
+		this.tipoInterseccion = tipoInterseccion;
+	}
 
 	public Integer getId() {
 		return id;
@@ -151,14 +158,6 @@ public class MsPacManDescription implements CaseComponent {
 		this.vulnerable = vulnerable;
 	}
 
-	public Integer getLastMove() {
-		return lastMove;
-	}
-
-	public void setLastMove(Integer lastMove) {
-		this.lastMove = lastMove;
-	}
-
 	public Integer getPillsUp() {
 		return pillsUp;
 	}
@@ -242,7 +241,7 @@ public class MsPacManDescription implements CaseComponent {
 				+ ", distanciaDown=" + distanciaDown + ", distanciaLeft=" + distanciaLeft + ", ghostUp=" + ghostUp
 				+ ", ghostRight=" + ghostRight + ", ghostDown=" + ghostDown + ", ghostLeft=" + ghostLeft + ", edibleUp="
 				+ edibleUp + ", edibleRight=" + edibleRight + ", edibleDown=" + edibleDown + ", edibleLeft="
-				+ edibleLeft + ", vulnerable=" + vulnerable + ", direction=" + lastMove + ", pillsUp=" + pillsUp
+				+ edibleLeft + ", vulnerable=" + vulnerable + ", pillsUp=" + pillsUp
 				+ ", pillsRight=" + pillsRight + ", pillsDown=" + pillsDown + ", pillsLeft=" + pillsLeft
 				+ ", powerPillUp=" + powerPillUp + ", powerPillRight=" + powerPillRight + ", powerPillDown="
 				+ powerPillDown + ", powerPillLeft=" + powerPillLeft + ", score=" + score + "]";

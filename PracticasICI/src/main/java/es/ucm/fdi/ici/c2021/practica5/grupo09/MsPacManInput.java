@@ -32,6 +32,7 @@ public class MsPacManInput implements Input {
 	int[] powerPills = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
 
 	Integer score = -1;	
+	Integer interseccion = 0;
 
 	class GhostPair{
 		GHOST ghost;
@@ -86,7 +87,6 @@ public class MsPacManInput implements Input {
 		description.setEdibleDown(edible[2]);
 		description.setEdibleLeft(edible[3]);
 		description.setVulnerable(vulnerable);
-		description.setLastMove(lastMove.ordinal());
 		description.setPillsUp(pills[0]);
 		description.setPillsRight(pills[1]);
 		description.setPillsDown(pills[2]);
@@ -96,9 +96,10 @@ public class MsPacManInput implements Input {
 		description.setPowerPillDown(powerPills[2]);
 		description.setPowerPillLeft(powerPills[3]);
 		description.setScore(score);
+		description.setTipoInterseccion(interseccion);
 		
 		CBRQuery query = new CBRQuery();
-		query.setDescription(description);
+		query.setDescription(description);	
 		return query;
 	}
 	
