@@ -38,14 +38,6 @@ public class MsPacManDescription implements CaseComponent {
 	Integer score;
 	Integer tipoInterseccion;
 
-	public Integer getTipoInterseccion() {
-		return tipoInterseccion;
-	}
-
-	public void setTipoInterseccion(Integer tipoInterseccion) {
-		this.tipoInterseccion = tipoInterseccion;
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -230,6 +222,14 @@ public class MsPacManDescription implements CaseComponent {
 		this.score = score;
 	}
 
+	public Integer getTipoInterseccion() {
+		return tipoInterseccion;
+	}
+
+	public void setTipoInterseccion(Integer tipoInterseccion) {
+		this.tipoInterseccion = tipoInterseccion;
+	}
+
 	@Override
 	public Attribute getIdAttribute() {
 		return new Attribute("id", MsPacManDescription.class);
@@ -241,10 +241,11 @@ public class MsPacManDescription implements CaseComponent {
 				+ ", distanciaDown=" + distanciaDown + ", distanciaLeft=" + distanciaLeft + ", ghostUp=" + ghostUp
 				+ ", ghostRight=" + ghostRight + ", ghostDown=" + ghostDown + ", ghostLeft=" + ghostLeft + ", edibleUp="
 				+ edibleUp + ", edibleRight=" + edibleRight + ", edibleDown=" + edibleDown + ", edibleLeft="
-				+ edibleLeft + ", vulnerable=" + vulnerable + ", pillsUp=" + pillsUp
-				+ ", pillsRight=" + pillsRight + ", pillsDown=" + pillsDown + ", pillsLeft=" + pillsLeft
-				+ ", powerPillUp=" + powerPillUp + ", powerPillRight=" + powerPillRight + ", powerPillDown="
-				+ powerPillDown + ", powerPillLeft=" + powerPillLeft + ", score=" + score + "]";
+				+ edibleLeft + ", vulnerable=" + vulnerable + ", pillsUp=" + pillsUp + ", pillsRight=" + pillsRight
+				+ ", pillsDown=" + pillsDown + ", pillsLeft=" + pillsLeft + ", powerPillUp=" + powerPillUp
+				+ ", powerPillRight=" + powerPillRight + ", powerPillDown=" + powerPillDown + ", powerPillLeft="
+				+ powerPillLeft + ", score=" + score + ", tipoInterseccion=" + tipoInterseccion + "]";
 	}
+
 	
 }

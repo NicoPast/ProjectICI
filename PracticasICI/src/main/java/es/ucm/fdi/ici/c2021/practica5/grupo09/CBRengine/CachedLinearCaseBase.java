@@ -33,6 +33,9 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 	private Collection<CBRCase> casesNotVulnerable;
 	private Collection<CBRCase> casesVulnerable;
 	
+
+	INTER intersecciones[] = {INTER.CRUZ,INTER.T_HOR,INTER.L_INVER,INTER.T_INVER,INTER.L_VERT};
+	
 	private Collection<CBRCase> casesToRemove;
 	/**
 	 * Closes the case base saving or deleting the cases of the persistence media
@@ -109,12 +112,14 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 		
 		//hay que leer todos los casos y clasificarlos en su lista correspondiente
 		for(CBRCase caso : originalCases) {
-			MsPacManSolution solucion = (MsPacManSolution)caso.getSolution();
-			
-			if(((MsPacManDescription)caso.getDescription()).getVulnerable()) 
-				listCasesVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
-			else 
-				listCasesNotVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
+			MsPacManDescription description = (MsPacManDescription)caso.getDescription();
+			//descripcion.get
+			if(description.getVulnerable()) 
+				listCasesVulnerable.get(intersecciones[description.getTipoInterseccion()]).add(caso);
+			else {
+				
+				listCasesNotVulnerable.get(intersecciones[description.getTipoInterseccion()]).add(caso);				
+			}
 		}
 		
 		
@@ -141,10 +146,10 @@ public class CachedLinearCaseBase implements CBRCaseBase {
 			MsPacManDescription descripcion = (MsPacManDescription)caso.getDescription();
 			
 			if(descripcion.getVulnerable()) {
-				listCasesVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);
+				listCasesVulnerable.get(intersecciones[descripcion.getTipoInterseccion()]).add(caso);
 			}
-			else {
-				listCasesNotVulnerable.get(INTER.valueOf(solucion.getInterseccion())).add(caso);				
+			else {	
+				listCasesNotVulnerable.get(intersecciones[descripcion.getTipoInterseccion()]).add(caso);		
 			}
 		}
 	}

@@ -32,7 +32,7 @@ public class MsPacManInput implements Input {
 	int[] powerPills = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
 
 	Integer score = -1;	
-	Integer interseccion = 0;
+	Integer tipoInterseccion = 0;
 
 	class GhostPair{
 		GHOST ghost;
@@ -67,6 +67,9 @@ public class MsPacManInput implements Input {
 		vulnerable = isVulnerable(game);		
 		
 		score = game.getScore();
+		
+		tipoInterseccion = getTipoInterseccion();
+		//System.out.println(tipoInterseccion);
 	}
 
 	@Override
@@ -96,7 +99,7 @@ public class MsPacManInput implements Input {
 		description.setPowerPillDown(powerPills[2]);
 		description.setPowerPillLeft(powerPills[3]);
 		description.setScore(score);
-		description.setTipoInterseccion(interseccion);
+		description.setTipoInterseccion(tipoInterseccion);
 		
 		CBRQuery query = new CBRQuery();
 		query.setDescription(description);	
@@ -170,4 +173,14 @@ public class MsPacManInput implements Input {
 		return distMin < distAlerta;
 	}
 	
+	private int getTipoInterseccion() {
+		//usamo el mapa para saber en que tipo de interseccion estamos
+		interseccion interseccionActual = mapInfo.getInterseccionActual();
+		
+		if(interseccionActual.destinos.get(MOVE.UP) == null) return 1;
+		else if(interseccionActual.destinos.get(MOVE.RIGHT) == null) return 2;
+		else if(interseccionActual.destinos.get(MOVE.DOWN) == null) return 3;
+		else if(interseccionActual.destinos.get(MOVE.LEFT) == null) return 4;
+		else return 0;
+	}
 }
