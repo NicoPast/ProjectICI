@@ -17,19 +17,12 @@ import pacman.game.Game;
 public class MsPacManInput implements Input {
 
 	MapaInfo mapInfo;
-	
-	int[] distancias = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
-	int[] ghost = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
-	
-	//el estado del fantasma mas cercana en esa direccion 
-	Boolean[] edible = {false, false, false, false}; //ejemplo: (edible[0] es el estado del fantasma que se llega por ghost[0])
-	
+		
 	Boolean vulnerable = false;
 	
-	MOVE lastMove = MOVE.NEUTRAL;
-
-	int[] pills = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
-	int[] powerPills = {-1,-1,-1,-1}; //UP, RIGHT, DOWN, LEFT
+	Double distGhost = Double.MAX_VALUE;
+	Double distEdibleGhost = Double.MAX_VALUE;
+	Double distToPowerPill = Double.MAX_VALUE;
 
 	Integer score = -1;	
 	Integer tipoInterseccion = 0;
@@ -48,24 +41,15 @@ public class MsPacManInput implements Input {
 	@Override
 	public void parseInput(Game game) { //se llama en cada interseccion	
 		
-		//AQUI SE ACTUALIZAN LOS DATOS PARA GUARDARLOS
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 
-		for(MOVE m: MOVE.values()) {
-			if(interseccionActual.distancias.get(m) != null) {
-				distancias[m.ordinal()] = interseccionActual.distancias.get(m);
-				GhostPair pair = proxGhost(game, interseccionActual, m);
-				ghost[m.ordinal()] = pair.dist.intValue();
-				edible[m.ordinal()] = game.isGhostEdible(pair.ghost);
-				pills[m.ordinal()] = interseccionActual.pills.get(m);
-				powerPills[m.ordinal()] = interseccionActual.powerPill.get(m);
-			}
-		}
-		lastMove = game.getPacmanLastMoveMade();
-		score = game.getScore();
 		
+		score = game.getScore();		
 		vulnerable = isVulnerable(game);		
-		
+
+		distGhost =  distToGhost(game, false);
+		distEdibleGhost =  distToGhost(game, true);
+		distToPowerPill = distToPP(game);
 		score = game.getScore();
 		
 		tipoInterseccion = getTipoInterseccion();
@@ -77,29 +61,12 @@ public class MsPacManInput implements Input {
 		MsPacManDescription description = new MsPacManDescription();
 				
 		//Hacer todos los sets
-		description.setDistanciaUp(distancias[0]);
-		description.setDistanciaRight(distancias[1]);
-		description.setDistanciaDown(distancias[2]);
-		description.setDistanciaLeft(distancias[3]);
-		description.setGhostUp(ghost[0]);
-		description.setGhostRight(ghost[1]);
-		description.setGhostDown(ghost[2]);
-		description.setGhostLeft(ghost[3]);
-		description.setEdibleUp(edible[0]);
-		description.setEdibleRight(edible[1]);
-		description.setEdibleDown(edible[2]);
-		description.setEdibleLeft(edible[3]);
 		description.setVulnerable(vulnerable);
-		description.setPillsUp(pills[0]);
-		description.setPillsRight(pills[1]);
-		description.setPillsDown(pills[2]);
-		description.setPillsLeft(pills[3]);
-		description.setPowerPillUp(powerPills[0]);
-		description.setPowerPillRight(powerPills[1]);
-		description.setPowerPillDown(powerPills[2]);
-		description.setPowerPillLeft(powerPills[3]);
 		description.setScore(score);
 		description.setTipoInterseccion(tipoInterseccion);
+		description.setDistClosestGhost(distGhost.intValue());
+		description.setDistClosestEdibleGhost(distEdibleGhost.intValue());
+		description.setDistToPowerPill(distToPowerPill.intValue());
 		
 		CBRQuery query = new CBRQuery();
 		query.setDescription(description);	
@@ -183,4 +150,25 @@ public class MsPacManInput implements Input {
 		else if(interseccionActual.destinos.get(MOVE.LEFT) == null) return 4;
 		else return 0;
 	}
+
+	private Double distToGhost(Game game, Boolean edible) {
+		Double dist = Double.MAX_VALUE;
+		
+		for(GHOST g:GHOST.values()) {
+			if(game.isGhostEdible(g) == edible) {
+				Double aux = game.getDistance(game.getPacmanCurrentNodeIndex(), 
+						game.getGhostCurrentNodeIndex(g), DM.PATH);
+				if(aux != -1 && aux < dist) dist = aux;
+			}			
+		}		
+		return dist;		
+	}
+	
+	
+	private Double distToPP(Game game) {
+		return game.getDistance(game.getPacmanCurrentNodeIndex(),mapInfo.getClosestPillAnchura(game) , DM.PATH);
+	}
+
 }
+
+

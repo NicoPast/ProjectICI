@@ -18,7 +18,7 @@ public class ChillAction implements Action{
 	@Override
 	public MOVE execute(Game game) {
 			
-		System.out.println("Chill");
+		//System.out.println("Chill");
 		interseccion interseccionActual = mapInfo.getInterseccionActual();
 		if(interseccionActual == null) return MOVE.DOWN;
 		//buscamos por que camino nos comemos mas pils

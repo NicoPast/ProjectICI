@@ -4,27 +4,10 @@
 	<DescriptionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManDescription</DescriptionClassName>
 	<DescriptionMappings>
 		<Map>id</Map>
-		<Map>distanciaUp</Map>
-		<Map>distanciaRight</Map>
-		<Map>distanciaDown</Map>
-		<Map>distanciaLeft</Map>
-		<Map>ghostUp</Map>
-		<Map>ghostRight</Map>
-		<Map>ghostDown</Map>
-		<Map>ghostLeft</Map>
-		<Map>edibleUp</Map>
-		<Map>edibleRight</Map>
-		<Map>edibleDown</Map>
-		<Map>edibleLeft</Map>
-		<Map>vulnerable</Map>
-		<Map>pillsUp</Map>
-		<Map>pillsRight</Map>
-		<Map>pillsDown</Map>
-		<Map>pillsLeft</Map>
-		<Map>powerPillUp</Map>
-		<Map>powerPillRight</Map>
-		<Map>powerPillDown</Map>
-		<Map>powerPillRight</Map>		
+		<Map>distClosestEdibleGhost</Map>
+		<Map>distClosestGhost</Map>
+		<Map>distToPowerPill</Map>
+		<Map>vulnerable</Map>	
 		<Map>score</Map>	
 		<Map>tipoInterseccion</Map>	
 	</DescriptionMappings>
