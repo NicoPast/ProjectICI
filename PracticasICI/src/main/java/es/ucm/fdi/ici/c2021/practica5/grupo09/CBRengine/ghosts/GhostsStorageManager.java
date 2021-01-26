@@ -44,7 +44,7 @@ public class GhostsStorageManager {
 		this.caseBase = caseBase;
 	}
 	
-	public void storeCase(CBRCase newCase, NNConfig simConfig)
+	public void storeCase(CBRCase newCase)
 	{			
 		this.buffer.get(ghostType).add(newCase);
 		
@@ -52,11 +52,11 @@ public class GhostsStorageManager {
 		if(this.buffer.get(ghostType).size() >TIME_WINDOW)
 		{
 			CBRCase bCase = this.buffer.get(ghostType).remove(0);
-			reviseCase(bCase, simConfig);
+			reviseCase(bCase);
 		}
 	}
 	
-	private void reviseCase(CBRCase bCase, NNConfig simConfig) {
+	private void reviseCase(CBRCase bCase) {
 		GhostsDescription description = (GhostsDescription)bCase.getDescription();
 		int oldScore = description.getScore();
 		int currentScore = game.getScore();
@@ -82,25 +82,24 @@ public class GhostsStorageManager {
 		if(resultValue > 200 || lifesValue < 0 ||
 			(description.getEdible() && game.isGhostEdible(ghostType) && resultDistance > 40) 
 			|| (!description.getEdible() && !game.isGhostEdible(ghostType) && resultDistance < -40) ){	
-				if(simConfig != null){
-					Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(
-							((GhostsCachedLinearCaseBase)caseBase).getCases(description.getEdible(), description.getIntersectionType()), bCase, simConfig);
-					if(!eval.isEmpty()){		
-						RetrievalResult first = SelectCases.selectTopKRR(eval, 1).iterator().next();
-						
-						GhostsSolution newCaseSolution = (GhostsSolution)bCase.getSolution();
-						GhostsResult oldCaseResult = (GhostsResult) first.get_case().getResult();
-						GhostsSolution oldCaseSolution = (GhostsSolution) first.get_case().getSolution();
-						
-						//Si es muy parecido, se aplasta si el anterior fue malo y yo bueno
-						if(first.getEval() > 0.95 && oldCaseSolution.getMove() != newCaseSolution.getMove() && 
-						oldCaseResult.getScore() > result.getScore() + 50 || (lifesValue < 0 && oldCaseResult.getPacmanHealth() == 0)){
-							List<CBRCase> cases = new ArrayList<CBRCase>();
-							cases.add(first.get_case());
-							((GhostsCachedLinearCaseBase)caseBase).forgetCases(cases);
-						}
+				
+				Collection<RetrievalResult> eval = GhostsCustomNN.customNN(((GhostsCachedLinearCaseBase)caseBase).getCases(description.getEdible(), description.getIntersectionType()), bCase);
+				if(!eval.isEmpty()){		
+					RetrievalResult first = SelectCases.selectTopKRR(eval, 1).iterator().next();
+					
+					GhostsSolution newCaseSolution = (GhostsSolution)bCase.getSolution();
+					GhostsResult oldCaseResult = (GhostsResult) first.get_case().getResult();
+					GhostsSolution oldCaseSolution = (GhostsSolution) first.get_case().getSolution();
+					
+					//Si es muy parecido, se aplasta si el anterior fue malo y yo bueno
+					if(first.getEval() > 0.95 && oldCaseSolution.getMove() != newCaseSolution.getMove() && 
+					oldCaseResult.getScore() > result.getScore() + 50 || (lifesValue < 0 && oldCaseResult.getPacmanHealth() == 0)){
+						List<CBRCase> cases = new ArrayList<CBRCase>();
+						cases.add(first.get_case());
+						((GhostsCachedLinearCaseBase)caseBase).forgetCases(cases);
 					}
 				}
+				
 				
 				StoreCasesMethod.storeCase(this.caseBase, bCase);
 		}

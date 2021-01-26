@@ -1,7 +1,6 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ghosts;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 
@@ -14,14 +13,10 @@ import es.ucm.fdi.gaia.jcolibri.connector.PlainTextConnector;
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.RetrievalResult;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.NNConfig;
-import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.NNScoringMethod;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
-import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Equal;
-import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Interval;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.GhostsAction;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.ParallelNNScoringMethod;
 import pacman.game.Constants.MOVE;
 
 public class GhostsCBRengine implements StandardCBRApplication {
@@ -83,51 +78,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 
 		Attribute att;
 
-		att = new Attribute("distanceNextIntersectionUp",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(40));
-		att = new Attribute("distanceNextIntersectionDown",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(40));
-		att = new Attribute("distanceNextIntersectionLeft",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(40));
-		att = new Attribute("distanceNextIntersectionRight",GhostsDescription.class);
-		simConfig.setWeight(att, 1.0);
-		simConfig.addMapping(att, new Interval(40));
-
-		att = new Attribute("distanceNearestGhostUp",GhostsDescription.class);
-		simConfig.setWeight(att, 0.5);
-		simConfig.addMapping(att, new Interval(150));
-		att = new Attribute("distanceNearestGhostDown",GhostsDescription.class);
-		simConfig.setWeight(att, 0.5);
-		simConfig.addMapping(att, new Interval(150));
-		att = new Attribute("distanceNearestGhostLeft",GhostsDescription.class);
-		simConfig.setWeight(att, 0.5);
-		simConfig.addMapping(att, new Interval(150));
-		att = new Attribute("distanceNearestGhostRight",GhostsDescription.class);
-		simConfig.setWeight(att, 0.5);
-		simConfig.addMapping(att, new Interval(150));
 		
-		att = new Attribute("GhostEdibleUp",GhostsDescription.class);
-		simConfig.setWeight(att, 2.0);
-		simConfig.addMapping(att, new Equal());
-		att = new Attribute("GhostEdibleDown",GhostsDescription.class);
-		simConfig.setWeight(att, 2.0);
-		simConfig.addMapping(att, new Equal());
-		att = new Attribute("GhostEdibleLeft",GhostsDescription.class);
-		simConfig.setWeight(att, 2.0);
-		simConfig.addMapping(att, new Equal());
-		att = new Attribute("GhostEdibleRight",GhostsDescription.class);
-		simConfig.setWeight(att, 2.0);
-		simConfig.addMapping(att, new Equal());
-
-		att = new Attribute("lastMove",GhostsDescription.class);
-		simConfig.setWeight(att, 10.0);
-		simConfig.addMapping(att, new Equal());
-		att = new Attribute("distanceToPacMan",GhostsDescription.class);
-		simConfig.setWeight(att, 3.0);
-		simConfig.addMapping(att, new Interval(300));
 		
 		// att = new Attribute("score",GhostsDescription.class);
 		// simConfig.setWeight(att, 1.0);
@@ -139,7 +90,8 @@ public class GhostsCBRengine implements StandardCBRApplication {
 		caseBase.init(connector);
 		return caseBase;
 	}
-
+	
+	
 	@Override
 	public void cycle(CBRQuery query) throws ExecutionException {
 
@@ -161,7 +113,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			// else {
 
 				//Compute NN
-				Collection<RetrievalResult> eval = ParallelNNScoringMethod.evaluateSimilarityParallel(/*filtered*/ cases, query, simConfig);
+				Collection<RetrievalResult> eval = GhostsCustomNN.customNN(cases, query);
 				
 				Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
 				
@@ -207,7 +159,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			}
 		//}
 		CBRCase newCase = createNewCase(query);
-		this.storageManager.storeCase(newCase, simConfig);
+		this.storageManager.storeCase(newCase);
 	}
 
 	//Pacman gano demasiados puntos y no murio o se alejo o acerco cuando no debia
