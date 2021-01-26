@@ -11,7 +11,8 @@ public class ExecutorTest {
 
     public static void main(String[] args) { 
         Executor executor = new Executor.Builder()
-                .setTickLimit(400)
+                .setTickLimit(4000)
+                .setTimeLimit(200)
                 .setVisual(true)
                 .setScaleFactor(3.0)
                 .build();
@@ -20,7 +21,7 @@ public class ExecutorTest {
         GhostController ghosts = new Ghosts();
       
         System.out.println( 
-        		executor.runGame(pacMan, ghosts, 15)
+        		executor.runGame(pacMan, ghosts, 10)
         );
         
     }

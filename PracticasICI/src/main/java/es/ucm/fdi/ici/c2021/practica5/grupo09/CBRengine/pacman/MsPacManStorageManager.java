@@ -12,6 +12,7 @@ public class MsPacManStorageManager {
 	Game game;
 	CBRCaseBase caseBase;
 	Vector<CBRCase> buffer;
+	Integer numCases = 0;
 
 	private final static int TIME_WINDOW = 3;
 	
@@ -39,13 +40,14 @@ public class MsPacManStorageManager {
 			CBRCase bCase = this.buffer.remove(0);
 			reviseCase(bCase);
 		}
+		else numCases++;
 	}
 	
 	private void reviseCase(CBRCase bCase) {
 		MsPacManDescription description = (MsPacManDescription)bCase.getDescription();
 		int oldScore = description.getScore();
 		int currentScore = game.getScore();
-		int resultValue = currentScore - oldScore;
+		int resultValue = currentScore - oldScore; //el incremento en puntuacion
 		MsPacManResult result = (MsPacManResult)bCase.getResult();
 		result.setScore(resultValue);
 		
@@ -61,6 +63,7 @@ public class MsPacManStorageManager {
 	}
 
 	public int getPendingCases() {
-		return this.buffer.size();
+		return numCases;
+		//return this.buffer.size();
 	}
 }
