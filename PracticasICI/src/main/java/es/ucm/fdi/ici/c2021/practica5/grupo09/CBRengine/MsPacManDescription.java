@@ -2,48 +2,27 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CaseComponent;
+import pacman.game.Constants.MOVE;
 
 public class MsPacManDescription implements CaseComponent {
 
 	Integer id;
+
+	Integer distClosestEdibleGhost;
+	Integer distClosestGhost;
+	Integer distToPowerPill;
 	
+	Boolean vulnerable;
+		
 	Integer score;
-	Integer time;
-	Integer nearestPPill;
-	Integer nearestGhost;
-	Boolean edibleGhost;
-	
-	
+	Integer tipoInterseccion;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-	
-	public Integer getNearestPPill() {
-		return nearestPPill;
-	}
-
-	public void setNearestPPill(Integer nearestPPill) {
-		this.nearestPPill = nearestPPill;
-	}
-
-	public Integer getNearestGhost() {
-		return nearestGhost;
-	}
-
-	public void setNearestGhost(Integer nearestGhost) {
-		this.nearestGhost = nearestGhost;
-	}
-
-	public Boolean getEdibleGhost() {
-		return edibleGhost;
-	}
-
-	public void setEdibleGhost(Boolean edibleGhost) {
-		this.edibleGhost = edibleGhost;
 	}
 
 	public Integer getScore() {
@@ -54,12 +33,46 @@ public class MsPacManDescription implements CaseComponent {
 		this.score = score;
 	}
 
-	public Integer getTime() {
-		return time;
+	public Integer getTipoInterseccion() {
+		return tipoInterseccion;
 	}
 
-	public void setTime(Integer time) {
-		this.time = time;
+	public void setTipoInterseccion(Integer tipoInterseccion) {
+		this.tipoInterseccion = tipoInterseccion;
+	}
+	
+	
+
+	public Integer getDistClosestEdibleGhost() {
+		return distClosestEdibleGhost;
+	}
+
+	public void setDistClosestEdibleGhost(Integer distClosestEdibleGhost) {
+		this.distClosestEdibleGhost = distClosestEdibleGhost;
+	}
+
+	public Integer getDistClosestGhost() {
+		return distClosestGhost;
+	}
+
+	public void setDistClosestGhost(Integer distClosestGhost) {
+		this.distClosestGhost = distClosestGhost;
+	}
+
+	public Integer getDistToPowerPill() {
+		return distToPowerPill;
+	}
+
+	public void setDistToPowerPill(Integer distToPowerPill) {
+		this.distToPowerPill = distToPowerPill;
+	}
+
+	public Boolean getVulnerable() {
+		return vulnerable;
+	}
+
+	public void setVulnerable(Boolean vulnerable) {
+		this.vulnerable = vulnerable;
 	}
 
 	@Override
@@ -69,10 +82,10 @@ public class MsPacManDescription implements CaseComponent {
 
 	@Override
 	public String toString() {
-		return "MsPacManDescription [id=" + id + ", score=" + score + ", time=" + time + ", nearestPPill="
-				+ nearestPPill + ", nearestGhost=" + nearestGhost + ", edibleGhost=" + edibleGhost + "]";
+		return "MsPacManDescription [id=" + id + ", distClosestEdibleGhost=" + distClosestEdibleGhost
+				+ ", distClosestGhost=" + distClosestGhost + ", distToPowerPill=" + distToPowerPill + ", vulnerable="
+				+ vulnerable + ", score=" + score + ", tipoInterseccion=" + tipoInterseccion + "]";
 	}
-	
-	
 
+	
 }

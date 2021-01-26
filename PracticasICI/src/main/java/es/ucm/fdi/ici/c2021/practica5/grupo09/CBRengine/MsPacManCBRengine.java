@@ -2,6 +2,8 @@ package es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
@@ -19,20 +21,28 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.local.Int
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.Action;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MsPacManActionSelector;
+import pacman.game.Game;
 
 public class MsPacManCBRengine implements StandardCBRApplication {
 
 	private String casebaseFile;
-	private Action action;
 	private MsPacManActionSelector actionSelector;
 	private MsPacManStorageManager storageManager;
-
+	private Action action;
+	
 	CustomPlainTextConnector connector;
-	CBRCaseBase caseBase;
+	CachedLinearCaseBase caseBase;
 	NNConfig simConfig;
+	CBRCase newCase = null; //el caso que vamos a ir guardando
+	MapaInfo mapInfo;
+	Game game;
 	
+	Queue<CBRCase> cases_a_guardar = new LinkedList<CBRCase>();
+	String actionsStrings[] = {"ChaseAction", "ChillAction", "RunAwayAction"};
 	
+	INTER intersecciones[] = {INTER.CRUZ,INTER.T_HOR,INTER.L_INVER,INTER.T_INVER,INTER.L_VERT};
 	
 	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/plaintextconfig.xml"; //Cuidado!! poner el grupo aquí
 
@@ -54,10 +64,11 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 	
 	
-	public MsPacManCBRengine(MsPacManActionSelector actionSelector, MsPacManStorageManager storageManager)
+	public MsPacManCBRengine(MsPacManActionSelector actionSelector, MsPacManStorageManager storageManager, MapaInfo map)
 	{
 		this.actionSelector = actionSelector;
 		this.storageManager = storageManager;
+		this.mapInfo = map;
 	}
 	
 	
@@ -75,13 +86,15 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		this.storageManager.setCaseBase(caseBase);
 		
 		simConfig = new NNConfig();
-		simConfig.setDescriptionSimFunction(new Average());
-		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(15000));
-		simConfig.addMapping(new Attribute("time",MsPacManDescription.class), new Interval(4000));
-		simConfig.addMapping(new Attribute("nearestPPill",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("nearestGhost",MsPacManDescription.class), new Interval(650));
-		simConfig.addMapping(new Attribute("edibleGhost",MsPacManDescription.class), new Equal());
-		
+		simConfig.setDescriptionSimFunction(new Average());	
+
+		simConfig.addMapping(new Attribute("distClosestEdibleGhost",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distClosestGhost",MsPacManDescription.class), new Interval(650));
+		simConfig.addMapping(new Attribute("distToPowerPill",MsPacManDescription.class), new Interval(650));
+
+		simConfig.addMapping(new Attribute("vulnerable",MsPacManDescription.class), new Equal());
+
+		simConfig.addMapping(new Attribute("score",MsPacManDescription.class), new Interval(20000));
 	}
 
 	@Override
@@ -91,34 +104,72 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 
 	@Override
-	public void cycle(CBRQuery query) throws ExecutionException {
-		if(caseBase.getCases().isEmpty()) {
-			this.action = actionSelector.findAction();
-		}else {
-			//Compute NN
-			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(), query, simConfig);
-			
-			// This simple implementation only uses 1NN
-			// Consider using kNNs with majority voting
-			RetrievalResult first = SelectCases.selectTopKRR(eval, 1).iterator().next();
-			CBRCase mostSimilarCase = first.get_case();
-			double similarity = first.getEval();
-	
-			MsPacManResult result = (MsPacManResult) mostSimilarCase.getResult();
-			MsPacManSolution solution = (MsPacManSolution) mostSimilarCase.getSolution();
-			
-			//Now compute a solution for the query
-			this.action = actionSelector.getAction(solution.getAction());
-			
-			if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
-				this.action = actionSelector.findAction();
-			
-			else if(result.getScore()<0) //This was a bad case, ask actionSelector for another one.
-				this.action = actionSelector.findAnotherAction(solution.getAction());
-		}
-		CBRCase newCase = createNewCase(query);
-		this.storageManager.storeCase(newCase);
+	public void cycle(CBRQuery query) throws ExecutionException { //se llama en cada interseccion
+
+		//se guarda el caso en memoria, hay que esperar 3 ciclos
+		if(cases_a_guardar.size() == 3) this.storageManager.storeCase(cases_a_guardar.poll());
+				
+		//pedir segun que lista
+		MsPacManDescription descripcion = (MsPacManDescription)query.getDescription();
+		Boolean vulnerable = descripcion.getVulnerable(); //para saber de que lista sacar
+
+		Double bestVote = 0.0;
 		
+		INTER tipoInter = intersecciones[descripcion.getTipoInterseccion()]; //se necesita el tipo de interseccion			
+		
+		if(caseBase.getCases(vulnerable, tipoInter).isEmpty()) {		
+			this.action = actionSelector.findAction(); 
+			}
+		else { //ya tenemos algun caso guardado		
+			//Cargamos todos los casos
+			Collection<RetrievalResult> eval = NNScoringMethod.evaluateSimilarity(caseBase.getCases(vulnerable, tipoInter),
+					query, simConfig);
+			//elegimos el top 5
+			Collection<RetrievalResult> colaMejores = SelectCases.selectTopKRR(eval, 5);
+			
+			//elegimos cual es el mejor caso de los dado (votacion ponderada
+			int votos[] = {0,0,0}; //votos para cada estadp 0=chase, 1=chill, 2=runaway
+			double probabilidadesAcumuladas[] = {0,0,0};
+			
+			for(RetrievalResult caso : colaMejores) {			
+				String actionRes = ((MsPacManSolution)(caso.get_case()).getSolution()).getAction();
+				if(actionRes == "ChaseAction") {
+					votos[0]++;
+					probabilidadesAcumuladas[0] += caso.getEval();
+				}
+				else if(actionRes == "ChillAction"){
+					votos[1]++;
+					probabilidadesAcumuladas[1] += caso.getEval();
+				}
+				else if(actionRes == "RunAwayAction"){
+					votos[2]++;
+					probabilidadesAcumuladas[2] += caso.getEval();
+				}
+			}
+			
+			//sacar la media ponderada
+			int accionResultante = 1; //por defecto que sea chill
+			
+			for(int i=0;i<3;i++) {
+				double media = probabilidadesAcumuladas[i] / votos[i];
+				if(media > bestVote) {
+					bestVote = media;
+					accionResultante = i;
+				}
+			}
+			
+			this.action = actionSelector.getAction(actionsStrings[accionResultante]);
+		}
+
+		//System.out.println(bestVote);
+		if(bestVote < 0.9) 
+		{ //si el caso no es lo sufucientemente parecido
+			this.action = actionSelector.findAction(); //saca una accion random			
+		}
+		
+		
+		newCase = createNewCase(query);
+		cases_a_guardar.add(newCase);
 	}
 
 	/**
@@ -131,7 +182,7 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 		MsPacManDescription newDescription = (MsPacManDescription) query.getDescription();
 		MsPacManResult newResult = new MsPacManResult();
 		MsPacManSolution newSolution = new MsPacManSolution();
-		int newId = this.caseBase.getCases().size();
+		int newId = this.caseBase.getNumCases();
 		newId+= storageManager.getPendingCases();
 		newDescription.setId(newId);
 		newResult.setId(newId);
@@ -144,13 +195,21 @@ public class MsPacManCBRengine implements StandardCBRApplication {
 	}
 	
 	public Action getSolution() {
-		return this.action;
+		return action;
 	}
 
 	@Override
 	public void postCycle() throws ExecutionException {
 		this.storageManager.close();
 		this.caseBase.close();
+	}
+	
+	public void setMap(MapaInfo map) {
+		this.mapInfo = map;
+	}
+	
+	public void setGame(Game _game) {
+		this.game = _game;
 	}
 
 }
