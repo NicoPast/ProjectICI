@@ -1,14 +1,8 @@
 package es.ucm.fdi.ici.c2021.practica5.grupo09;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.MapaInfo.interseccion;
-import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.MsPacManDescription;
-import javassist.compiler.ast.Pair;
+import es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManDescription;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
