@@ -31,7 +31,7 @@ public class GhostsAction {
 		int pacmanPos = game.getPacmanCurrentNodeIndex();
 		int ghostPos = game.getGhostCurrentNodeIndex(ghostType);
 		if(game.isGhostEdible(ghostType) || //Es edible o  el pacman esta cerca de una powerpill
-			game.getEuclideanDistance(pacmanPos, game.getClosestNodeIndexFromNodeIndex(pacmanPos, game.getActivePowerPillsIndices(), DM.EUCLID)) < 30){
+			game.getActivePowerPillsIndices().length > 0 && game.getEuclideanDistance(pacmanPos, game.getClosestNodeIndexFromNodeIndex(pacmanPos, game.getActivePowerPillsIndices(), DM.EUCLID)) < 30){
 				return game.getNextMoveAwayFromTarget(ghostPos, pacmanPos, game.getGhostLastMoveMade(ghostType), DM.EUCLID);
 		}
 		return game.getNextMoveTowardsTarget(ghostPos, pacmanPos, game.getGhostLastMoveMade(ghostType), DM.EUCLID);

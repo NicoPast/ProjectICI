@@ -5,15 +5,12 @@ import java.util.Collection;
 import java.util.EnumMap;
 
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
-import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRCaseBase;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.CBRQuery;
 import es.ucm.fdi.gaia.jcolibri.connector.PlainTextConnector;
 import es.ucm.fdi.gaia.jcolibri.exception.ExecutionException;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.RetrievalResult;
-import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.NNConfig;
-import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.global.Average;
 import es.ucm.fdi.gaia.jcolibri.method.retrieve.selection.SelectCases;
 import es.ucm.fdi.gaia.jcolibri.util.FileIO;
 import es.ucm.fdi.ici.c2021.practica5.grupo09.GhostsAction;
@@ -27,10 +24,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 	private GhostsStorageManager storageManager;
 
 	CustomPlainTextConnector connector;
-	GhostsCachedLinearCaseBase caseBase;
-	NNConfig simConfig;
-	
-	
+	GhostsCachedLinearCaseBase caseBase;	
 	
 	final static String CONNECTOR_FILE_PATH = "es/ucm/fdi/ici/c2021/practica5/grupo09/CBRengine/ghostsplaintextconfig.xml"; //Cuidado!! poner el grupo aquí
 
@@ -71,18 +65,6 @@ public class GhostsCBRengine implements StandardCBRApplication {
 		connector.initFromXMLfile(FileIO.findFile(CONNECTOR_FILE_PATH));
 		connector.setCaseBaseFile(this.casebaseFile);
 		this.storageManager.setCaseBase(caseBase);
-		
-		simConfig = new NNConfig();
-		simConfig.setDescriptionSimFunction(new Average());
-		
-
-		Attribute att;
-
-		
-		
-		// att = new Attribute("score",GhostsDescription.class);
-		// simConfig.setWeight(att, 1.0);
-		// simConfig.addMapping(att, new Interval(15000));
 	}
 
 	@Override
@@ -99,65 +81,51 @@ public class GhostsCBRengine implements StandardCBRApplication {
 		Collection<CBRCase> cases = caseBase.getCases(description.getEdible(), description.getIntersectionType());
 		if(cases.isEmpty()) {
 			this.move = actionSelector.defaultAction();
-		}else {
-			//Se filtran aquellas interseccion cuya solucion es imposible de realizar
-			// Collection<CBRCase> filtered = new ArrayList<CBRCase>();
-			// for(CBRCase c : cases){
-			// 	if(((GhostsSolution)c.getSolution()).getMove() != MOVE.values()[((GhostsDescription)c.getDescription()).getLastMove()].opposite().ordinal())
-			// 		filtered.add(c);
-			// }
-
-			// if(filtered.isEmpty()){
-			// 	this.move = actionSelector.defaultAction();
-			// }
-			// else {
-
-				//Compute NN
-				Collection<RetrievalResult> eval = GhostsCustomNN.customNN(cases, query);
-				
-				Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
-				
-				EnumMap<MOVE, Double> votacion = new EnumMap<>(MOVE.class);
-				
-				//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
-				for(RetrievalResult similarCase : similarCases){
-					if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
-						MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
-						votacion.put(m, votacion.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
-					}
+		}
+		else {
+			//Compute NN
+			
+			Collection<RetrievalResult> eval = GhostsCustomNN.customNN(cases, query);		
+			Collection<RetrievalResult> similarCases = SelectCases.selectTopKRR(eval, 5);
+			
+			EnumMap<MOVE, Double> votacionPositiva = new EnumMap<>(MOVE.class);
+			EnumMap<MOVE, Double> votacionNegativa = new EnumMap<>(MOVE.class);
+			//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
+			for(RetrievalResult similarCase : similarCases){
+				if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
+					MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
+					GhostsDescription des = (GhostsDescription)similarCase.get_case().getDescription();
+					GhostsResult res = (GhostsResult)similarCase.get_case().getResult();
+					if(badCase(des, res))
+						votacionNegativa.put(m, votacionNegativa.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
+					else if(goodCase(des, res))
+						votacionPositiva.put(m, votacionPositiva.getOrDefault(m, 0.0) + similarCase.getEval() * similarCase.getEval());
 				}
-				//Pillamos el movimiento mas votado
-				MOVE mostVotedMove = MOVE.NEUTRAL;
-				Double mostVotes = 0.0;
-				for(MOVE m : votacion.keySet()){
-					if(votacion.get(m) > mostVotes){
-						mostVotes = votacion.get(m);
-						mostVotedMove = m;
-					}
-				}
-				
-				CBRCase mostSimilarCase = similarCases.iterator().next().get_case();
-				double similarity = 0;
-				
-				for(RetrievalResult similarCase : similarCases){
-					if(MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()] == mostVotedMove && similarity < similarCase.getEval()){
-						mostSimilarCase = similarCase.get_case();
-						similarity = similarCase.getEval();
-					}
-				}
-				
-				GhostsResult result = (GhostsResult) mostSimilarCase.getResult();
-				
-				//Now compute a solution for the query
-				this.move = mostVotedMove;
-				
-				if(similarity<0.7) //Sorry not enough similarity, ask actionSelector for an action
-					this.move = actionSelector.defaultAction();
-				
-				else if(badCase((GhostsDescription)mostSimilarCase.getDescription(), result)) 
-					this.move = actionSelector.findAnotherMove(mostVotedMove);
 			}
-		//}
+			//Pillamos el movimiento Positivo mas votado
+			MOVE mostPositiveVotedMove = MOVE.NEUTRAL;
+			Double mostPositiveVotes = 0.0;
+			for(MOVE m : votacionPositiva.keySet()){
+				if(votacionPositiva.get(m) > mostPositiveVotes){
+					mostPositiveVotes = votacionPositiva.get(m);
+					mostPositiveVotedMove = m;
+				}
+			}
+			MOVE mostNegativeVotedMove = MOVE.NEUTRAL;
+			Double mostNegativeVotes = 0.0;
+			for(MOVE m : votacionPositiva.keySet()){
+				if(votacionPositiva.get(m) > mostNegativeVotes){
+					mostNegativeVotes = votacionPositiva.get(m);
+					mostNegativeVotedMove = m;
+				}
+			}
+			if(mostPositiveVotes < 1 && mostNegativeVotes < 1) //Si no destaca ningun movimiento
+				this.move = actionSelector.defaultAction();
+			else if(mostPositiveVotes > mostNegativeVotes) //Se asume que el movimiento mas votado es bueno
+				this.move = mostPositiveVotedMove;		
+			else 
+				this.move = actionSelector.findAnotherMove(mostNegativeVotedMove);
+		}
 		CBRCase newCase = createNewCase(query);
 		this.storageManager.storeCase(newCase);
 	}
@@ -165,10 +133,15 @@ public class GhostsCBRengine implements StandardCBRApplication {
 	//Pacman gano demasiados puntos y no murio o se alejo o acerco cuando no debia
 	boolean badCase(GhostsDescription description, GhostsResult result){
 		return result.getScore() > 200 && result.getPacmanHealth() == 0 ||
-			(description.getEdible() && result.deltaDistanceToPacMan > 40) 
-			|| (!description.getEdible() && result.deltaDistanceToPacMan < -40);
+			(description.getEdible() && result.deltaDistanceToPacMan > 20) 
+			|| (!description.getEdible() && result.deltaDistanceToPacMan < -20);
 	}
 
+	boolean goodCase(GhostsDescription description, GhostsResult result){
+		return result.getScore() < 200 && result.getPacmanHealth() < 0 ||
+			(description.getEdible() && result.deltaDistanceToPacMan < -20) 
+			|| (!description.getEdible() && result.deltaDistanceToPacMan > 20);
+	}
 
 	/**
 	 * Creates a new case using the query as description, 

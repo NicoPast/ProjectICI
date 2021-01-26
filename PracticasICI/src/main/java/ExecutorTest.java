@@ -11,16 +11,16 @@ public class ExecutorTest {
 
     public static void main(String[] args) { 
         Executor executor = new Executor.Builder()
-                .setTickLimit(4000)
+                .setTickLimit(400)
                 .setVisual(true)
                 .setScaleFactor(3.0)
                 .build();
 
-        PacmanController pacMan = new MsPacMan();
+        PacmanController pacMan = new es.ucm.fdi.ici.c2021.practica2.grupo09.MsPacMan();
         GhostController ghosts = new Ghosts();
       
         System.out.println( 
-        		executor.runGame(pacMan, ghosts, 20)
+        		executor.runGame(pacMan, ghosts, 15)
         );
         
     }
