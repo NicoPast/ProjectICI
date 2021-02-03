@@ -53,7 +53,6 @@ public class GhostsInput implements Input {
 		distanceNextInterseccion.clear();
 
 		mapa.update(game);
-		
 		myInterseccion = mapa.getInterseccion(game.getGhostCurrentNodeIndex(ghostType));
 		edible = game.isGhostEdible(ghostType);
 		lastMove = game.getGhostLastMoveMade(ghostType);
