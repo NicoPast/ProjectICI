@@ -73,7 +73,7 @@ public class GhostsStorageManager {
 
 		GhostsResult result = (GhostsResult)bCase.getResult();
 		result.setScore(resultValue);
-		if(lifesValue==1 && resultDistance>10)
+		if(lifesValue==1 && oldDistance>10)
 			lifesValue=0;
 		result.setPacmanHealth(lifesValue);
 		result.setDeltaDistanceToPacMan((int)resultDistance);

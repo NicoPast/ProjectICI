@@ -87,10 +87,7 @@ public class GhostsInput implements Input {
 
 		description.setIntersectionType(intersectionType);
 
-		description.setDistanceNearestGhostUp(this.nearestGhosts.get(MOVE.UP));
-		description.setDistanceNearestGhostDown(this.nearestGhosts.get(MOVE.DOWN));
-		description.setDistanceNearestGhostLeft(this.nearestGhosts.get(MOVE.LEFT));
-		description.setDistanceNearestGhostRight(this.nearestGhosts.get(MOVE.RIGHT));
+		
 		
 		description.setDistanceNextIntersectionUp(this.distanceNextInterseccion.get(MOVE.UP));
 		description.setDistanceNextIntersectionDown(this.distanceNextInterseccion.get(MOVE.DOWN));

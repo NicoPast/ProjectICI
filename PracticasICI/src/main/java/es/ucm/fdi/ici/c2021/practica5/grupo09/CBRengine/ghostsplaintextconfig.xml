@@ -6,16 +6,12 @@
 		<Map>id</Map>
 		<Map>intersectionType</Map>
 		<Map>distanceNextIntersectionUp</Map>
-		<Map>distanceNearestGhostUp</Map>
 		<Map>GhostEdibleUp</Map>		
 		<Map>distanceNextIntersectionDown</Map>
-		<Map>distanceNearestGhostDown</Map>
 		<Map>GhostEdibleDown</Map>		
 		<Map>distanceNextIntersectionLeft</Map>
-		<Map>distanceNearestGhostLeft</Map>
 		<Map>GhostEdibleLeft</Map>		
 		<Map>distanceNextIntersectionRight</Map>
-		<Map>distanceNearestGhostRight</Map>
 		<Map>GhostEdibleRight</Map>		
 		<Map>edible</Map>
 		<Map>lastMove</Map>
