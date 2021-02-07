@@ -72,7 +72,7 @@ public class PacManParallelEvaluator {
 		properties.setProperty(KEY_PO, "false");
 		properties.setProperty(KEY_TRIALS, "100");
 		properties.setProperty(KEY_TICKS_LIMIT, "4000");
-		properties.setProperty(KEY_TIME_LIMIT, "40");
+		properties.setProperty(KEY_TIME_LIMIT, "200");
 		properties.setProperty(KEY_PO_SIGHT_LIMIT, "50");
 	}
 	

@@ -13,22 +13,18 @@ public class GhostsDescription implements CaseComponent {
 		Integer intersectionType;
 		//Up
 		Integer distanceNextIntersectionUp;
-		Integer distanceNearestGhostUp;
 		Boolean GhostEdibleUp;
 		
 		//Down
 		Integer distanceNextIntersectionDown;
-		Integer distanceNearestGhostDown;
 		Boolean GhostEdibleDown;
 
 		//Left
 		Integer distanceNextIntersectionLeft;
-		Integer distanceNearestGhostLeft;
 		Boolean GhostEdibleLeft;
 
 		//Right
 		Integer distanceNextIntersectionRight;
-		Integer distanceNearestGhostRight;
 		Boolean GhostEdibleRight;
 
 	Boolean edible;
@@ -60,14 +56,7 @@ public class GhostsDescription implements CaseComponent {
 	}
 
 
-	public Integer getDistanceNearestGhostUp() {
-		return distanceNearestGhostUp;
-	}
 
-
-	public void setDistanceNearestGhostUp(Integer distanceNearestGhostUp) {
-		this.distanceNearestGhostUp = distanceNearestGhostUp;
-	}
 
 
 	public Boolean getGhostEdibleUp() {
@@ -90,15 +79,6 @@ public class GhostsDescription implements CaseComponent {
 	}
 
 
-	public Integer getDistanceNearestGhostDown() {
-		return distanceNearestGhostDown;
-	}
-
-
-	public void setDistanceNearestGhostDown(Integer distanceNearestGhostDown) {
-		this.distanceNearestGhostDown = distanceNearestGhostDown;
-	}
-
 
 	public Boolean getGhostEdibleDown() {
 		return GhostEdibleDown;
@@ -120,14 +100,7 @@ public class GhostsDescription implements CaseComponent {
 	}
 
 
-	public Integer getDistanceNearestGhostLeft() {
-		return distanceNearestGhostLeft;
-	}
 
-
-	public void setDistanceNearestGhostLeft(Integer distanceNearestGhostLeft) {
-		this.distanceNearestGhostLeft = distanceNearestGhostLeft;
-	}
 
 
 	public Boolean getGhostEdibleLeft() {
@@ -150,14 +123,6 @@ public class GhostsDescription implements CaseComponent {
 	}
 
 
-	public Integer getDistanceNearestGhostRight() {
-		return distanceNearestGhostRight;
-	}
-
-
-	public void setDistanceNearestGhostRight(Integer distanceNearestGhostRight) {
-		this.distanceNearestGhostRight = distanceNearestGhostRight;
-	}
 
 
 	public Boolean getGhostEdibleRight() {
@@ -228,19 +193,20 @@ public class GhostsDescription implements CaseComponent {
 		return new Attribute("id", GhostsDescription.class);
 	}
 
+
 	@Override
 	public String toString() {
-		return "GhostsDescription [GhostEdibleDown=" + GhostEdibleDown + ", GhostEdibleLeft=" + GhostEdibleLeft
-				+ ", GhostEdibleRight=" + GhostEdibleRight + ", GhostEdibleUp=" + GhostEdibleUp
-				+ ", distanceNearestGhostDown=" + distanceNearestGhostDown + ", distanceNearestGhostLeft="
-				+ distanceNearestGhostLeft + ", distanceNearestGhostRight=" + distanceNearestGhostRight
-				+ ", distanceNearestGhostUp=" + distanceNearestGhostUp + ", distanceNextIntersectionDown="
-				+ distanceNextIntersectionDown + ", distanceNextIntersectionLeft=" + distanceNextIntersectionLeft
-				+ ", distanceNextIntersectionRight=" + distanceNextIntersectionRight + ", distanceNextIntersectionUp="
-				+ distanceNextIntersectionUp + ", distanceToPacMan=" + distanceToPacMan + ", edible=" + edible + ", id="
-				+ id + ", intersectionType=" + intersectionType + ", lastMove=" + lastMove + ", pacmanLife="
-				+ pacmanLife + ", score=" + score + "]";
+		return "GhostsDescription [id=" + id + ", intersectionType=" + intersectionType
+				+ ", distanceNextIntersectionUp=" + distanceNextIntersectionUp + ", GhostEdibleUp=" + GhostEdibleUp
+				+ ", distanceNextIntersectionDown=" + distanceNextIntersectionDown + ", GhostEdibleDown="
+				+ GhostEdibleDown + ", distanceNextIntersectionLeft=" + distanceNextIntersectionLeft
+				+ ", GhostEdibleLeft=" + GhostEdibleLeft + ", distanceNextIntersectionRight="
+				+ distanceNextIntersectionRight + ", GhostEdibleRight=" + GhostEdibleRight + ", edible=" + edible
+				+ ", lastMove=" + lastMove + ", distanceToPacMan=" + distanceToPacMan + ", score=" + score
+				+ ", pacmanLife=" + pacmanLife + "]";
 	}
+
+	
 
 	
 }
