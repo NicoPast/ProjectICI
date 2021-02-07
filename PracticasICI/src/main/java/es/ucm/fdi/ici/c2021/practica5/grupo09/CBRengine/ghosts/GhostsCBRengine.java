@@ -92,7 +92,7 @@ public class GhostsCBRengine implements StandardCBRApplication {
 			EnumMap<MOVE, Double> votacionNegativa = new EnumMap<>(MOVE.class);
 			//Hacemos una votacion con el movimiento mas elegido por la similitud de la solucion
 			for(RetrievalResult similarCase : similarCases){
-				if(similarCase.getEval() > 0.5){ //Sumamos en la votacion: similitud^2 y en el score
+				if(similarCase.getEval() > 0.7){ //Sumamos en la votacion: similitud^2 y en el score
 					MOVE m = MOVE.values()[((GhostsSolution)similarCase.get_case().getSolution()).getMove()];
 					GhostsDescription des = (GhostsDescription)similarCase.get_case().getDescription();
 					GhostsResult res = (GhostsResult)similarCase.get_case().getResult();
