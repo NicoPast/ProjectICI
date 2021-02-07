@@ -24,16 +24,16 @@ public class GhostsCustomNN {
 		GhostsDescription _query = (GhostsDescription)description;
 		GhostsDescription _case = (GhostsDescription)description2;
 		double simil = 0;
-		simil += Math.abs(_query.getDistanceNextIntersectionUp()-_case.getDistanceNextIntersectionUp())/40;
-		simil += Math.abs(_query.getDistanceNextIntersectionDown()-_case.getDistanceNextIntersectionDown())/40;
-		simil += Math.abs(_query.getDistanceNextIntersectionLeft()-_case.getDistanceNextIntersectionLeft())/40;
-		simil += Math.abs(_query.getDistanceNextIntersectionRight()-_case.getDistanceNextIntersectionRight())/40;
+		simil += 1 - (Math.abs(_query.getDistanceNextIntersectionUp() -_case.getDistanceNextIntersectionUp())/40);
+		simil += 1 - (Math.abs(_query.getDistanceNextIntersectionDown()-_case.getDistanceNextIntersectionDown())/40);
+		simil += 1 - (Math.abs(_query.getDistanceNextIntersectionLeft()-_case.getDistanceNextIntersectionLeft())/40);
+		simil += 1 - (Math.abs(_query.getDistanceNextIntersectionRight()-_case.getDistanceNextIntersectionRight())/40);
 		simil += _query.getGhostEdibleUp().equals(_case.getGhostEdibleUp()) ? 2.0 : 0.0;
 		simil += _query.getGhostEdibleDown().equals(_case.getGhostEdibleDown()) ? 2.0 : 0.0;
 		simil += _query.getGhostEdibleLeft().equals(_case.getGhostEdibleLeft()) ? 2.0 : 0.0;
 		simil += _query.getGhostEdibleRight().equals(_case.getGhostEdibleRight()) ? 2.0 : 0.0;
 		simil += _query.getLastMove().equals(_case.getLastMove()) ? 10.0 : 0.0;
-		simil += 3 * Math.abs(_query.getDistanceToPacMan()-_case.getDistanceToPacMan())/300;
+		simil += 3 - (3 * Math.abs(_query.getDistanceToPacMan()-_case.getDistanceToPacMan())/300);
 
 		return simil/25.0;
 	}
