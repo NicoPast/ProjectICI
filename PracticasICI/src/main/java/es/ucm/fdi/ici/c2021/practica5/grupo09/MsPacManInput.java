@@ -21,6 +21,8 @@ public class MsPacManInput implements Input {
 	Integer score = -1;	
 	Integer tipoInterseccion = 0;
 
+	Integer numPills = 0;
+	
 	class GhostPair{
 		GHOST ghost;
 		Double dist;
@@ -45,6 +47,7 @@ public class MsPacManInput implements Input {
 		distEdibleGhost =  distToGhost(game, true);
 		distToPowerPill = distToPP(game);
 		score = game.getScore();
+		numPills = getNumPills(interseccionActual);
 		
 		tipoInterseccion = getTipoInterseccion();
 		//System.out.println(tipoInterseccion);
@@ -61,6 +64,7 @@ public class MsPacManInput implements Input {
 		description.setDistClosestGhost(distGhost.intValue());
 		description.setDistClosestEdibleGhost(distEdibleGhost.intValue());
 		description.setDistToPowerPill(distToPowerPill.intValue());
+		description.setNumPills(numPills);
 		
 		CBRQuery query = new CBRQuery();
 		query.setDescription(description);	
@@ -155,12 +159,25 @@ public class MsPacManInput implements Input {
 				if(aux != -1 && aux < dist) dist = aux;
 			}			
 		}		
+		if(dist>650.0) dist=650.0;
 		return dist;		
 	}
 	
 	
 	private Double distToPP(Game game) {
 		return game.getDistance(game.getPacmanCurrentNodeIndex(),mapInfo.getClosestPillAnchura(game) , DM.PATH);
+	}
+	
+	private Integer getNumPills(interseccion interseccionActual) {
+		int num = 0;
+		
+		for(MOVE m:MOVE.values()) {
+			if(interseccionActual.destinos.get(m)!=null) {
+				num += interseccionActual.pills.get(m);
+			}
+		}
+		
+		return num;
 	}
 
 }

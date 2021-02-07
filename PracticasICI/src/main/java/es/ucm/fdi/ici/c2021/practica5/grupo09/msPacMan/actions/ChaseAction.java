@@ -17,7 +17,7 @@ public class ChaseAction implements Action{
 	}
 	
 	@Override
-	public MOVE execute(Game game) {		 
+	public MOVE execute(Game game) {	
 		//System.out.println("Chasing");
 				
 		//miramos si hay algun fantasma al que estamos viendo 

@@ -16,6 +16,15 @@ public class MsPacManDescription implements CaseComponent {
 		
 	Integer score;
 	Integer tipoInterseccion;
+	Integer numPills;
+
+	public Integer getNumPills() {
+		return numPills;
+	}
+
+	public void setNumPills(Integer numPills) {
+		this.numPills = numPills;
+	}
 
 	public Integer getId() {
 		return id;
@@ -84,8 +93,11 @@ public class MsPacManDescription implements CaseComponent {
 	public String toString() {
 		return "MsPacManDescription [id=" + id + ", distClosestEdibleGhost=" + distClosestEdibleGhost
 				+ ", distClosestGhost=" + distClosestGhost + ", distToPowerPill=" + distToPowerPill + ", vulnerable="
-				+ vulnerable + ", score=" + score + ", tipoInterseccion=" + tipoInterseccion + "]";
+				+ vulnerable + ", score=" + score + ", tipoInterseccion=" + tipoInterseccion + ", numPills=" + numPills
+				+ "]";
 	}
+
+	
 
 	
 }
