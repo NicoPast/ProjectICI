@@ -10,6 +10,7 @@
 		<Map>vulnerable</Map>	
 		<Map>score</Map>	
 		<Map>tipoInterseccion</Map>	
+		<Map>numPills</Map>	
 	</DescriptionMappings>
 	<SolutionClassName>es.ucm.fdi.ici.c2021.practica5.grupo09.CBRengine.pacman.MsPacManSolution</SolutionClassName>
 	<SolutionMappings>
