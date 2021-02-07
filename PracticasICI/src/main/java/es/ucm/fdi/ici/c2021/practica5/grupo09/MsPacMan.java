@@ -20,7 +20,7 @@ public class MsPacMan extends PacmanController {
 	MsPacManActionSelector actionSelector;
 	MsPacManStorageManager storageManager;
 	
-	final static String FILE_PATH = "cbrdata/grupo09/MsPacMan.csv";
+	final static String FILE_PATH = "bin/es/ucm/fdi/ici/c2021/practica5/grupo09/data/MsPacMan.csv";
 
 	MapaInfo mapInfo;
 	

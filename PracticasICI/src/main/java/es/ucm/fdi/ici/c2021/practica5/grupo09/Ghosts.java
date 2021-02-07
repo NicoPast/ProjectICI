@@ -22,7 +22,7 @@ public class Ghosts extends GhostController {
 	GhostsAction actionSelector;
 	GhostsStorageManager storageManager;
 	
-	final static String FILE_PATH = "cbrdata/grupo09/Ghosts.csv"; //Cuidado!! poner el grupo aquí
+	final static String FILE_PATH = "bin/es/ucm/fdi/ici/c2021/practica5/grupo09/data/Ghosts.csv"; //Cuidado!! poner el grupo aquí, okey
 	
 	public Ghosts()
 	{
