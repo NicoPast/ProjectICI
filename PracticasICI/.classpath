@@ -31,7 +31,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/gs-core-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/gs-ui-swing-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jFuzzyLogic.jar"/>
 	<classpathentry kind="src" path="target/generated-sources/annotations">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -43,7 +42,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/PacManEngineFSM.jar"/>
-	<classpathentry kind="lib" path="lib/PacManEngineFSMGraphObserver.jar"/>
+	<classpathentry kind="lib" path="lib/jess.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
