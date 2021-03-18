@@ -11,7 +11,7 @@ import pacman.game.Game;
 
 public class SecurePPillAction implements Action {
 
-	DM CONSTANT_MEASURE_DISTANCE = DM.PATH;
+	DM CONSTANT_MEASURE_DISTANCE = DM.EUCLID;
 	DM CONSTANT_MEASURE_DIRECTION = DM.EUCLID;
 
 	MapaInfoGhost mapa;

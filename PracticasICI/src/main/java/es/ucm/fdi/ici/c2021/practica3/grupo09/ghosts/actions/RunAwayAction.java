@@ -38,7 +38,7 @@ public class RunAwayAction implements Action {
 
 		double furthest = 0;
 		for (int p : pos) {
-			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, DM.PATH);
+			double aux = game.getDistance(game.getGhostCurrentNodeIndex(ghost), p, m, DM.EUCLID);
 			if (aux > furthest) {
 				furthest = aux;
 							}

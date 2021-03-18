@@ -58,8 +58,8 @@ public class GhostsInput extends Input {
 	private int ppillsLeft;
 
 	// --------------------------------constants--------------------------------------------
-	private int PacmanPPillTreshold = 25;
-	private int GhostsClosePacmanTreshold = 25;
+	private int PacmanPPillTreshold = 10;
+	private int GhostsClosePacmanTreshold = 30;
 
 	private float GhostCanSeekProtection(GHOST ghost) {
 		if (!this.isGhostStrong(ghost) && !activeGhosts.isEmpty()) {

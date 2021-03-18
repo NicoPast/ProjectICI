@@ -13,7 +13,7 @@ public class ChaseMsPacManAction implements Action{
 
 	MapaInfo mapInfo;
 	interseccion interseccionActual;
-	float distanciaMaximaPerseguir = 80;
+	float distanciaMaximaPerseguir = 110;
 	
 	public ChaseMsPacManAction(MapaInfo map){
 		mapInfo = map;
@@ -31,11 +31,11 @@ public class ChaseMsPacManAction implements Action{
 		
 		
 		MOVE moveToGhost = game.getApproximateNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(proxGhost),
-				game.getPacmanLastMoveMade(), DM.PATH);
+				game.getPacmanLastMoveMade(), DM.EUCLID);
 
 		//si hay un fantasma no comible en el camino o esta muy lejos
 		if(ghostInWay(moveToGhost, game) || game.getDistance(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(proxGhost),
-				game.getPacmanLastMoveMade(), DM.PATH) > distanciaMaximaPerseguir || 
+				game.getPacmanLastMoveMade(), DM.EUCLID) > distanciaMaximaPerseguir || 
 				mapInfo.lairDanger(game, interseccionActual.destinos.get(moveToGhost), moveToGhost)) {
 			//usar get best move
 			return mapInfo.getBestMove(game);
@@ -59,7 +59,7 @@ public class ChaseMsPacManAction implements Action{
 		for(GHOST g:GHOST.values()) {
 			if(game.isGhostEdible(g)) {
 				double distAux = game.getDistance(game.getGhostCurrentNodeIndex(g), 
-						interseccionActual.identificador, DM.PATH);
+						interseccionActual.identificador, DM.EUCLID);
 				
 				//System.out.println(g + " " + distAux);
 				
@@ -84,7 +84,7 @@ public class ChaseMsPacManAction implements Action{
 		for (GHOST g : GHOST.values()) {
 			if(!game.isGhostEdible(g)) {
 				double distancia = game.getDistance(interseccionActual.destinos.get(m), game.getGhostCurrentNodeIndex(g),
-					DM.PATH);
+					DM.EUCLID);
 														//hay que poner un +2 para que se cuenten las posiciones de las intersecciones
 				if (distancia != -1 && distancia <= (interseccionActual.distancias.get(m) + 2) && !hasPowerPill(m,g, game)) { // no pillar el camino
 					hasGhost = true;
@@ -105,8 +105,8 @@ public class ChaseMsPacManAction implements Action{
 			int powerPillIndex = getPowerPillCercana(game);
 			
 			if(game.getDistance(game.getPacmanCurrentNodeIndex(), powerPillIndex,
-					game.getPacmanLastMoveMade(), DM.PATH) < game.getDistance(game.getGhostCurrentNodeIndex(proxGhost), powerPillIndex,
-							game.getGhostLastMoveMade(proxGhost), DM.PATH)) return true;
+					game.getPacmanLastMoveMade(), DM.EUCLID) < game.getDistance(game.getGhostCurrentNodeIndex(proxGhost), powerPillIndex,
+							game.getGhostLastMoveMade(proxGhost), DM.EUCLID)) return true;
 			
 		}
 		

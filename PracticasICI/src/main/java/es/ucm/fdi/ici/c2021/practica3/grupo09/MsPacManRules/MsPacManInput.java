@@ -12,7 +12,7 @@ import pacman.game.Game;
 public class MsPacManInput extends Input {
 	
 	MapaInfo mapInfo;
-	private double distanciaPeligro = 93;
+	private double distanciaPeligro = 90;
 
 	public MsPacManInput(Game game, MapaInfo map) {
 		super(game);

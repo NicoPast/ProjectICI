@@ -38,7 +38,7 @@ public class ProtectAlliesAction implements Action {
 		int nearestP = -1;
 		double nearestDist = Double.MAX_VALUE;
 		for (int p : pos) {
-			double aux = game.getDistance(myPos, p, m, DM.PATH);
+			double aux = game.getDistance(myPos, p, m, DM.EUCLID);
 			if (aux < nearestDist) {
 				nearestDist = aux;
 				nearestP = p;
